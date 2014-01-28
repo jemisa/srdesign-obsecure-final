@@ -4,27 +4,15 @@
  */
 package cs492.obsecurefinal;
 
+import java.util.Vector;
+
 /**
  *
  * @author JOEL
  */
-public class EntityExtractor
+public abstract class EntityExtractor
 {
-    String sentence;
+    public EntityExtractor() {}
     
-    public EntityExtractor(String s)
-    {
-        sentence = s;
-    }
-    
-    // extract named entities and return list
-    public void extractAll()
-    {
-        
-    }
-    
-    private void extractLocation()
-    {
-        
-    }
+    public abstract Vector<NamedEntity> extractAll();
 }

@@ -13,7 +13,7 @@ public class App
         
         String text = scan.nextLine();
         
-        Sanitization sanitizer = new Sanitization(text);
+        SimpleSanitization sanitizer = new SimpleSanitization(text);
         sanitizer.sanitize();
         
     }
