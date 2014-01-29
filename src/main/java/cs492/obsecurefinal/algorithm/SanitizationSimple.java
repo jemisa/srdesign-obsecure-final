@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package cs492.obsecurefinal;
+package cs492.obsecurefinal.algorithm;
 
 import java.io.FileInputStream;
 import opennlp.tools.sentdetect.*;
@@ -11,12 +11,12 @@ import opennlp.tools.sentdetect.*;
  *
  * @author JOEL
  */
-public class SimpleSanitization extends Sanitization
+public class SanitizationSimple extends Sanitization
 {
     String text;
     
     // TODO: Take in document object instead of string
-    public SimpleSanitization(String s)
+    public SanitizationSimple(String s)
     {
         this.text = s;
     }

@@ -1,4 +1,4 @@
-package cs492.obsecurefinal;
+package cs492.obsecurefinal.common;
 
 /**
  *

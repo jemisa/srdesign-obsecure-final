@@ -1,5 +1,6 @@
 package cs492.obsecurefinal;
 
+import cs492.obsecurefinal.algorithm.SanitizationSimple;
 import java.util.Scanner;
 
 public class App 
@@ -13,7 +14,7 @@ public class App
         
         String text = scan.nextLine();
         
-        SimpleSanitization sanitizer = new SimpleSanitization(text);
+        SanitizationSimple sanitizer = new SanitizationSimple(text);
         sanitizer.sanitize();
         
     }
