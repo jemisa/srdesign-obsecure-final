@@ -27,43 +27,28 @@ public class TopicIdentifier {
 	Pipe pipe;
 
     public TopicIdentifier() {
-        
     }
-
-    // Builds MALLET Pipe for formating and processing text from documents
-    public Pipe buildFilePipe() {
+    
+    public enum PipeType {
+        CORPUS, MODEL
+    }
+    
+    public Pipe buildPipe(PipeType type) {
         ArrayList<Pipe> pipeList = new ArrayList<Pipe>();
 
-        //  Pattern for tokens: {L}etters, {N}umbers, {P}unctuation
+        // Pattern for tokens: {L}etters, {N}umbers, {P}unctuation
         Pattern tokenPattern = Pattern.compile("\\p{L}[\\p{L}\\p{P}]+\\p{L}");  //("[\\p{L}\\p{N}_]+");
         
-        pipeList.add(new Input2CharSequence("UTF-8"));				// File format
-        pipeList.add(new CharSequence2TokenSequence(tokenPattern));		// Tokenize strings
-        pipeList.add(new TokenSequenceLowercase());				// Covert to lowercase to unify
-        pipeList.add(new TokenSequenceRemoveStopwords(false, false));		// Common words to be ignored
-        pipeList.add(new TokenSequence2FeatureSequence());			// Convert to int
-        pipeList.add(new Target2Label());					// Convert labels
-        pipeList.add(new FeatureSequence2FeatureVector());			// ID sequences to vector
-        // Requires stopword list 
-        // pipeList.add( new TokenSequenceRemoveStopwords(new File("stoplists/en.txt"), "UTF-8", false, false, false) );
+        if (type.equals(PipeType.CORPUS)) pipeList.add(new Input2CharSequence("UTF-8"));	// File format
+        pipeList.add(new CharSequence2TokenSequence(tokenPattern));				// Tokenize strings
+        pipeList.add(new TokenSequenceLowercase());						// Covert to lowercase to unify
+        pipeList.add( new TokenSequenceRemoveStopwords(new File("stoplist.txt"), "UTF-8", false, false, false) );// Common words to be ignored
+        pipeList.add(new TokenSequence2FeatureSequence());					// Convert to int
+        if (type.equals(PipeType.CORPUS)) pipeList.add(new Target2Label());			// Convert labels
+        if (type.equals(PipeType.CORPUS)) pipeList.add(new FeatureSequence2FeatureVector());	// ID sequences to vector
         
         // FOR TESTING
         pipeList.add(new PrintInputAndTarget());
-
-        return new SerialPipes(pipeList);
-    }
-    
-    // Builds MALLET Pipe for formating and processing text from strings    
-    public Pipe buildStringPipe() {
-        ArrayList<Pipe> pipeList = new ArrayList<Pipe>();
-
-        //  Pattern for tokens: {L}etters, {N}umbers, {P}unctuation
-        Pattern tokenPattern = Pattern.compile("\\p{L}[\\p{L}\\p{P}]+\\p{L}");
-        
-        pipeList.add(new CharSequenceLowercase());
-        pipeList.add(new CharSequence2TokenSequence(tokenPattern));
-        pipeList.add(new TokenSequenceRemoveStopwords(false, false));
-        pipeList.add(new TokenSequence2FeatureSequence());
 
         return new SerialPipes(pipeList);
     }
@@ -78,81 +63,73 @@ public class TopicIdentifier {
     }
     
     public InstanceList readFromStrings(String[] s){
-        InstanceList instances = new InstanceList (buildStringPipe());
+        InstanceList instances = new InstanceList (buildPipe(PipeType.MODEL));
         instances.addThruPipe(new StringArrayIterator(s));
         
         return instances;
     }
     
     public InstanceList readFromFile(String file) throws IOException{   	
-        InstanceList instances = new InstanceList(buildFilePipe());
+        InstanceList instances = new InstanceList(buildPipe(PipeType.MODEL));
         
         Reader fileReader = new InputStreamReader(new FileInputStream(new File(file)), "UTF-8");
         instances.addThruPipe(new CsvIterator (fileReader, Pattern.compile("^(\\S*)[\\s,]*(\\S*)[\\s,]*(.*)$"), 3, 2, 1)); // data, label, name fields
         
         return instances;
     }
-
+    
+    // TODO: return topics instead of printing
     public void modelTopics(InstanceList instances) throws IOException {
-        // Create a model with 100 topics, alpha_t = 0.01, beta_w = 0.01
-        //  Note that the first parameter is passed as the sum over topics, while
-        //  the second is the parameter for a single dimension of the Dirichlet prior.
-        int numTopics = 100;
-        ParallelTopicModel model = new ParallelTopicModel(numTopics, 1.0, 0.01);
+        int numTopics = 10;		// Results are inconsistant > 10 in testing
+        int numThreads = 4;
+        int numIterations = 50;  	// 1000 to 2000 recommended for production
+        double alpha = 1.00;
+        double beta = 0.01;
+        ParallelTopicModel model = new ParallelTopicModel(numTopics, alpha, beta);
 
+        // Model attributes
         model.addInstances(instances);
-
-        // Use two parallel samplers, which each look at one half the corpus and combine
-        //  statistics after every iteration.
-        model.setNumThreads(2);
-
-        // Run the model for 50 iterations and stop (this is for testing only, 
-        //  for real applications, use 1000 to 2000 iterations)
-        model.setNumIterations(50);
+        model.setNumThreads(numThreads);
+        model.setNumIterations(numIterations);
         model.estimate();
 
-        // Show the words and topics in the first instance
-
-        // The data alphabet maps word IDs to strings
+        System.out.println("in");
+        
         Alphabet dataAlphabet = instances.getDataAlphabet();
-
+        
         FeatureSequence tokens = (FeatureSequence) model.getData().get(0).instance.getData();
         LabelSequence topics = model.getData().get(0).topicSequence;
-
+        
         Formatter out = new Formatter(new StringBuilder(), Locale.US);
         for (int position = 0; position < tokens.getLength(); position++) {
             out.format("%s-%d ", dataAlphabet.lookupObject(tokens.getIndexAtPosition(position)), topics.getIndexAtPosition(position));
         }
-        System.out.println(out);
 
-        // Estimate the topic distribution of the first instance, 
-        //  given the current Gibbs state.
+        // Topic probabilities
         double[] topicDistribution = model.getTopicProbabilities(0);
 
-        // Get an array of sorted sets of word ID/count pairs
         ArrayList<TreeSet<IDSorter>> topicSortedWords = model.getSortedWords();
-
-        // Show top 5 words in topics with proportions for the first document
+        
+        // Show number of topics with proportions for the first document
         for (int topic = 0; topic < numTopics; topic++) {
             Iterator<IDSorter> iterator = topicSortedWords.get(topic).iterator();
-
+            
             out = new Formatter(new StringBuilder(), Locale.US);
             out.format("%d\t%.3f\t", topic, topicDistribution[topic]);
             int rank = 0;
-            while (iterator.hasNext() && rank < 5) {
+            while (iterator.hasNext() && rank < numTopics) {
                 IDSorter idCountPair = iterator.next();
                 out.format("%s (%.0f) ", dataAlphabet.lookupObject(idCountPair.getID()), idCountPair.getWeight());
                 rank++;
             }
-            System.out.println(out);
         }
-
+        
         // Create a new instance with high probability of topic 0
         StringBuilder topicZeroText = new StringBuilder();
         Iterator<IDSorter> iterator = topicSortedWords.get(0).iterator();
 
         int rank = 0;
-        while (iterator.hasNext() && rank < 5) {
+        while (iterator.hasNext() && rank < numTopics) {
             IDSorter idCountPair = iterator.next();
             topicZeroText.append(dataAlphabet.lookupObject(idCountPair.getID()) + " ");
             rank++;
@@ -165,20 +142,21 @@ public class TopicIdentifier {
         TopicInferencer inferencer = model.getInferencer();
         double[] testProbabilities = inferencer.getSampledDistribution(testing.get(0), 10, 1, 5);
         System.out.println("0\t" + testProbabilities[0]);
-    }
-
+	}
 		
     // FROM EXAMPLE:
-    // Used to build corpus.  Can be remvoed when moving to corpus database tables
+    // Used to build corpus.  Can be removed when moving to corpus database tables
     public InstanceList readDirectory(File directory) {
         return readDirectories(new File[] {directory});
     }
 
     public InstanceList readDirectories(File[] directories) {
-        FileIterator iterator = new FileIterator(directories, new TxtFilter(), FileIterator.LAST_DIRECTORY);
+        FileIterator iterator =
+            new FileIterator(directories,
+                             new TxtFilter(),
+                             FileIterator.LAST_DIRECTORY);
 
-        //InstanceList instances = new InstanceList(buildFilePipe());
-        InstanceList instances = new InstanceList(buildFilePipe());
+        InstanceList instances = new InstanceList(buildPipe(PipeType.CORPUS));
         
         instances.addThruPipe(iterator);
 
