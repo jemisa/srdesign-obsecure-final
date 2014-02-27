@@ -62,7 +62,7 @@ public class SanitizationSimple extends Sanitization
             for (String sentence: sentences)
             {
                 // extract entities from each
-                EntityExtractor extractor = new EntityExtractorSimple(sentence);
+                EntityExtractor extractor = new EntityExtractor(sentence);
                 
                 // send entities to topic modeller to see if a match is found against the privacy profile
                 
