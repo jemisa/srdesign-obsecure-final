@@ -8,5 +8,5 @@ package cs492.obsecurefinal.common;
 // add to enumerated type as needed
 public enum EntityTypes
 {
-    Location, Occupation, Company
+    LOCATION, OCCUPATION, COMPANY
 }

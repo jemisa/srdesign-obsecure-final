@@ -7,7 +7,7 @@
  * http://mallet.cs.umass.edu. 2002.
  */
 
-package cs492.obsecurefinal.common;
+package cs492.obsecurefinal.algorithm;
 
 import java.io.File;
 import java.io.FileFilter;

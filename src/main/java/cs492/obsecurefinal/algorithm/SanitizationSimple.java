@@ -4,7 +4,12 @@
  */
 package cs492.obsecurefinal.algorithm;
 
+import cs492.obsecurefinal.common.Document;
+import cs492.obsecurefinal.common.Agent;
+import cs492.obsecurefinal.common.NamedEntity;
+import cs492.obsecurefinal.common.SanitizationResult;
 import java.io.FileInputStream;
+import java.util.List;
 import opennlp.tools.sentdetect.*;
 
 /**
@@ -13,18 +18,21 @@ import opennlp.tools.sentdetect.*;
  */
 public class SanitizationSimple extends Sanitization
 {
+    Document doc;
+    Agent profile;
     String text;
     
     // TODO: Take in document object instead of string
-    public SanitizationSimple(String s)
+    public SanitizationSimple(Document d, Agent agent)
     {
-        this.text = s;
+        this.doc = d;
+        this.profile = agent;
     }
     
-    public void sanitize()
+    public SanitizationResult sanitize()
     {
-        //TODO: preprocessing goes here
-        
+        text = doc.getText();
+                
         //split into sentences using natural language processing
         FileInputStream modelInput = null;
         SentenceModel sm = null;
@@ -37,7 +45,7 @@ public class SanitizationSimple extends Sanitization
         }
         catch(Exception ex)
         {
-            ex.printStackTrace();
+            ex.printStackTrace(System.out);
         }
         finally
         {
@@ -55,6 +63,8 @@ public class SanitizationSimple extends Sanitization
         // sentence model is initialized, split into sentences
         if(sm != null)
         {
+            SanitizationResult finalResult = new SanitizationResult();
+            
             SentenceDetectorME detector = new SentenceDetectorME(sm);
         
             String[] sentences = detector.sentDetect(text);
@@ -64,10 +74,25 @@ public class SanitizationSimple extends Sanitization
                 // extract entities from each
                 EntityExtractor extractor = new EntityExtractor(sentence);
                 
+                List<NamedEntity> allEntities = extractor.extractAll();
+                
                 // send entities to topic modeller to see if a match is found against the privacy profile
                 
+                TopicIdentifier ident = new TopicIdentifier();
+                
                 //if topic modeller identifies private information, return lists of generalized entities
+            
+                for(NamedEntity ent: allEntities)
+                {
+                    
+                }
+                
+                
             }
+            
+            return finalResult;
         }
+        else
+            return null;
     }
 }

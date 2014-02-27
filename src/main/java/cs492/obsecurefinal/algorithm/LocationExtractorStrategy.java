@@ -22,7 +22,7 @@ public class LocationExtractorStrategy extends EntityExtractorStrategy
 {
     public LocationExtractorStrategy(String[] sentence)
     {
-        super(sentence, EntityTypes.Location);
+        super(sentence, EntityTypes.LOCATION);
     }
 
     @Override
