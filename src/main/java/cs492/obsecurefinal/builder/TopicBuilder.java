@@ -133,6 +133,20 @@ public class TopicBuilder
 	public void loadDatabase(String file)
 	{	
 		BufferedReader in;
+		int topicMask;
+		int topicBits;
+		
+		// Set up the bit masks for the strange format used
+		if (Integer.bitCount(numTopics) == 1) {
+			// exact power of 2
+			topicMask = numTopics - 1;
+			topicBits = Integer.bitCount(topicMask);
+		}
+		else {
+			// otherwise add an extra bit
+			topicMask = Integer.highestOneBit(numTopics) * 2 - 1;
+			topicBits = Integer.bitCount(topicMask);
+		}
 		
 		database = new ParallelTopicModel(numTopics);
 		
@@ -169,6 +183,8 @@ public class TopicBuilder
 				// Put the weight of the topic in the database
 				database.alpha[i] = Double.parseDouble(ln);
 				
+				int j = 0;
+				
 				while(ln != null && !ln.equals("THISISTHETOPICTERMINATORIHOPETHISISNEVERUSEDASAWORD"))
 				{
 					String[] tokens = ln.split("\t");
@@ -182,8 +198,11 @@ public class TopicBuilder
 					// Add tokens[0] (the word) to the word list
 					database.alphabet.lookupIndex(tokens[0]);
 					
-					// TODO:Add tokens[1] (the weight) to the weight indices table
-					
+					// Add tokens[1] (the weight) to the weight indices table
+					// This uses a strange format involving bitwise shifts
+					database.typeTopicCounts[i][j] = (j << topicBits) + i;
+							
+					j++;
 				}
 				
 				if(ln == null)
