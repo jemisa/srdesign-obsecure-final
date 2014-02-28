@@ -18,9 +18,9 @@ public class ObSecureCycStrategyFactory {
 	CycQueryStrategy strategy = null;
 	
 	if (EntityTypes.Company == entityType) {
-	    strategy = new LocationStrategy();
-	} else if (EntityTypes.Location == entityType) {
 	    strategy = new OccupationStrategy();
+	} else if (EntityTypes.Location == entityType) {
+	    strategy = new LocationStrategy();
 	} else if (EntityTypes.Occupation == entityType) {
 	    strategy = new OrganizationStrategy();
 	} else {

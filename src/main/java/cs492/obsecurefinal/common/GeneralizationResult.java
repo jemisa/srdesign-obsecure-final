@@ -12,15 +12,15 @@ import java.util.Vector;
  */
 public class GeneralizationResult
 {
-        private Vector<String> results;
+        private final Vector<String> results = new Vector<>(); //TODO: why are we using an obsolete collection?
 
         public Vector<String> getResults()
         {
-               return null;
+               return results;
         }
 
         public void add(String result)
         {
-                
+	    results.add(result);
         }
 }
