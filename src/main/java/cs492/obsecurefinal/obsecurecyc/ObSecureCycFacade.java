@@ -11,7 +11,10 @@ import cs492.obsecurefinal.common.GeneralizationResult;
 import cs492.obsecurefinal.common.NamedEntity;
 import cs492.obsecurefinal.obsecurecyc.opencyc.api.CycAccess;
 import cs492.obsecurefinal.obsecurecyc.opencyc.api.CycApiException;
+import cs492.obsecurefinal.obsecurecyc.opencyc.cycobject.CycList;
+import cs492.obsecurefinal.obsecurecyc.opencyc.cycobject.CycObject;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -24,7 +27,7 @@ import java.util.logging.Logger;
  */
 public class ObSecureCycFacade {
     private static final ObSecureCycFacade instance = new ObSecureCycFacade();
-    private CycAccess cycAccess;
+    private CycAccess cycAccess = null;
     
     private ObSecureCycFacade() {
 	try {
@@ -33,10 +36,13 @@ public class ObSecureCycFacade {
 	} catch (IOException | CycApiException ex) {
 	    Logger.getLogger(ObSecureCycFacade.class.getName()).log(Level.SEVERE, null, ex);
 	}
-	    
     }
     
-    public static final ObSecureCycFacade getInstance() {
+    public static final ObSecureCycFacade getInstance() throws Exception {
+	if (instance.cycAccess == null) {
+	    throw new Exception("OpenCyc is not running on your machine");
+	}
+    
 	return instance;
     }
     
@@ -47,9 +53,13 @@ public class ObSecureCycFacade {
 	    EntityTypes type = entity.getType();
 	    CycQueryStrategy strategy = ObSecureCycStrategyFactory.lookupStrategy(type);
 	    try {
-		new CycQuery(strategy,cycAccess).execute(entity.getContents());
+		CycList cycList = new CycQuery(strategy,cycAccess).execute(entity.getContents());
+		for (Iterator it = cycList.iterator(); it.hasNext();) {
+		    CycObject obj = (CycObject) it.next();
+		    result.add(obj.stringApiValue());
+		}
 	    } catch (IOException ex) {
-		Logger.getLogger(ObSecureCycFacade.class.getName()).log(Level.SEVERE, null, ex);
+		Logger.getLogger(ObSecureCycFacade.class.getName()).log(Level.SEVERE, null, ex); //TODO: we need to implement a logging solution
 	    }
 	    map.put(entity, result);
 	}

@@ -19,6 +19,6 @@ public class OccupationStrategy extends CycQueryStrategy {
 
     @Override
     public CycList exec(CycAccess cycAccess, String text) throws UnknownHostException, IOException {
-	return cycAccess.getGenls(getCycConstantForText(cycAccess, text));
+	return cycAccess.getGenls(getAllCycConstantsContainingText(cycAccess, text));
     }
 }
