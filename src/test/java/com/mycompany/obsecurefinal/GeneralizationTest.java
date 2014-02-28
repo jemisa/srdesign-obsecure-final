@@ -26,8 +26,9 @@ public class GeneralizationTest {
     public void generalizeLocation() throws Exception {
 	ObSecureCycFacade cycFacade = ObSecureCycFacade.getInstance();
 	List<NamedEntity> sensitiveEntities = new ArrayList<>();
-	NamedEntity philadelphia = new NamedEntity("Philadelphia", EntityTypes.Location);
+	NamedEntity philadelphia = new NamedEntity("Philadelphia", EntityTypes.LOCATION);
 	sensitiveEntities.add(philadelphia);
+	
 	Map<NamedEntity, GeneralizationResult> res = cycFacade.generalize(sensitiveEntities);
 	for (NamedEntity entity : res.keySet()) {
 	    GeneralizationResult result = res.get(entity);

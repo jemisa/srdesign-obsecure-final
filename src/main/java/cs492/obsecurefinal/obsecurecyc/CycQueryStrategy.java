@@ -11,7 +11,6 @@ import java.net.UnknownHostException;
 import cs492.obsecurefinal.obsecurecyc.opencyc.api.CycAccess;
 import cs492.obsecurefinal.obsecurecyc.opencyc.api.CycObjectFactory;
 import cs492.obsecurefinal.obsecurecyc.opencyc.cycobject.CycList;
-import cs492.obsecurefinal.obsecurecyc.opencyc.cycobject.CycObject;
 import cs492.obsecurefinal.obsecurecyc.opencyc.cycobject.CycSymbol;
 
 /**

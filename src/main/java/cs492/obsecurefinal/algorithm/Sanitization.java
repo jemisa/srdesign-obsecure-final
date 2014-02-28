@@ -4,13 +4,13 @@
  */
 package cs492.obsecurefinal.algorithm;
 
+import cs492.obsecurefinal.common.SanitizationResult;
+
 /**
  *
  * @author JOEL
  */
 public abstract class Sanitization
-{
-    public Sanitization() {}
-    
-    public abstract void sanitize();
+{    
+    public abstract SanitizationResult sanitize();
 }

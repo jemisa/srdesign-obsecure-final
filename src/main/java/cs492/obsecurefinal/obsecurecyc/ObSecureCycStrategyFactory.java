@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -13,15 +14,15 @@ import cs492.obsecurefinal.common.EntityTypes;
  * @author Ben
  */
 public class ObSecureCycStrategyFactory {
-    
+      
     public static CycQueryStrategy lookupStrategy(EntityTypes entityType) {
 	CycQueryStrategy strategy = null;
 	
-	if (EntityTypes.Company == entityType) {
-	    strategy = new OccupationStrategy();
-	} else if (EntityTypes.Location == entityType) {
+	if (EntityTypes.COMPANY == entityType) {
 	    strategy = new LocationStrategy();
-	} else if (EntityTypes.Occupation == entityType) {
+	} else if (EntityTypes.LOCATION == entityType) {
+	    strategy = new OccupationStrategy();
+	} else if (EntityTypes.OCCUPATION == entityType) {
 	    strategy = new OrganizationStrategy();
 	} else {
 	    strategy = new PersonStrategy();
