@@ -72,12 +72,13 @@ public class TopicIdentifier {
     }
     
     // Assuming that I am going to pass an instance list to the DAO
-    public void getTopics(InstanceList instances){
+    public String[] getTopics(InstanceList instances){
+        String[] topics = null;
     	//String[] topics = DAO.getTopicsFromInstanceList(instances);
     	//return topics;
     	
     	//or for each instace.getData()
-    	//return topics;
+        return topics;
     }
     
     // Returns largest possibility of distribution

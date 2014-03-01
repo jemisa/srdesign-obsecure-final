@@ -19,6 +19,7 @@ public class TopicMatcher
     
     public double getMatchValue()
     {
-        
+        double value = 0;
+        return value;
     }
 }
