@@ -18,11 +18,11 @@ public class ObSecureCycStrategyFactory {
 	CycQueryStrategy strategy = null;
 	
 	if (EntityTypes.COMPANY == entityType) {
-	    strategy = new LocationStrategy();
-	} else if (EntityTypes.LOCATION == entityType) {
-	    strategy = new OccupationStrategy();
-	} else if (EntityTypes.OCCUPATION == entityType) {
 	    strategy = new OrganizationStrategy();
+	} else if (EntityTypes.LOCATION == entityType) {
+	    strategy = new LocationStrategy();
+	} else if (EntityTypes.OCCUPATION == entityType) {
+	    strategy = new OccupationStrategy();
 	} else {
 	    strategy = new PersonStrategy();
 	}
