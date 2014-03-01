@@ -11,8 +11,11 @@ import cs492.obsecurefinal.common.GeneralizationResult;
 import cs492.obsecurefinal.common.NamedEntity;
 import cs492.obsecurefinal.obsecurecyc.opencyc.api.CycAccess;
 import cs492.obsecurefinal.obsecurecyc.opencyc.api.CycApiException;
+import cs492.obsecurefinal.obsecurecyc.opencyc.cycobject.CycConstant;
+import cs492.obsecurefinal.obsecurecyc.opencyc.cycobject.CycFort;
 import cs492.obsecurefinal.obsecurecyc.opencyc.cycobject.CycList;
 import cs492.obsecurefinal.obsecurecyc.opencyc.cycobject.CycObject;
+import cs492.obsecurefinal.obsecurecyc.opencyc.cycobject.DefaultCycObject;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
@@ -53,10 +56,9 @@ public class ObSecureCycFacade {
 	    EntityTypes type = entity.getType();
 	    CycQueryStrategy strategy = ObSecureCycStrategyFactory.lookupStrategy(type);
 	    try {
-		CycList cycList = new CycQuery(strategy,cycAccess).execute(entity.getContents());
-		for (Iterator it = cycList.iterator(); it.hasNext();) {
-		    CycObject obj = (CycObject) it.next();
-		    result.add(obj.stringApiValue());
+		List<String> results = new CycQuery(strategy,cycAccess).execute(entity.getContents());
+		for (Iterator<String> it = results.iterator(); it.hasNext();) {
+		    result.add(it.next());
 		}
 	    } catch (IOException ex) {
 		Logger.getLogger(ObSecureCycFacade.class.getName()).log(Level.SEVERE, null, ex); //TODO: we need to implement a logging solution

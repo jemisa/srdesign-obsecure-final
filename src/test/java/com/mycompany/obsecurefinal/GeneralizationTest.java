@@ -17,7 +17,7 @@ import static junit.framework.Assert.assertTrue;
 import org.junit.Test;
 
 /**
- * OpenCyc must be running for this test to pass
+ * OpenCyc must be running for these test cases to pass
  * @author Ben
  */
 public class GeneralizationTest {
@@ -33,6 +33,34 @@ public class GeneralizationTest {
 	for (NamedEntity entity : res.keySet()) {
 	    GeneralizationResult result = res.get(entity);
 	    new GeneralizationAsserter(result).assertContains("Pennsylvania");
+	}
+    }
+    
+    @Test
+     public void generalizeOrganization() throws Exception {
+	ObSecureCycFacade cycFacade = ObSecureCycFacade.getInstance();
+	List<NamedEntity> sensitiveEntities = new ArrayList<>();
+	NamedEntity merck = new NamedEntity("Merck", EntityTypes.COMPANY);
+	sensitiveEntities.add(merck);
+	
+	Map<NamedEntity, GeneralizationResult> res = cycFacade.generalize(sensitiveEntities);
+	for (NamedEntity entity : res.keySet()) {
+	    GeneralizationResult result = res.get(entity);
+	    new GeneralizationAsserter(result).assertContains("pharmaceutical");
+	}
+    }
+     
+     @Test
+     public void generalizeOccupation() throws Exception {
+	ObSecureCycFacade cycFacade = ObSecureCycFacade.getInstance();
+	List<NamedEntity> sensitiveEntities = new ArrayList<>();
+	NamedEntity occupation = new NamedEntity("system administrator", EntityTypes.OCCUPATION);
+	sensitiveEntities.add(occupation);
+	
+	Map<NamedEntity, GeneralizationResult> res = cycFacade.generalize(sensitiveEntities);
+	for (NamedEntity entity : res.keySet()) {
+	    GeneralizationResult result = res.get(entity);
+	    new GeneralizationAsserter(result).assertContains("computer");
 	}
     }
     
