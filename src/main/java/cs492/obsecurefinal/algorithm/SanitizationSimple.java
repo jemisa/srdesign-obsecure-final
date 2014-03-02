@@ -4,12 +4,18 @@
  */
 package cs492.obsecurefinal.algorithm;
 
+import cc.mallet.types.InstanceList;
 import cs492.obsecurefinal.common.Document;
 import cs492.obsecurefinal.common.Agent;
+import cs492.obsecurefinal.common.GeneralizationResult;
 import cs492.obsecurefinal.common.NamedEntity;
+import cs492.obsecurefinal.common.SanitizationHint;
 import cs492.obsecurefinal.common.SanitizationResult;
+import cs492.obsecurefinal.obsecurecyc.ObSecureCycFacade;
 import java.io.FileInputStream;
 import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 import opennlp.tools.sentdetect.*;
 
 /**
@@ -69,25 +75,66 @@ public class SanitizationSimple extends Sanitization
         
             String[] sentences = detector.sentDetect(text);
             
-            for (String sentence: sentences)
+            for (int i = 0; i < sentences.length; i++)
             {
-                // extract entities from each
+                // Get this sentence and the sentences surrounding it
+                String sentence = sentences[i];
+                String nextSentence = "";
+                String prevSentence = "";
+                
+                if(i < sentences.length)
+                    nextSentence = sentences[i+1];
+                
+                if(i > 0)
+                    prevSentence = sentences[i-1];
+                
+                // extract entities from the current sentence
                 EntityExtractor extractor = new EntityExtractor(sentence);
                 
                 List<NamedEntity> allEntities = extractor.extractAll();
                 
-                // send entities to topic modeller to see if a match is found against the privacy profile
-                
-                TopicIdentifier ident = new TopicIdentifier();
-                
-                //if topic modeller identifies private information, return lists of generalized entities
-            
-                for(NamedEntity ent: allEntities)
+                if(allEntities.size() > 0)
                 {
-                    
+                    // send sentences to topic modeller to see if a match is found against the privacy profile
+
+                    TopicIdentifier ident = new TopicIdentifier();
+                    InstanceList documentInference = ident.readFromStrings(new String[] {prevSentence, sentence, nextSentence});
+
+                    boolean anyMatch = false;
+
+                    // load instance lists for profile
+                    List<InstanceList> profileInferences = new Vector<InstanceList>();
+                    for(InstanceList inf : profileInferences)
+                    {
+                        TopicMatcher matcher = new TopicMatcher(inf, documentInference);
+                        if (matcher.getMatchValue() > 0.5) // TODO: adjust threshold value
+                        {
+                            anyMatch = true;
+                            break;
+                        }
+                    }
+
+                    //if topic modeller identifies private information, return lists of generalized entities
+                    if(anyMatch)
+                    {  
+                        try
+                        {
+                            ObSecureCycFacade generalizer = ObSecureCycFacade.getInstance();
+
+                            Map<NamedEntity, GeneralizationResult> generalizedResults = generalizer.generalize(allEntities);
+
+                            for(NamedEntity ent: generalizedResults.keySet())
+                            {
+                                SanitizationHint hint = new SanitizationHint(ent, generalizedResults.get(ent));
+                                finalResult.addHint(hint);
+                            }
+                        }
+                        catch(Exception ex)
+                        {
+                            ex.printStackTrace(System.out);
+                        }
+                    }
                 }
-                
-                
             }
             
             return finalResult;

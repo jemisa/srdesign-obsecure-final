@@ -13,7 +13,7 @@ public class SanitizationHint
         private int tokenIndex;
         private GeneralizationResult sanitizedMatches;
 
-        public SanitizationHint(int tIndex, GeneralizationResult result)
+        public SanitizationHint(NamedEntity ent, GeneralizationResult result)
         {
                 
         }
