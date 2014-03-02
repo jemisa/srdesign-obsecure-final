@@ -74,22 +74,10 @@ public class TopicIdentifier {
     }
     
     // Returns largest probability of distribution
-    public double getProbability(InstanceList instances) throws IOException{
-        int numTopics = 5;			// Results are inconsistant > 10 in testing
-        int numThreads = 2;
-        int numIterations = 50;  		// 1000 to 2000 recommended for production
-        int numProbIterations = 50;
-        double alpha = 1.00;
-        double beta = 0.01;
-        ParallelTopicModel model = new ParallelTopicModel(numTopics, alpha, beta);
-
-        model.addInstances(instances);
-        model.setNumThreads(numThreads);
-        model.setNumIterations(numIterations);
-        model.estimate();
-    	
-        TopicInferencer inferencer = model.getInferencer();
-        double[] probabilities = inferencer.getSampledDistribution(instances.get(0), numProbIterations, 10, 10);
+    public double getProbability(InstanceList instance, ParallelTopicModel model){
+    	int numProbIterations = 50;
+    	TopicInferencer inferencer = model.getInferencer();
+        double[] probabilities = inferencer.getSampledDistribution(instance.get(0), numProbIterations, 10, 10);
         
         return probabilities[0];
     }
