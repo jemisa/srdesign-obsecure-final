@@ -11,6 +11,7 @@ import cs492.obsecurefinal.common.GeneralizationResult;
 import cs492.obsecurefinal.common.NamedEntity;
 import cs492.obsecurefinal.common.SanitizationHint;
 import cs492.obsecurefinal.common.SanitizationResult;
+import cs492.obsecurefinal.common.Topic;
 import cs492.obsecurefinal.obsecurecyc.ObSecureCycFacade;
 import java.io.FileInputStream;
 import java.util.List;
@@ -97,16 +98,17 @@ public class SanitizationSimple extends Sanitization
                 {
                     // send sentences to topic modeller to see if a match is found against the privacy profile
 
-                    TopicIdentifier ident = new TopicIdentifier();
+                    TopicIdentifier ident = new TopicIdentifier();                                   
                     InstanceList documentInference = ident.readFromStrings(new String[] {prevSentence, sentence, nextSentence});
-
+                    Topic[] topicList = ident.instanceToTopicArray(documentInference);
+                    
                     boolean anyMatch = false;
 
                     // load instance lists for profile
-                    List<InstanceList> profileInferences = new Vector<InstanceList>();
-                    for(InstanceList inf : profileInferences)
+                    List<Topic[]> profileInferences = new Vector<Topic[]>();
+                    for(Topic[] inf : profileInferences)
                     {
-                        TopicMatcher matcher = new TopicMatcher(inf, documentInference);
+                        TopicMatcher matcher = new TopicMatcher(inf, topicList);
                         if (matcher.getMatchValue() > 0.5) // TODO: adjust threshold value
                         {
                             anyMatch = true;

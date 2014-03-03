@@ -5,6 +5,7 @@
 package cs492.obsecurefinal.algorithm;
 
 import cc.mallet.types.InstanceList;
+import cs492.obsecurefinal.common.Topic;
 
 /**
  *
@@ -12,7 +13,7 @@ import cc.mallet.types.InstanceList;
  */
 public class TopicMatcher 
 {
-    public TopicMatcher(InstanceList a, InstanceList b)
+    public TopicMatcher(Topic[] a, Topic[] b)
     {
         
     }
