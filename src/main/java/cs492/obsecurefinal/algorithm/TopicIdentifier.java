@@ -28,9 +28,19 @@ import cs492.obsecurefinal.common.Topic;
 /*
  * @author MIKE
  */
+
+
+// DON'T CREATE MODEL FROM DOC TO BE SANITIZED
+// TAKE MASTER MODEL (FROM TOPIC BUILDER) and RUN INFERENCES FROM THE DOCUMENT AGAINST IT
+// TWO DIFFERENT DOCUMENTS WILL GO IN (DOCUMENT AND VALUE)
+
+// MATCHER WILL TAKE TWO TOPIC[] 
 public class TopicIdentifier {
-	Pipe pipe;
-	
+    Pipe pipe;
+    int numTopics = 5;
+    int numTopWords = 5;
+
+        
     public TopicIdentifier() {
     }
        
@@ -53,10 +63,8 @@ public class TopicIdentifier {
     }
     
     public Topic[] instanceToTopicArray(InstanceList instances){
-    	int numTopics = 5;
-    	
-    	ParallelTopicModel model = modelTopics(instances, numTopics);
-    	Topic[] topicArray = getTopicDetails(model, instances, numTopics);
+    	ParallelTopicModel model = modelTopics(instances);
+    	Topic[] topicArray = getTopicDetails(model, instances);
     	
     	return topicArray;
     }
@@ -79,7 +87,7 @@ public class TopicIdentifier {
     }
     
     // Returns Topic Model for an instance
-    private ParallelTopicModel modelTopics(InstanceList instances, int numTopics){
+    private ParallelTopicModel modelTopics(InstanceList instances){
         int numThreads = 2;
         int numIterations = 10;  		// 1000 to 2000 recommended for production
         double alpha = 1.00;
@@ -99,9 +107,7 @@ public class TopicIdentifier {
     }
   	
     // Returns array of Topics with IDs, probabilities, and top word list
-    private Topic[] getTopicDetails(ParallelTopicModel model, InstanceList instances, int numTopics) {
-        int numTopWords = 5;
-
+    private Topic[] getTopicDetails(ParallelTopicModel model, InstanceList instances) {
         Topic[] topicArray = new Topic[numTopics];
         String[] topWords = new String[numTopWords];
 
