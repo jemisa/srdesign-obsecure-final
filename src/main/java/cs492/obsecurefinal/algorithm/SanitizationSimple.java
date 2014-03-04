@@ -14,6 +14,7 @@ import cs492.obsecurefinal.common.SanitizationResult;
 import cs492.obsecurefinal.common.Topic;
 import cs492.obsecurefinal.obsecurecyc.ObSecureCycFacade;
 import java.io.FileInputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -98,44 +99,63 @@ public class SanitizationSimple extends Sanitization
                 {
                     // send sentences to topic modeller to see if a match is found against the privacy profile
 
-                    TopicIdentifier ident = new TopicIdentifier();                                   
-                    InstanceList documentInference = ident.readFromStrings(new String[] {prevSentence, sentence, nextSentence});
-                    Topic[] topicList = ident.instanceToTopicArray(documentInference);
+                    TopicIdentifier ident = new TopicIdentifier();
                     
-                    boolean anyMatch = false;
+                   //boolean anyMatch = false;
 
-                    // load instance lists for profile
-                    List<Topic[]> profileInferences = new Vector<Topic[]>();
-                    for(Topic[] inf : profileInferences)
+                    HashMap<NamedEntity, Boolean> privateEntities = new HashMap<NamedEntity, Boolean>();
+                                        
+                    for(NamedEntity ent: allEntities)
                     {
-                        TopicMatcher matcher = new TopicMatcher(inf, topicList);
-                        if (matcher.getMatchValue() > 0.5) // TODO: adjust threshold value
+                        privateEntities.put(ent, Boolean.FALSE);
+                        
+                        InstanceList documentInference = ident.readFromStrings(new String[] {prevSentence, sentence, nextSentence});
+                        Topic[] topicList = ident.instanceToTopicArray(documentInference);
+                    
+                        // TODO: remove entity from sentence
+                        
+                        InstanceList documentInferenceNoEntities = ident.readFromStrings(new String[] {prevSentence, sentence, nextSentence});
+                        Topic[] topicListNoEntities = ident.instanceToTopicArray(documentInferenceNoEntities);
+                    
+                        List<Topic[]> profileInferences = new Vector<Topic[]>(); // TODO: Load from builder
+                        
+                        for(Topic[] inf : profileInferences)
                         {
-                            anyMatch = true;
-                            break;
+                            TopicMatcher matcher = new TopicMatcher(inf, topicList);
+                            TopicMatcher matcherNoEntities = new TopicMatcher(inf, topicListNoEntities);
+                            
+                            double matchWithEntities = matcher.getMatchValue();
+                            double matchWithNoEntities = matcherNoEntities.getMatchValue();
+                            
+                            if (matchWithEntities > 0.5 && matchWithNoEntities < matchWithEntities) // TODO: adjust threshold value
+                            {
+                                privateEntities.put(ent, Boolean.TRUE);     
+                                break;
+                            }
                         }
                     }
-
+                    
                     //if topic modeller identifies private information, return lists of generalized entities
-                    if(anyMatch)
-                    {  
-                        try
+                    
+                    try
+                    {
+                        ObSecureCycFacade generalizer = ObSecureCycFacade.getInstance();
+
+                        Map<NamedEntity, GeneralizationResult> generalizedResults = generalizer.generalize(allEntities);
+
+                        for(NamedEntity ent: generalizedResults.keySet())
                         {
-                            ObSecureCycFacade generalizer = ObSecureCycFacade.getInstance();
-
-                            Map<NamedEntity, GeneralizationResult> generalizedResults = generalizer.generalize(allEntities);
-
-                            for(NamedEntity ent: generalizedResults.keySet())
+                            if(privateEntities.get(ent) == Boolean.TRUE)
                             {
                                 SanitizationHint hint = new SanitizationHint(ent, generalizedResults.get(ent));
                                 finalResult.addHint(hint);
                             }
                         }
-                        catch(Exception ex)
-                        {
-                            ex.printStackTrace(System.out);
-                        }
                     }
+                    catch(Exception ex)
+                    {
+                        ex.printStackTrace(System.out);
+                    }                    
                 }
             }
             
