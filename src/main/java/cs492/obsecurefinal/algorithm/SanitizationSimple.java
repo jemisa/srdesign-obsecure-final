@@ -27,6 +27,8 @@ import cs492.obsecurefinal.common.DataSourceNames;
  */
 public class SanitizationSimple extends Sanitization
 {
+    public static final double EQUALITY_THRESHOLD = 0.75;
+    
     Document doc;
     Agent profile;
     String text;
@@ -128,7 +130,7 @@ public class SanitizationSimple extends Sanitization
                             double matchWithEntities = matcher.getMatchValue();
                             double matchWithNoEntities = matcherNoEntities.getMatchValue();
                             
-                            if (matchWithEntities > 0.5 && matchWithNoEntities < matchWithEntities) // TODO: adjust threshold value
+                            if (matchWithEntities > EQUALITY_THRESHOLD && matchWithNoEntities < matchWithEntities) // TODO: adjust threshold value
                             {
                                 privateEntities.put(ent, Boolean.TRUE);     
                                 break;
