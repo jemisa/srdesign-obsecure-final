@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import opennlp.tools.sentdetect.*;
+import cs492.obsecurefinal.common.DataSourceNames;
 
 /**
  *
@@ -47,7 +48,7 @@ public class SanitizationSimple extends Sanitization
         
         try
         { 
-            modelInput  = new FileInputStream("en-sent.bin");
+            modelInput  = new FileInputStream(DataSourceNames.SENT_MODEL_FILE);
             
             sm = new SentenceModel(modelInput);
         }
