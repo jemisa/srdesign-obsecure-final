@@ -4,6 +4,7 @@
  */
 package cs492.obsecurefinal.algorithm;
 
+import cs492.obsecurefinal.common.DataSourceNames;
 import cs492.obsecurefinal.common.EntityTypes;
 import cs492.obsecurefinal.common.NamedEntity;
 import java.io.FileInputStream;
@@ -33,7 +34,7 @@ public class WorkplaceExtractorStrategy extends EntityExtractorStrategy
         try
         {
             // TODO: change model file name
-            InputStream modelFile = new FileInputStream("models/opennlp/ner/en-ner-location.bin");
+            InputStream modelFile = new FileInputStream(DataSourceNames.WORKPLACE_MODEL_FILE);
             TokenNameFinderModel tnf = new TokenNameFinderModel(modelFile);
             NameFinderME nf = new NameFinderME(tnf);
             Span spans[] = nf.find(sentence);

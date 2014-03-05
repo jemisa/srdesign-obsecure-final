@@ -19,6 +19,14 @@ public class Agent
         this.location = location;
         this.workplace = workplace;
     }
+        
+    public Agent()
+    {
+        name = "";
+        occupation = "";
+        location = "";
+        workplace = "";
+    }
     
     public String getName()
     {
