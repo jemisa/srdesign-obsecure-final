@@ -56,7 +56,7 @@ public class ObSecureCycFacade {
 	    EntityTypes type = entity.getType();
 	    CycQueryStrategy strategy = ObSecureCycStrategyFactory.lookupStrategy(type);
 	    try {
-		List<String> results = new CycQuery(strategy,cycAccess).execute(entity.getContents());
+		List<String> results = new CycQuery(strategy,cycAccess).execute(entity.getText());
 		for (Iterator<String> it = results.iterator(); it.hasNext();) {
 		    result.add(it.next());
 		}

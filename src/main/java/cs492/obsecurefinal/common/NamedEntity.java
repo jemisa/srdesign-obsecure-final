@@ -1,5 +1,7 @@
 package cs492.obsecurefinal.common;
 
+import opennlp.tools.util.Span;
+
 /**
  *
  * @author JOEL
@@ -8,11 +10,13 @@ package cs492.obsecurefinal.common;
 public class NamedEntity implements Comparable
 {
     private EntityTypes type;
-    private String contents;
+    private String sentence;
+    private Span entitySpan;
     
-    public NamedEntity(String entity, EntityTypes type)
+    public NamedEntity(String sentence, Span entitySpan, EntityTypes type)
     {
-        contents = entity;
+        this.sentence = sentence;
+        this.entitySpan = entitySpan;
         this.type = type;
     }
     
@@ -21,9 +25,9 @@ public class NamedEntity implements Comparable
         return type;
     }
     
-    public String getContents()
+    public String getText()
     {
-        return contents;
+        return entitySpan.getCoveredText(sentence).toString();
     }
 
     @Override
@@ -31,7 +35,7 @@ public class NamedEntity implements Comparable
 	int res = -1;
 	if (o != null && o instanceof NamedEntity) {
 	    NamedEntity entity = (NamedEntity) o;
-	    res= contents.compareTo(entity.getContents());
+	    res= getText().compareTo(entity.getText());
 	    if (res == 0) {
 		res = type.compareTo(entity.getType());
 	    }

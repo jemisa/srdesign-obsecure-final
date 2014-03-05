@@ -21,7 +21,7 @@ import opennlp.tools.util.Span;
  */
 public class LocationExtractorStrategy extends EntityExtractorStrategy
 {
-    public LocationExtractorStrategy(String[] sentence)
+    public LocationExtractorStrategy(String sentence)
     {
         super(sentence, EntityTypes.LOCATION);
     }
@@ -36,12 +36,12 @@ public class LocationExtractorStrategy extends EntityExtractorStrategy
             InputStream modelFile = new FileInputStream(DataSourceNames.LOC_MODEL_FILE);
             TokenNameFinderModel tnf = new TokenNameFinderModel(modelFile);
             NameFinderME nf = new NameFinderME(tnf);
-            Span spans[] = nf.find(sentence);
+            Span spans[] = nf.find(words);
             String entities[] = Span.spansToStrings(spans, sentence);
             
             // Add all identified location entities to the list
-            for(String ent:entities)
-                locEntities.add(new NamedEntity(ent, type));
+            for(Span span: spans)
+                locEntities.add(new NamedEntity(sentence, span, type));
         }
         catch(Exception ex)
         {
