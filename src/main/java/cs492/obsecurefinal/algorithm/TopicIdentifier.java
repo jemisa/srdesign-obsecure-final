@@ -30,15 +30,6 @@ import cs492.obsecurefinal.builder.TopicBuilder;
  * @author MIKE
  */
 
-// NOTES FOR MIKE
-// DON'T CREATE MODEL FROM DOC TO BE SANITIZED
-// TAKE MASTER MODEL (FROM TOPIC BUILDER) and RUN INFERENCES FROM THE DOCUMENT AGAINST IT
-// TWO DIFFERENT DOCUMENTS WILL GO IN (DOCUMENT AND VALUE)
-
-// TOPIC ID, PROBABILITY : QUESTIONS WHETHER THESE IDS ARE THE SAME AS THE MODEL IDS
-//  RETURN TOPIC CLASS
-
-// MATCHER WILL TAKE TWO TOPIC[] 
 public class TopicIdentifier {
     private Pipe pipe;
     private int numTopics = 5;
@@ -65,18 +56,10 @@ public class TopicIdentifier {
         //return instanceToTopicArray(instances);
     }
     
-    // Will probably be removed
-    public Topic[] instanceToTopicArray(InstanceList instances){
-    	ParallelTopicModel model = modelTopics(instances);
-    	Topic[] topicArray = getTopicDetails(model, instances);
-    	
-    	return topicArray;
-    }
-    
     // Need to double check if the inferred topic IDs are the same as the model IDs
     public Topic[] getInference(InstanceList instances){
         //TopicBuilder tb = new TopicBuilder;
-        //tb.getMasterModel();
+        //ParalellTopicModel model = tb.getMasterModel();
         
         ParallelTopicModel model = modelTopics(instances);
         Topic[] topicArray = new Topic[numTopics];
@@ -106,15 +89,25 @@ public class TopicIdentifier {
         // Pattern for tokens: {L}etters, {N}umbers, {P}unctuation
         Pattern tokenPattern = Pattern.compile("\\p{L}[\\p{L}\\p{P}]+\\p{L}");
         
-        pipeList.add(new CharSequence2TokenSequence(tokenPattern));									// Tokenize strings
-        pipeList.add(new TokenSequenceLowercase());													// Covert to lowercase to unify
-        pipeList.add(new TokenSequenceRemoveStopwords(new File("stoplist.txt"), "UTF-8", false, false, false));// Common words to be ignored
-        pipeList.add(new TokenSequence2FeatureSequence());											// Convert to int
+        pipeList.add(new CharSequence2TokenSequence(tokenPattern));
+        pipeList.add(new TokenSequenceLowercase());
+        pipeList.add(new TokenSequenceRemoveStopwords(new File("stoplist.txt"), "UTF-8", false, false, false));
+        pipeList.add(new TokenSequence2FeatureSequence());
         
         // FOR TESTING
         //pipeList.add(new PrintInputAndTarget());
 
         return new SerialPipes(pipeList);
+    }
+    
+    /** Functions below may no longer be required.  Dependent on TopicBuilder functionality. **/
+    
+    // Will probably be removed
+    public Topic[] instanceToTopicArray(InstanceList instances){
+    	ParallelTopicModel model = modelTopics(instances);
+    	Topic[] topicArray = getTopicDetails(model, instances);
+    	
+    	return topicArray;
     }
     
     // Returns Topic Model for an instance
@@ -129,9 +122,9 @@ public class TopicIdentifier {
         model.setNumThreads(numThreads);
         model.setNumIterations(numIterations);
         try {
-                      model.estimate();
+            model.estimate();
         } catch (IOException e) {
-                      e.printStackTrace();
+            e.printStackTrace();
         }
 
         return model;
@@ -141,27 +134,24 @@ public class TopicIdentifier {
     private Topic[] getTopicDetails(ParallelTopicModel model, InstanceList instances) {
         Topic[] topicArray = new Topic[numTopics];
         String[] topWords = new String[numTopWords];
+        //double[] probability = model.getTopicProbabilities(0);  // Don't think this is required anymore
 
         Alphabet dataAlphabet = instances.getDataAlphabet();
-
-        FeatureSequence tokens = (FeatureSequence) model.getData().get(0).instance.getData();
-        LabelSequence topics = model.getData().get(0).topicSequence;
-
-        double[] probability = model.getTopicProbabilities(0);
-
         ArrayList<TreeSet<IDSorter>> topicSortedWords = model.getSortedWords();
 
         for (int topic = 0; topic < numTopics; topic++) {
+            int rank = 0;
             Iterator<IDSorter> iterator = topicSortedWords.get(topic).iterator();
 
-            int rank = 0;
             while (iterator.hasNext() && rank < numTopWords) {
                 IDSorter idCountPair = iterator.next();
                 topWords[rank] = dataAlphabet.lookupObject(idCountPair.getID()).toString();
                 rank++;
             }
 
-            topicArray[topic] = new Topic(topic, probability[topic], topWords);
+            //topicArray[topic] = new Topic(topic, probability[topic], topWords);
+            topicArray[topic] = new Topic(topic, 0, topWords);
+            
             topWords = new String[numTopWords];
         }
 
