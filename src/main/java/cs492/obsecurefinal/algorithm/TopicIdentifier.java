@@ -91,10 +91,9 @@ public class TopicIdentifier {
     }
     
     private double[] inferTopics(Instance instance, ParallelTopicModel model){
-        int numIterations = 50;
-        int numThinning = 50;     // The number of iterations between saved samples
-        int numBurnin = 50;       // The number of iterations before the first saved sample
-
+        int numIterations = 1000;
+        int numThinning = 20;     // The number of iterations between saved samples
+        int numBurnin = 20;       // The number of iterations before the first saved sample
         
         TopicInferencer topicinfer = model.getInferencer();        
         double [] distribution = topicinfer.getSampledDistribution(instance, numIterations, numThinning, numBurnin);
