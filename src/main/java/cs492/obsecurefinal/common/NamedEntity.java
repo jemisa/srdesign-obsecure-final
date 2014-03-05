@@ -30,6 +30,11 @@ public class NamedEntity implements Comparable
         return entitySpan.getCoveredText(sentence).toString();
     }
 
+    public Span getSpan()
+    {
+        return entitySpan;
+    }
+    
     @Override
     public int compareTo(Object o) {
 	int res = -1;

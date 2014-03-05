@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Vector;
 import opennlp.tools.sentdetect.*;
 import cs492.obsecurefinal.common.DataSourceNames;
+import opennlp.tools.util.Span;
 
 /**
  *
@@ -104,20 +105,24 @@ public class SanitizationSimple extends Sanitization
 
                     TopicIdentifier ident = new TopicIdentifier();
                     
-                   //boolean anyMatch = false;
-
-                    HashMap<NamedEntity, Boolean> privateEntities = new HashMap<NamedEntity, Boolean>();
+                   HashMap<NamedEntity, Boolean> privateEntities = new HashMap<NamedEntity, Boolean>();
                                         
                     for(NamedEntity ent: allEntities)
                     {
                         privateEntities.put(ent, Boolean.FALSE);
                         
+                        // Run inference on sentence and context
                         InstanceList documentInference = ident.readFromStrings(new String[] {prevSentence, sentence, nextSentence});
                         Topic[] topicList = ident.instanceToTopicArray(documentInference);
                     
-                        // TODO: remove entity from sentence
-                        
-                        InstanceList documentInferenceNoEntities = ident.readFromStrings(new String[] {prevSentence, sentence, nextSentence});
+                        // Remove entity from the sentence
+                        Span entitySpan = ent.getSpan();
+                        String s1 = sentence.substring(0, entitySpan.getStart());
+                        String s2 = sentence.substring(entitySpan.getEnd(), sentence.length() - 1);
+                        String sentenceNoEntity = s1 + s2;                        
+                                            
+                        // Run the inference on the entity-less sentence and context
+                        InstanceList documentInferenceNoEntities = ident.readFromStrings(new String[] {prevSentence, sentenceNoEntity, nextSentence});
                         Topic[] topicListNoEntities = ident.instanceToTopicArray(documentInferenceNoEntities);
                     
                         List<Topic[]> profileInferences = new Vector<Topic[]>(); // TODO: Load from builder
