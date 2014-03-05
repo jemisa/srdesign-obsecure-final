@@ -24,23 +24,26 @@ import cc.mallet.types.*;
 import cc.mallet.topics.*;
 
 import cs492.obsecurefinal.common.Topic;
+import cs492.obsecurefinal.builder.TopicBuilder;
 
 /*
  * @author MIKE
  */
 
-
+// NOTES FOR MIKE
 // DON'T CREATE MODEL FROM DOC TO BE SANITIZED
 // TAKE MASTER MODEL (FROM TOPIC BUILDER) and RUN INFERENCES FROM THE DOCUMENT AGAINST IT
 // TWO DIFFERENT DOCUMENTS WILL GO IN (DOCUMENT AND VALUE)
 
+// TOPIC ID, PROBABILITY : QUESTIONS WHETHER THESE IDS ARE THE SAME AS THE MODEL IDS
+//  RETURN TOPIC CLASS
+
 // MATCHER WILL TAKE TWO TOPIC[] 
 public class TopicIdentifier {
-    Pipe pipe;
-    int numTopics = 5;
-    int numTopWords = 5;
-
-        
+    private Pipe pipe;
+    private int numTopics = 5;
+    private int numTopWords = 5;
+    
     public TopicIdentifier() {
     }
        
@@ -62,11 +65,40 @@ public class TopicIdentifier {
         //return instanceToTopicArray(instances);
     }
     
+    // Will probably be removed
     public Topic[] instanceToTopicArray(InstanceList instances){
     	ParallelTopicModel model = modelTopics(instances);
     	Topic[] topicArray = getTopicDetails(model, instances);
     	
     	return topicArray;
+    }
+    
+    // Need to double check if the inferred topic IDs are the same as the model IDs
+    public Topic[] getInference(InstanceList instances){
+        //TopicBuilder tb = new TopicBuilder;
+        //tb.getMasterModel();
+        
+        ParallelTopicModel model = modelTopics(instances);
+        Topic[] topicArray = new Topic[numTopics];
+        
+        double[] dist = inferTopics(instances.get(0), model);
+        
+        for (int i=0; i < numTopics; i++){
+            topicArray[i] = new Topic(i, dist[i], null);
+        }
+        
+        return topicArray;
+    }
+    
+    private double[] inferTopics(Instance instance, ParallelTopicModel model){
+        int numIterations = 50;
+        int numThinning = 50;     // The number of iterations between saved samples
+        int numBurnin = 50;       // The number of iterations before the first saved sample
+
+        
+        TopicInferencer topicinfer = model.getInferencer();        
+        double [] distribution = topicinfer.getSampledDistribution(instance, numIterations, numThinning, numBurnin);
+        return distribution;
     }
     
     private Pipe buildPipe() {
