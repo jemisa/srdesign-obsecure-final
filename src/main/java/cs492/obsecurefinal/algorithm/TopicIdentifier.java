@@ -25,6 +25,7 @@ import cc.mallet.topics.*;
 
 import cs492.obsecurefinal.common.Topic;
 import cs492.obsecurefinal.builder.TopicBuilder;
+import cs492.obsecurefinal.common.DataSourceNames;
 
 /*
  * @author MIKE
@@ -91,7 +92,7 @@ public class TopicIdentifier {
         
         pipeList.add(new CharSequence2TokenSequence(tokenPattern));
         pipeList.add(new TokenSequenceLowercase());
-        pipeList.add(new TokenSequenceRemoveStopwords(new File("stoplist.txt"), "UTF-8", false, false, false));
+        pipeList.add(new TokenSequenceRemoveStopwords(new File(DataSourceNames.TOPICS_STOPWORDS), "UTF-8", false, false, false));
         pipeList.add(new TokenSequence2FeatureSequence());
         
         // FOR TESTING

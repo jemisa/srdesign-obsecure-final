@@ -7,6 +7,7 @@ package cs492.obsecurefinal.algorithm;
 import cs492.obsecurefinal.common.DataSourceNames;
 import cs492.obsecurefinal.common.EntityTypes;
 import cs492.obsecurefinal.common.NamedEntity;
+import cs492.obsecurefinal.common.Sentence;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.List;
@@ -21,7 +22,7 @@ import opennlp.tools.util.Span;
  */
 public class LocationExtractorStrategy extends EntityExtractorStrategy
 {
-    public LocationExtractorStrategy(String sentence)
+    public LocationExtractorStrategy(Sentence sentence)
     {
         super(sentence, EntityTypes.LOCATION);
     }
@@ -37,7 +38,7 @@ public class LocationExtractorStrategy extends EntityExtractorStrategy
             TokenNameFinderModel tnf = new TokenNameFinderModel(modelFile);
             NameFinderME nf = new NameFinderME(tnf);
             Span spans[] = nf.find(words);
-            String entities[] = Span.spansToStrings(spans, sentence);
+            String entities[] = Span.spansToStrings(spans, sentence.getText());
             
             // Add all identified location entities to the list
             for(Span span: spans)

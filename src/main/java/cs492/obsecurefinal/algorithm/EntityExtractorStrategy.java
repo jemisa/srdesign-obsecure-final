@@ -7,6 +7,7 @@ package cs492.obsecurefinal.algorithm;
 import cs492.obsecurefinal.common.EntityTypes;
 import java.util.List;
 import cs492.obsecurefinal.common.NamedEntity;
+import cs492.obsecurefinal.common.Sentence;
 
 /**
  *
@@ -15,15 +16,15 @@ import cs492.obsecurefinal.common.NamedEntity;
 public abstract class EntityExtractorStrategy 
 {
     protected EntityTypes type;
-    protected String sentence;
+    protected Sentence sentence;
     protected String[] words;
     
-    public EntityExtractorStrategy(String sentence, EntityTypes type)
+    public EntityExtractorStrategy(Sentence sentence, EntityTypes type)
     {
         this.type = type;
         this.sentence = sentence;
         
-        words = sentence.split(" ");
+        words = sentence.getText().split(" ");
     }
     
     public abstract List<NamedEntity> getEntities();
