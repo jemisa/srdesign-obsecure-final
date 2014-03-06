@@ -1,0 +1,25 @@
+﻿merge
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# rebase in progress; onto 9792946
+# You are currently rebasing branch 'master' on '9792946'.
+#   (all conflicts fixed: run "git rebase --continue")
+#
+# Changes to be committed:
+#   (use "git reset HEAD <file>..." to unstage)
+#
+#	modified:   pom.xml
+#	modified:   src/main/java/cs492/obsecurefinal/common/GeneralizationResult.java
+#	modified:   src/main/java/cs492/obsecurefinal/common/NamedEntity.java
+#	new file:   src/main/java/cs492/obsecurefinal/obsecurecyc/CycQueryBuilder.java
+#	modified:   src/main/java/cs492/obsecurefinal/obsecurecyc/CycQueryStrategy.java
+#	modified:   src/main/java/cs492/obsecurefinal/obsecurecyc/LocationStrategy.java
+#	modified:   src/main/java/cs492/obsecurefinal/obsecurecyc/ObSecureCycFacade.java
+#	modified:   src/main/java/cs492/obsecurefinal/obsecurecyc/ObSecureCycStrategyFactory.java
+#	modified:   src/main/java/cs492/obsecurefinal/obsecurecyc/OccupationStrategy.java
+#	modified:   src/main/java/cs492/obsecurefinal/obsecurecyc/OrganizationStrategy.java
+#	modified:   src/main/java/cs492/obsecurefinal/obsecurecyc/PersonStrategy.java
+#	new file:   src/test/java/com/mycompany/obsecurefinal/GeneralizationTest.java
+#
+
