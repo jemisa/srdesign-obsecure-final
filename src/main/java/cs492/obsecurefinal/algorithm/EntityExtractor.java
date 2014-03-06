@@ -1,6 +1,7 @@
 package cs492.obsecurefinal.algorithm;
 
 import cs492.obsecurefinal.common.NamedEntity;
+import cs492.obsecurefinal.common.Sentence;
 import java.util.List;
 import java.util.Vector;
 
@@ -14,9 +15,9 @@ public class EntityExtractor
     
     // Constructor, splits the provided sentence into words for processing,
     // and sets up which strategies to use
-    public EntityExtractor(String sentence)
+    public EntityExtractor(Sentence sentence)
     {
-        this.sentence = sentence;
+        this.sentence = sentence.getText();
         //words = sentence.split(" ");
         
         allStrats = new Vector<EntityExtractorStrategy>();

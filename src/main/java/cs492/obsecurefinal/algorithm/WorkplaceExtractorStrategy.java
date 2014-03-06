@@ -7,6 +7,7 @@ package cs492.obsecurefinal.algorithm;
 import cs492.obsecurefinal.common.DataSourceNames;
 import cs492.obsecurefinal.common.EntityTypes;
 import cs492.obsecurefinal.common.NamedEntity;
+import cs492.obsecurefinal.common.Sentence;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.List;
@@ -17,11 +18,11 @@ import opennlp.tools.util.Span;
 
 /**
  *
- * @author JOEL
+ * @author Joel Marcinik
  */
 public class WorkplaceExtractorStrategy extends EntityExtractorStrategy
 {
-    public WorkplaceExtractorStrategy(String sentence)
+    public WorkplaceExtractorStrategy(Sentence sentence)
     {
         super(sentence, EntityTypes.COMPANY);
     }
@@ -38,7 +39,7 @@ public class WorkplaceExtractorStrategy extends EntityExtractorStrategy
             TokenNameFinderModel tnf = new TokenNameFinderModel(modelFile);
             NameFinderME nf = new NameFinderME(tnf);
             Span spans[] = nf.find(words);
-            String entities[] = Span.spansToStrings(spans, sentence);
+            String entities[] = Span.spansToStrings(spans, sentence.getText());
             
             // Add all identified workplace entities to the list
             for(Span span:spans)

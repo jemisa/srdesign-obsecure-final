@@ -10,10 +10,10 @@ import opennlp.tools.util.Span;
 public class NamedEntity implements Comparable
 {
     private EntityTypes type;
-    private String sentence;
+    private Sentence sentence;
     private Span entitySpan;
     
-    public NamedEntity(String sentence, Span entitySpan, EntityTypes type)
+    public NamedEntity(Sentence sentence, Span entitySpan, EntityTypes type)
     {
         this.sentence = sentence;
         this.entitySpan = entitySpan;
@@ -27,12 +27,17 @@ public class NamedEntity implements Comparable
     
     public String getText()
     {
-        return entitySpan.getCoveredText(sentence).toString();
+        return entitySpan.getCoveredText(sentence.getText()).toString();
     }
 
     public Span getSpan()
     {
         return entitySpan;
+    }
+    
+    public Sentence getSentence()
+    {
+        return sentence;
     }
     
     @Override
