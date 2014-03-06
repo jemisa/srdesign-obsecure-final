@@ -12,7 +12,7 @@ import cs492.obsecurefinal.common.NamedEntity;
 import cs492.obsecurefinal.common.SanitizationHint;
 import cs492.obsecurefinal.common.SanitizationResult;
 import cs492.obsecurefinal.common.Topic;
-import cs492.obsecurefinal.obsecurecyc.ObSecureCycFacade;
+import cs492.obsecurefinal.generalization.GeneralizationManager;
 import java.io.FileInputStream;
 import java.util.List;
 import java.util.Map;
@@ -121,9 +121,7 @@ public class SanitizationSimple extends Sanitization
                     {  
                         try
                         {
-                            ObSecureCycFacade generalizer = ObSecureCycFacade.getInstance();
-
-                            Map<NamedEntity, GeneralizationResult> generalizedResults = generalizer.generalize(allEntities);
+                            Map<NamedEntity, GeneralizationResult> generalizedResults = GeneralizationManager.generalize(allEntities);
 
                             for(NamedEntity ent: generalizedResults.keySet())
                             {

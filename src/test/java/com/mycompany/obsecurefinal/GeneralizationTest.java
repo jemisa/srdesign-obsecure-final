@@ -9,7 +9,7 @@ package com.mycompany.obsecurefinal;
 import cs492.obsecurefinal.common.EntityTypes;
 import cs492.obsecurefinal.common.GeneralizationResult;
 import cs492.obsecurefinal.common.NamedEntity;
-import cs492.obsecurefinal.obsecurecyc.ObSecureCycFacade;
+import cs492.obsecurefinal.generalization.GeneralizationManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,12 +24,11 @@ public class GeneralizationTest {
 
     @Test
     public void generalizeLocation() throws Exception {
-	ObSecureCycFacade cycFacade = ObSecureCycFacade.getInstance();
 	List<NamedEntity> sensitiveEntities = new ArrayList<>();
 	NamedEntity philadelphia = new NamedEntity("Philadelphia", EntityTypes.LOCATION);
 	sensitiveEntities.add(philadelphia);
 	
-	Map<NamedEntity, GeneralizationResult> res = cycFacade.generalize(sensitiveEntities);
+	Map<NamedEntity, GeneralizationResult> res = GeneralizationManager.generalize(sensitiveEntities);
 	for (NamedEntity entity : res.keySet()) {
 	    GeneralizationResult result = res.get(entity);
 	    new GeneralizationAsserter(result).assertContains("Pennsylvania");
@@ -38,12 +37,11 @@ public class GeneralizationTest {
     
     @Test
      public void generalizeOrganization() throws Exception {
-	ObSecureCycFacade cycFacade = ObSecureCycFacade.getInstance();
 	List<NamedEntity> sensitiveEntities = new ArrayList<>();
 	NamedEntity merck = new NamedEntity("Merck", EntityTypes.COMPANY);
 	sensitiveEntities.add(merck);
 	
-	Map<NamedEntity, GeneralizationResult> res = cycFacade.generalize(sensitiveEntities);
+	Map<NamedEntity, GeneralizationResult> res = GeneralizationManager.generalize(sensitiveEntities);
 	for (NamedEntity entity : res.keySet()) {
 	    GeneralizationResult result = res.get(entity);
 	    new GeneralizationAsserter(result).assertContains("pharmaceutical");
@@ -52,18 +50,17 @@ public class GeneralizationTest {
      
      @Test
      public void generalizeOccupation() throws Exception {
-	ObSecureCycFacade cycFacade = ObSecureCycFacade.getInstance();
 	List<NamedEntity> sensitiveEntities = new ArrayList<>();
 	NamedEntity occupation = new NamedEntity("system administrator", EntityTypes.OCCUPATION);
 	sensitiveEntities.add(occupation);
 	
-	Map<NamedEntity, GeneralizationResult> res = cycFacade.generalize(sensitiveEntities);
+	Map<NamedEntity, GeneralizationResult> res = GeneralizationManager.generalize(sensitiveEntities);
 	for (NamedEntity entity : res.keySet()) {
 	    GeneralizationResult result = res.get(entity);
 	    new GeneralizationAsserter(result).assertContains("computer");
 	}
     }
-    
+     
     private static class GeneralizationAsserter {
 	private final GeneralizationResult generalizationResult;
 	

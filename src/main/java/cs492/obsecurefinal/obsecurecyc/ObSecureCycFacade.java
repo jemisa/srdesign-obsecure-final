@@ -9,13 +9,9 @@ package cs492.obsecurefinal.obsecurecyc;
 import cs492.obsecurefinal.common.EntityTypes;
 import cs492.obsecurefinal.common.GeneralizationResult;
 import cs492.obsecurefinal.common.NamedEntity;
+import cs492.obsecurefinal.generalization.GeneralizationFacade;
 import cs492.obsecurefinal.obsecurecyc.opencyc.api.CycAccess;
 import cs492.obsecurefinal.obsecurecyc.opencyc.api.CycApiException;
-import cs492.obsecurefinal.obsecurecyc.opencyc.cycobject.CycConstant;
-import cs492.obsecurefinal.obsecurecyc.opencyc.cycobject.CycFort;
-import cs492.obsecurefinal.obsecurecyc.opencyc.cycobject.CycList;
-import cs492.obsecurefinal.obsecurecyc.opencyc.cycobject.CycObject;
-import cs492.obsecurefinal.obsecurecyc.opencyc.cycobject.DefaultCycObject;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
@@ -28,7 +24,7 @@ import java.util.logging.Logger;
  *
  * @author Ben
  */
-public class ObSecureCycFacade {
+public class ObSecureCycFacade implements GeneralizationFacade {
     private static final ObSecureCycFacade instance = new ObSecureCycFacade();
     private CycAccess cycAccess = null;
     

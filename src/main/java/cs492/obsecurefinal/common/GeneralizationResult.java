@@ -4,6 +4,7 @@
  */
 package cs492.obsecurefinal.common;
 
+import java.util.Collection;
 import java.util.Vector;
 
 /**
@@ -23,4 +24,8 @@ public class GeneralizationResult
         {
 	    results.add(result);
         }
+	
+	public void addAll(Collection<String> result) {
+	    results.addAll(result);
+	}
 }
