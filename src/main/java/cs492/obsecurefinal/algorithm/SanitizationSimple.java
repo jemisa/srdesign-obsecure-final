@@ -45,45 +45,45 @@ public class SanitizationSimple extends Sanitization
     @Override
     public SanitizationResult sanitize()
     {
-        text = doc.getText();
-                
-        //split into sentences using natural language processing
-        FileInputStream modelInput = null;
-        SentenceModel sm = null;
+//        text = doc.getText();
+//                
+//        //split into sentences using natural language processing
+//        FileInputStream modelInput = null;
+//        SentenceModel sm = null;
+//        
+//        try
+//        { 
+//            modelInput  = new FileInputStream(DataSourceNames.SENT_MODEL_FILE);
+//            
+//            sm = new SentenceModel(modelInput);
+//        }
+//        catch(Exception ex)
+//        {
+//            ex.printStackTrace(System.out);
+//        }
+//        finally
+//        {
+//            try
+//            {
+//                if(modelInput != null)            
+//                    modelInput.close();
+//            }
+//            catch(Exception ex)
+//            {                
+//                ex.printStackTrace();
+//            }
+//        }
         
-        try
-        { 
-            modelInput  = new FileInputStream(DataSourceNames.SENT_MODEL_FILE);
-            
-            sm = new SentenceModel(modelInput);
-        }
-        catch(Exception ex)
-        {
-            ex.printStackTrace(System.out);
-        }
-        finally
-        {
-            try
-            {
-                if(modelInput != null)            
-                    modelInput.close();
-            }
-            catch(Exception ex)
-            {                
-                ex.printStackTrace();
-            }
-        }
-        
-        // sentence model is initialized, split into sentences
-        if(sm != null)
+        // doc has been properly split into sentences
+        if(doc.isValid())
         {
             SanitizationResult finalResult = new SanitizationResult();
             
-            SentenceDetectorME detector = new SentenceDetectorME(sm);
+            //SentenceDetectorME detector = new SentenceDetectorME(sm);
         
-            String[] sentenceStrings = detector.sentDetect(text);
+            //String[] sentenceStrings = detector.sentDetect(text);
             
-            Sentence[] sentences = Sentence.convertStringArray(sentenceStrings);
+            Sentence[] sentences = doc.getSentences(); //Sentence.convertStringArray(sentenceStrings);
             
             for (int i = 0; i < sentences.length; i++)
             {
