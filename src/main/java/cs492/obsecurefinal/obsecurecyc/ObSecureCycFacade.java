@@ -10,8 +10,6 @@ import cs492.obsecurefinal.common.EntityTypes;
 import cs492.obsecurefinal.common.GeneralizationResult;
 import cs492.obsecurefinal.common.NamedEntity;
 import cs492.obsecurefinal.generalization.GeneralizationFacade;
-import cs492.obsecurefinal.obsecurecyc.opencyc.api.CycAccess;
-import cs492.obsecurefinal.obsecurecyc.opencyc.api.CycApiException;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
@@ -19,6 +17,8 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.opencyc.api.CycAccess;
+import org.opencyc.api.CycApiException;
 
 /**
  *

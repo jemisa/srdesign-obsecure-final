@@ -6,11 +6,11 @@
 
 package cs492.obsecurefinal.obsecurecyc;
 
-import cs492.obsecurefinal.obsecurecyc.opencyc.api.CycAccess;
-import cs492.obsecurefinal.obsecurecyc.opencyc.api.CycObjectFactory;
-import cs492.obsecurefinal.obsecurecyc.opencyc.cycobject.CycList;
-import cs492.obsecurefinal.obsecurecyc.opencyc.cycobject.CycObject;
-import cs492.obsecurefinal.obsecurecyc.opencyc.cycobject.CycVariable;
+import org.opencyc.api.CycAccess;
+import org.opencyc.api.CycObjectFactory;
+import org.opencyc.cycobject.CycList;
+import org.opencyc.cycobject.CycObject;
+import org.opencyc.cycobject.CycVariable;
 
 /**
  *

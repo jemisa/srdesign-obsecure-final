@@ -17,12 +17,27 @@
 
 package cs492.obsecurefinal.cluster;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
 /**
  *
  * @author Benjamin Arnold
  */
 public class BrownClusters {
     private static final BrownClusters instance = new BrownClusters();
+    
+    private TreeMap<String, String> cluster = new TreeMap<>();
     
     private BrownClusters() {
 	//singleton
@@ -33,9 +48,39 @@ public class BrownClusters {
 	return instance;
     }
     
+    public String cluster(String word) {
+	return cluster.get(word);
+    }
+    
     private void init() {
-	BrownClusters.class.getResourceAsStream("clusterKey.csv");
+	InputStream inStream = BrownClusters.class.getResourceAsStream("/cluster_viewer.html");
+	BufferedReader reader = new BufferedReader(new InputStreamReader(inStream));  
+	StringBuilder sb = new StringBuilder();
+	String line = null;
+	try {
+	    while ((line = reader.readLine()) != null) {
+		sb.append(line);
+	    }
+	} catch (IOException ex) {
+	    Logger.getLogger(BrownClusters.class.getName()).log(Level.SEVERE, null, ex);
+	}
 	
+	Document doc = Jsoup.parse(sb.toString());
+	Element table = doc.getElementsByTag("table").get(0).child(0);
+	Elements rows = table.children();
+	
+	for (Element row : rows) {
+	    Elements contents = row.getElementsByTag("td");
+	    if (contents.size() > 0) {
+		Element valuesCell = contents.last();
+		String valuesText = valuesCell.text();
+		StringTokenizer tokens = new StringTokenizer(valuesText, " ");
+		String key = tokens.nextToken();
+		while (tokens.hasMoreTokens()) {
+		    cluster.put(tokens.nextToken(), key);  //alias all results to intended key
+		}
+	    }
+	}
     }
     
 }

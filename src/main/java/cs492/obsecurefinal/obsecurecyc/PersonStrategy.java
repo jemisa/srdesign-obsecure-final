@@ -6,10 +6,10 @@
 
 package cs492.obsecurefinal.obsecurecyc;
 
-import cs492.obsecurefinal.obsecurecyc.opencyc.api.CycAccess;
-import cs492.obsecurefinal.obsecurecyc.opencyc.cycobject.CycList;
 import java.io.IOException;
 import java.net.UnknownHostException;
+import org.opencyc.api.CycAccess;
+import org.opencyc.cycobject.CycList;
 
 /**
  *

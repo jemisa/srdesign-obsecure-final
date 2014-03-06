@@ -8,13 +8,12 @@ package cs492.obsecurefinal.obsecurecyc;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
-import cs492.obsecurefinal.obsecurecyc.opencyc.api.CycAccess;
-import cs492.obsecurefinal.obsecurecyc.opencyc.api.CycObjectFactory;
-import cs492.obsecurefinal.obsecurecyc.opencyc.cycobject.CycConstant;
-import cs492.obsecurefinal.obsecurecyc.opencyc.cycobject.CycList;
-import cs492.obsecurefinal.obsecurecyc.opencyc.cycobject.CycNart;
-import cs492.obsecurefinal.obsecurecyc.opencyc.cycobject.CycObject;
-import cs492.obsecurefinal.obsecurecyc.opencyc.cycobject.CycSymbol;
+import org.opencyc.api.CycAccess;
+import org.opencyc.api.CycObjectFactory;
+import org.opencyc.cycobject.CycConstant;
+import org.opencyc.cycobject.CycList;
+import org.opencyc.cycobject.CycNart;
+import org.opencyc.cycobject.CycSymbol;
 
 /**
  *
