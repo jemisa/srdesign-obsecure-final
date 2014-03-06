@@ -15,12 +15,15 @@ import cs492.obsecurefinal.common.NamedEntity;
 public abstract class EntityExtractorStrategy 
 {
     protected EntityTypes type;
-    protected String[] sentence;
+    protected String sentence;
+    protected String[] words;
     
-    public EntityExtractorStrategy(String[] sentence, EntityTypes type)
+    public EntityExtractorStrategy(String sentence, EntityTypes type)
     {
         this.type = type;
         this.sentence = sentence;
+        
+        words = sentence.split(" ");
     }
     
     public abstract List<NamedEntity> getEntities();

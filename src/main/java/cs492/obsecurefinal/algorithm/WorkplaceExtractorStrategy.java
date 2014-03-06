@@ -4,6 +4,7 @@
  */
 package cs492.obsecurefinal.algorithm;
 
+import cs492.obsecurefinal.common.DataSourceNames;
 import cs492.obsecurefinal.common.EntityTypes;
 import cs492.obsecurefinal.common.NamedEntity;
 import java.io.FileInputStream;
@@ -20,7 +21,7 @@ import opennlp.tools.util.Span;
  */
 public class WorkplaceExtractorStrategy extends EntityExtractorStrategy
 {
-    public WorkplaceExtractorStrategy(String[] sentence)
+    public WorkplaceExtractorStrategy(String sentence)
     {
         super(sentence, EntityTypes.COMPANY);
     }
@@ -33,15 +34,15 @@ public class WorkplaceExtractorStrategy extends EntityExtractorStrategy
         try
         {
             // TODO: change model file name
-            InputStream modelFile = new FileInputStream("models/opennlp/ner/en-ner-location.bin");
+            InputStream modelFile = new FileInputStream(DataSourceNames.WORKPLACE_MODEL_FILE);
             TokenNameFinderModel tnf = new TokenNameFinderModel(modelFile);
             NameFinderME nf = new NameFinderME(tnf);
-            Span spans[] = nf.find(sentence);
+            Span spans[] = nf.find(words);
             String entities[] = Span.spansToStrings(spans, sentence);
             
             // Add all identified workplace entities to the list
-            for(String ent:entities)
-                workEntities.add(new NamedEntity(ent, type));
+            for(Span span:spans)
+                workEntities.add(new NamedEntity(sentence, span, type));
         }
         catch(Exception ex)
         {

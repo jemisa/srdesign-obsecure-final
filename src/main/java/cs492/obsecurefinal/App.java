@@ -4,6 +4,8 @@ import cs492.obsecurefinal.algorithm.SanitizationSimple;
 import cs492.obsecurefinal.common.Agent;
 import cs492.obsecurefinal.common.DatabaseAccess;
 import cs492.obsecurefinal.common.Document;
+import cs492.obsecurefinal.common.SanitizationHint;
+import cs492.obsecurefinal.common.SanitizationResult;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -12,7 +14,7 @@ public class App
     // Console interface for sanitization prototype
     public static void main( String[] args )
     {
-        if(args.length > 0 && !args[0].equals("builder"))
+        if(args.length > 0 && args[0].equals("-text"))
         {
             DatabaseAccess dbAccess = new DatabaseAccess();
             String[] allProfiles = dbAccess.getProfileNames();
@@ -41,7 +43,21 @@ public class App
             Document doc = new Document(text);
 
             SanitizationSimple sanitizer = new SanitizationSimple(doc, currentProfile);
-            sanitizer.sanitize();
+            SanitizationResult result = sanitizer.sanitize();
+            
+            for(SanitizationHint match:result.getResults())
+            {
+                System.out.print("Term that reveals private information:");
+                System.out.print("Blach bhla");
+            }
+        }
+        else if (args.length > 0 && args[0].equals("-builder"))
+        {
+            // builder
+        }
+        else
+        {
+            // launch ui
         }
     }
 }

@@ -130,7 +130,7 @@ public class TopicBuilder
 		}
 	}
 	
-	public void loadDatabase(String file)
+	public ParallelTopicModel loadDatabase(String file)
 	{	
 		BufferedReader in;
 		int topicMask;
@@ -157,7 +157,7 @@ public class TopicBuilder
 		catch(FileNotFoundException e)
 		{
 			System.err.println("Could not find the specified database file");
-			return;
+			return null;
 		}
 		
 		try
@@ -170,14 +170,14 @@ public class TopicBuilder
 				if(Integer.parseInt(ln) != i)
 				{
 					System.err.println("Incorrectly formatted database file");
-					System.exit(1);
+					return null;
 				}
 				
 				ln = in.readLine();
 				if(ln == null)
 				{
 					System.err.println("Unexpected end of file");
-					System.exit(1);
+					return null;
 				}
 				
 				// Put the weight of the topic in the database
@@ -192,7 +192,7 @@ public class TopicBuilder
 					if(tokens.length != 2)
 					{
 						System.err.println("Incorrectly formatted database file");
-						System.exit(1);
+						return null;
 					}
 					
 					// Add tokens[0] (the word) to the word list
@@ -219,13 +219,15 @@ public class TopicBuilder
 			if(ln == null)
 			{
 				System.err.println("Unexpected end of file");
-				System.exit(1);
+				return null;
 			}
 		}
 		catch(IOException e)
 		{
 			System.err.println("Error reading database file");
-			return;
+			return null;
 		}
+		
+		return database;
 	}
 }

@@ -17,11 +17,11 @@ public class EntityExtractor
     public EntityExtractor(String sentence)
     {
         this.sentence = sentence;
-        words = sentence.split(" ");
+        //words = sentence.split(" ");
         
         allStrats = new Vector<EntityExtractorStrategy>();
-        allStrats.add(new LocationExtractorStrategy(words));
-        allStrats.add(new WorkplaceExtractorStrategy(words));
+        allStrats.add(new LocationExtractorStrategy(sentence));
+        allStrats.add(new WorkplaceExtractorStrategy(sentence));
     }
     
     // For each strategy, get all entities that match it and return all of them together

@@ -12,12 +12,15 @@ import cs492.obsecurefinal.common.NamedEntity;
 import cs492.obsecurefinal.common.SanitizationHint;
 import cs492.obsecurefinal.common.SanitizationResult;
 import cs492.obsecurefinal.common.Topic;
-import cs492.obsecurefinal.generalization.GeneralizationManager;
 import java.io.FileInputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import opennlp.tools.sentdetect.*;
+import cs492.obsecurefinal.common.DataSourceNames;
+import cs492.obsecurefinal.generalization.GeneralizationManager;
+import opennlp.tools.util.Span;
 
 /**
  *
@@ -25,6 +28,8 @@ import opennlp.tools.sentdetect.*;
  */
 public class SanitizationSimple extends Sanitization
 {
+    public static final double EQUALITY_THRESHOLD = 0.75;
+    
     Document doc;
     Agent profile;
     String text;
@@ -46,7 +51,7 @@ public class SanitizationSimple extends Sanitization
         
         try
         { 
-            modelInput  = new FileInputStream("en-sent.bin");
+            modelInput  = new FileInputStream(DataSourceNames.SENT_MODEL_FILE);
             
             sm = new SentenceModel(modelInput);
         }
@@ -98,42 +103,65 @@ public class SanitizationSimple extends Sanitization
                 {
                     // send sentences to topic modeller to see if a match is found against the privacy profile
 
-                    TopicIdentifier ident = new TopicIdentifier();                                   
-                    InstanceList documentInference = ident.readFromStrings(new String[] {prevSentence, sentence, nextSentence});
-                    Topic[] topicList = ident.instanceToTopicArray(documentInference);
+                    TopicIdentifier ident = new TopicIdentifier();
                     
-                    boolean anyMatch = false;
-
-                    // load instance lists for profile
-                    List<Topic[]> profileInferences = new Vector<Topic[]>();
-                    for(Topic[] inf : profileInferences)
+                   HashMap<NamedEntity, Boolean> privateEntities = new HashMap<NamedEntity, Boolean>();
+                                        
+                    for(NamedEntity ent: allEntities)
                     {
-                        TopicMatcher matcher = new TopicMatcher(inf, topicList);
-                        if (matcher.getMatchValue() > 0.5) // TODO: adjust threshold value
+                        privateEntities.put(ent, Boolean.FALSE);
+                        
+                        // Run inference on sentence and context
+                        InstanceList documentInference = ident.readFromStrings(new String[] {prevSentence, sentence, nextSentence});
+                        Topic[] topicList = ident.instanceToTopicArray(documentInference);
+                    
+                        // Remove entity from the sentence
+                        Span entitySpan = ent.getSpan();
+                        String s1 = sentence.substring(0, entitySpan.getStart());
+                        String s2 = sentence.substring(entitySpan.getEnd(), sentence.length() - 1);
+                        String sentenceNoEntity = s1 + s2;                        
+                                            
+                        // Run the inference on the entity-less sentence and context
+                        InstanceList documentInferenceNoEntities = ident.readFromStrings(new String[] {prevSentence, sentenceNoEntity, nextSentence});
+                        Topic[] topicListNoEntities = ident.instanceToTopicArray(documentInferenceNoEntities);
+                    
+                        List<Topic[]> profileInferences = new Vector<Topic[]>(); // TODO: Load from builder
+                        
+                        for(Topic[] inf : profileInferences)
                         {
-                            anyMatch = true;
-                            break;
+                            TopicMatcher matcher = new TopicMatcher(inf, topicList);
+                            TopicMatcher matcherNoEntities = new TopicMatcher(inf, topicListNoEntities);
+                            
+                            double matchWithEntities = matcher.getMatchValue();
+                            double matchWithNoEntities = matcherNoEntities.getMatchValue();
+                            
+                            if (matchWithEntities > EQUALITY_THRESHOLD && matchWithNoEntities < matchWithEntities) // TODO: adjust threshold value
+                            {
+                                privateEntities.put(ent, Boolean.TRUE);     
+                                break;
+                            }
                         }
                     }
-
+                    
                     //if topic modeller identifies private information, return lists of generalized entities
-                    if(anyMatch)
-                    {  
-                        try
-                        {
-                            Map<NamedEntity, GeneralizationResult> generalizedResults = GeneralizationManager.generalize(allEntities);
+                    
+                    try
+                    {
+                        Map<NamedEntity, GeneralizationResult> generalizedResults = GeneralizationManager.generalize(allEntities);
 
-                            for(NamedEntity ent: generalizedResults.keySet())
+                        for(NamedEntity ent: generalizedResults.keySet())
+                        {
+                            if(privateEntities.get(ent) == Boolean.TRUE)
                             {
                                 SanitizationHint hint = new SanitizationHint(ent, generalizedResults.get(ent));
                                 finalResult.addHint(hint);
                             }
                         }
-                        catch(Exception ex)
-                        {
-                            ex.printStackTrace(System.out);
-                        }
                     }
+                    catch(Exception ex)
+                    {
+                        ex.printStackTrace(System.out);
+                    }                    
                 }
             }
             
