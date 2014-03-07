@@ -230,4 +230,9 @@ public class TopicBuilder
 		
 		return database;
 	}
+        
+        // Adding this so I can get the model directly -Mike
+        public ParallelTopicModel getModel(){
+		return database;
+	}
 }

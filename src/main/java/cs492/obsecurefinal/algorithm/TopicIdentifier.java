@@ -32,40 +32,49 @@ import cs492.obsecurefinal.common.DataSourceNames;
  */
 
 public class TopicIdentifier {
-    private Pipe pipe;
+    private ParallelTopicModel model;
     private int numTopics = 5;
     private int numTopWords = 5;
     
-    public TopicIdentifier() {
+    public TopicIdentifier(){
+        TopicBuilder tb = new TopicBuilder(numTopics, "THIS IS THE DEFAULT LOCATION FOR THE DOCUMENT DIRECTORY.");
+        model = tb.getModel();
     }
-       
-    public InstanceList readFromStrings(String[] s){
+    
+    public TopicIdentifier(ParallelTopicModel ptm) {
+        model = ptm;
+    }
+    
+    public TopicIdentifier(String location){
+        TopicBuilder tb = new TopicBuilder(numTopics, location);
+        model = tb.getModel();
+    }
+    
+    public Topic[] readFromStrings(String[] s){
         InstanceList instances = new InstanceList (buildPipe());        
         instances.addThruPipe(new StringArrayIterator(s));
         
-        return instances;        
-        //return instanceToTopicArray(instances);
+        Topic[] topicArray = getInference(instances);
+        
+        return topicArray;        
     }
     
-    public InstanceList readFromFile(String file) throws IOException{   	
+    public Topic[] readFromFile(String file) throws IOException{   	
         InstanceList instances = new InstanceList(buildPipe());
         
         Reader fileReader = new InputStreamReader(new FileInputStream(new File(file)), "UTF-8");
         instances.addThruPipe(new CsvIterator (fileReader, Pattern.compile("^(\\S*)[\\s,]*(\\S*)[\\s,]*(.*)$"), 3, 2, 1)); // dataGroup, label, name fields
         
-        return instances;
-        //return instanceToTopicArray(instances);
+        Topic[] topicArray = getInference(instances);
+        
+        return topicArray;
     }
     
-    // Need to double check if the inferred topic IDs are the same as the model IDs
-    public Topic[] getInference(InstanceList instances){
-        //TopicBuilder tb = new TopicBuilder;
-        //ParalellTopicModel model = tb.getMasterModel();
-        
-        ParallelTopicModel model = modelTopics(instances);
+    // Returns Topic[] for inferences of instances on model
+    private Topic[] getInference(InstanceList instances){
         Topic[] topicArray = new Topic[numTopics];
         
-        double[] dist = inferTopics(instances.get(0), model);
+        double[] dist = inferTopics(instances.get(0));
         
         for (int i=0; i < numTopics; i++){
             topicArray[i] = new Topic(i, dist[i], null);
@@ -74,7 +83,7 @@ public class TopicIdentifier {
         return topicArray;
     }
     
-    private double[] inferTopics(Instance instance, ParallelTopicModel model){
+    private double[] inferTopics(Instance instance){
         int numIterations = 1000;
         int numThinning = 20;     // The number of iterations between saved samples
         int numBurnin = 20;       // The number of iterations before the first saved sample
@@ -94,9 +103,6 @@ public class TopicIdentifier {
         pipeList.add(new TokenSequenceLowercase());
         pipeList.add(new TokenSequenceRemoveStopwords(new File(DataSourceNames.TOPICS_STOPWORDS), "UTF-8", false, false, false));
         pipeList.add(new TokenSequence2FeatureSequence());
-        
-        // FOR TESTING
-        //pipeList.add(new PrintInputAndTarget());
 
         return new SerialPipes(pipeList);
     }
@@ -104,9 +110,9 @@ public class TopicIdentifier {
     /** Functions below may no longer be required.  Dependent on TopicBuilder functionality. **/
     
     // Will probably be removed
-    public Topic[] instanceToTopicArray(InstanceList instances){
-    	ParallelTopicModel model = modelTopics(instances);
-    	Topic[] topicArray = getTopicDetails(model, instances);
+    private Topic[] instanceToTopicArray(InstanceList instances){
+    	model = modelTopics(instances);
+    	Topic[] topicArray = getTopicDetails(instances);
     	
     	return topicArray;
     }
@@ -117,22 +123,23 @@ public class TopicIdentifier {
         int numIterations = 10;  		// 1000 to 2000 recommended for production
         double alpha = 1.00;
         double beta = 0.01;
-        ParallelTopicModel model = new ParallelTopicModel(numTopics, alpha, beta);
+        ParallelTopicModel ptm = new ParallelTopicModel(numTopics, alpha, beta);
 
-        model.addInstances(instances);
-        model.setNumThreads(numThreads);
-        model.setNumIterations(numIterations);
+        ptm.addInstances(instances);
+        ptm.setNumThreads(numThreads);
+        ptm.setNumIterations(numIterations);
         try {
-            model.estimate();
+        	ptm.estimate();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return model;
+        return ptm;
     }
   	
     // Returns array of Topics with IDs, probabilities, and top word list
-    private Topic[] getTopicDetails(ParallelTopicModel model, InstanceList instances) {
+    // No longer used
+    private Topic[] getTopicDetails(InstanceList instances) {
         Topic[] topicArray = new Topic[numTopics];
         String[] topWords = new String[numTopWords];
         //double[] probability = model.getTopicProbabilities(0);  // Don't think this is required anymore
