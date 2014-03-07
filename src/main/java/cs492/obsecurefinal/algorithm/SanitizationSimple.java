@@ -5,6 +5,7 @@
 package cs492.obsecurefinal.algorithm;
 
 import cc.mallet.types.InstanceList;
+import cs492.obsecurefinal.builder.InferenceBuilder;
 import cs492.obsecurefinal.common.Document;
 import cs492.obsecurefinal.common.Agent;
 import cs492.obsecurefinal.common.GeneralizationResult;
@@ -19,6 +20,7 @@ import java.util.Map;
 import java.util.Vector;
 import opennlp.tools.sentdetect.*;
 import cs492.obsecurefinal.common.DataSourceNames;
+import cs492.obsecurefinal.common.EntityTypes;
 import cs492.obsecurefinal.common.Sentence;
 import cs492.obsecurefinal.generalization.GeneralizationManager;
 import opennlp.tools.util.Span;
@@ -128,6 +130,14 @@ public class SanitizationSimple extends Sanitization
                         Topic[] topicListNoEntities = ident.readFromStrings(new String[] {prevSentence, sentenceNoEntity, nextSentence});
                                              
                         List<Topic[]> profileInferences = new Vector<Topic[]>(); // TODO: Load from builder
+                        InferenceBuilder infBuilder = new InferenceBuilder();
+                        for(EntityTypes type: EntityTypes.values())
+                        {
+                            String profileEntity = profile.getCharacteristic(type);
+                            Topic[] infTopics = infBuilder.loadInference(profileEntity);
+                            if(infTopics.length > 0)
+                                profileInferences.add(infTopics);
+                        }
                         
                         for(Topic[] inf : profileInferences)
                         {
