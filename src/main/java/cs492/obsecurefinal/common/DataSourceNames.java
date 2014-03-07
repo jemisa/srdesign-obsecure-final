@@ -18,4 +18,5 @@ public class DataSourceNames
     public static final String SENT_MODEL_FILE = "en-sent.bin";
     public static final String DB_NAME = "obsecure";
     public static final String DB_URL = "jdbc:derby://localhost:1527/obsecure-final";
+    public static final String CLUSTERING_DATA = "/cluster_viewer.html";
 }

@@ -17,6 +17,7 @@
 
 package cs492.obsecurefinal.cluster;
 
+import cs492.obsecurefinal.common.DataSourceNames;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -53,7 +54,7 @@ public class BrownClusters {
     }
     
     private void init() {
-	InputStream inStream = BrownClusters.class.getResourceAsStream("/cluster_viewer.html");
+	InputStream inStream = BrownClusters.class.getResourceAsStream(DataSourceNames.CLUSTERING_DATA);
 	BufferedReader reader = new BufferedReader(new InputStreamReader(inStream));  
 	StringBuilder sb = new StringBuilder();
 	String line = null;
