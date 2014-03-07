@@ -116,9 +116,8 @@ public class SanitizationSimple extends Sanitization
                         privateEntities.put(ent, Boolean.FALSE);
                         
                         // Run inference on sentence and context
-                        InstanceList documentInference = ident.readFromStrings(new String[] {prevSentence, sentence, nextSentence});
-                        Topic[] topicList = ident.instanceToTopicArray(documentInference);
-                    
+                         Topic[] topicList =  ident.readFromStrings(new String[] {prevSentence, sentence, nextSentence});
+                                           
                         // Remove entity from the sentence
                         Span entitySpan = ent.getSpan();
                         String s1 = sentence.substring(0, entitySpan.getStart());
@@ -126,9 +125,8 @@ public class SanitizationSimple extends Sanitization
                         String sentenceNoEntity = s1 + s2;                        
                                             
                         // Run the inference on the entity-less sentence and context
-                        InstanceList documentInferenceNoEntities = ident.readFromStrings(new String[] {prevSentence, sentenceNoEntity, nextSentence});
-                        Topic[] topicListNoEntities = ident.instanceToTopicArray(documentInferenceNoEntities);
-                    
+                        Topic[] topicListNoEntities = ident.readFromStrings(new String[] {prevSentence, sentenceNoEntity, nextSentence});
+                                             
                         List<Topic[]> profileInferences = new Vector<Topic[]>(); // TODO: Load from builder
                         
                         for(Topic[] inf : profileInferences)
