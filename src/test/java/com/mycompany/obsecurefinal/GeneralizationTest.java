@@ -11,6 +11,7 @@ import cs492.obsecurefinal.algorithm.WorkplaceExtractorStrategy;
 import cs492.obsecurefinal.common.EntityTypes;
 import cs492.obsecurefinal.common.GeneralizationResult;
 import cs492.obsecurefinal.common.NamedEntity;
+import cs492.obsecurefinal.common.Sentence;
 import cs492.obsecurefinal.generalization.GeneralizationManager;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,7 @@ public class GeneralizationTest {
 
     @Test
     public void generalizeLocation() throws Exception {
-	final String sentence = "Philadelphia";
+	final Sentence sentence = new Sentence("Philadelphia", 0);
 	LocationExtractorStrategy strategy = new LocationExtractorStrategy(sentence);
 	List<NamedEntity> sensitiveEntities = strategy.getEntities();
 	
@@ -39,7 +40,7 @@ public class GeneralizationTest {
     
     @Test
      public void generalizeOrganization() throws Exception {
-	final String sentence = "Merck";
+	final Sentence sentence = new Sentence("Merck", 0);
 	WorkplaceExtractorStrategy strategy = new WorkplaceExtractorStrategy(sentence);
 	List<NamedEntity> sensitiveEntities = strategy.getEntities();
 	

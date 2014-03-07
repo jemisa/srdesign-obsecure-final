@@ -28,10 +28,11 @@ public class DatabaseAccess
     public static final String OCCUPATION = "OCCUPATION";
     public static final String WORKPLACE = "COMPANY";
     
+    
     public DatabaseAccess()
     {
         try
-        {
+        {             
             Class.forName("org.apache.derby.jdbc.ClientDriver");
             dbConnection = DriverManager.getConnection(DataSourceNames.DB_URL, DataSourceNames.DB_NAME, DataSourceNames.DB_NAME);
             stmt = dbConnection.createStatement();
@@ -98,10 +99,10 @@ public class DatabaseAccess
                 
                 ResultSet queryResults = stmt.executeQuery(GET_NAMES_QUERY);
 
-                agent.setLocation(queryResults.getString(LOCATION));
-                agent.setWorkplace(queryResults.getString(WORKPLACE));
+                agent.setCharacteristic(EntityTypes.LOCATION, queryResults.getString(EntityTypes.LOCATION.toString()));
+                agent.setCharacteristic(EntityTypes.COMPANY, queryResults.getString(EntityTypes.COMPANY.toString()));
                 agent.setName(name);
-                agent.setOccupation(queryResults.getString(OCCUPATION));
+                agent.setCharacteristic(EntityTypes.OCCUPATION, queryResults.getString(EntityTypes.OCCUPATION.toString()));
                 
                 return agent;
             }
@@ -121,7 +122,9 @@ public class DatabaseAccess
         {
             try
             {
-                String query = String.format(SAVE_PROFILE_QUERY, agent.getLocation(), agent.getOccupation(), agent.getWorkplace(), agent.getName());
+                String query = String.format(SAVE_PROFILE_QUERY, agent.getCharacteristic(EntityTypes.LOCATION), 
+                                             agent.getCharacteristic(EntityTypes.OCCUPATION), 
+                                             agent.getCharacteristic(EntityTypes.COMPANY), agent.getName());
                  
                 ResultSet queryResults = stmt.executeQuery(GET_NAMES_QUERY);
             }

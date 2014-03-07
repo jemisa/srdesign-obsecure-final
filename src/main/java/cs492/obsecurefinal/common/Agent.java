@@ -4,6 +4,8 @@
  */
 package cs492.obsecurefinal.common;
 
+import java.util.HashMap;
+
 /**
  *
  * @author JOEL
@@ -11,41 +13,36 @@ package cs492.obsecurefinal.common;
 public class Agent 
 {
     String name, occupation, location, workplace;
+    HashMap<EntityTypes, String> agentInfo;
     
-    public Agent(String name, String occupation, String location, String workplace)
+    public Agent(String name)
     {
         this.name = name;
-        this.occupation = occupation;
-        this.location = location;
-        this.workplace = workplace;
+        agentInfo = new HashMap<EntityTypes, String>();
     }
         
     public Agent()
     {
         name = "";
-        occupation = "";
-        location = "";
-        workplace = "";
+        //occupation = "";
+        //location = "";
+        //workplace = "";
+        agentInfo = new HashMap<EntityTypes, String>();
     }
     
     public String getName()
     {
         return name;
-    }
-    
-    public String getLocation()
+    }   
+       
+    public String getCharacteristic(EntityTypes type)
     {
-        return location;
-    }
-    
-    public String getOccupation()
-    {
-        return occupation;
-    }
-    
-    public String getWorkplace()
-    {
-        return workplace;
+        if(agentInfo.containsKey(type))
+        {
+            return agentInfo.get(type);
+        }
+        else
+            return "";
     }
     
     public void setName(String name)
@@ -53,18 +50,8 @@ public class Agent
         this.name = name;
     }
 
-    public void setOccupation(String occupation)
+    public void setCharacteristic(EntityTypes type, String c)
     {
-        this.occupation = occupation;
-    }
-
-    public void setWorkplace(String workplace)
-    {
-        this.workplace = workplace;
-    }
-
-    public void setLocation(String location)
-    {
-        this.location = location;
+        agentInfo.put(type, c);
     }
 }
