@@ -11,6 +11,7 @@ import cs492.obsecurefinal.algorithm.WorkplaceExtractorStrategy;
 import cs492.obsecurefinal.common.EntityTypes;
 import cs492.obsecurefinal.common.GeneralizationResult;
 import cs492.obsecurefinal.common.NamedEntity;
+import cs492.obsecurefinal.common.Sentence;
 import cs492.obsecurefinal.generalization.GeneralizationManager;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +27,15 @@ public class GeneralizationTest {
 
     @Test
     public void generalizeLocation() throws Exception {
-	final String sentence = "Philadelphia";
-	LocationExtractorStrategy strategy = new LocationExtractorStrategy(sentence);
-	List<NamedEntity> sensitiveEntities = strategy.getEntities();
+	final String text = "Philadelphia";
+	List<NamedEntity> sensitiveEntities = new ArrayList<>();
+	NamedEntity occupation = new NamedEntity(null, null, EntityTypes.LOCATION) {
+	    @Override
+	    public String getText() {
+		return text;
+	    }
+	};
+	sensitiveEntities.add(occupation);
 	
 	Map<NamedEntity, GeneralizationResult> res = GeneralizationManager.generalize(sensitiveEntities);
 	for (NamedEntity entity : res.keySet()) {
@@ -39,9 +46,15 @@ public class GeneralizationTest {
     
     @Test
      public void generalizeOrganization() throws Exception {
-	final String sentence = "Merck";
-	WorkplaceExtractorStrategy strategy = new WorkplaceExtractorStrategy(sentence);
-	List<NamedEntity> sensitiveEntities = strategy.getEntities();
+	final String text = "Merck";
+	List<NamedEntity> sensitiveEntities = new ArrayList<>();
+	NamedEntity occupation = new NamedEntity(null, null, EntityTypes.COMPANY) {
+	    @Override
+	    public String getText() {
+		return text;
+	    }
+	};
+	sensitiveEntities.add(occupation);
 	
 	Map<NamedEntity, GeneralizationResult> res = GeneralizationManager.generalize(sensitiveEntities);
 	for (NamedEntity entity : res.keySet()) {
@@ -50,18 +63,24 @@ public class GeneralizationTest {
 	}
     }
      
-//     @Test //FIXME: when we get the strategy we should reenable this
-//     public void generalizeOccupation() throws Exception {
-//	List<NamedEntity> sensitiveEntities = new ArrayList<>();
-//	NamedEntity occupation = new NamedEntity("system administrator", EntityTypes.OCCUPATION);
-//	sensitiveEntities.add(occupation);
-//	
-//	Map<NamedEntity, GeneralizationResult> res = GeneralizationManager.generalize(sensitiveEntities);
-//	for (NamedEntity entity : res.keySet()) {
-//	    GeneralizationResult result = res.get(entity);
-//	    new GeneralizationAsserter(result).assertContains("computer");
-//	}
-//    }
+     @Test //FIXME: when we get the strategy we should reenable this
+     public void generalizeOccupation() throws Exception {
+	List<NamedEntity> sensitiveEntities = new ArrayList<>();
+	final String systemAdministrator = "system administrator";
+	NamedEntity occupation = new NamedEntity(null, null, EntityTypes.OCCUPATION) {
+	    @Override
+	    public String getText() {
+		return systemAdministrator;
+	    }
+	};
+	sensitiveEntities.add(occupation);
+	
+	Map<NamedEntity, GeneralizationResult> res = GeneralizationManager.generalize(sensitiveEntities);
+	for (NamedEntity entity : res.keySet()) {
+	    GeneralizationResult result = res.get(entity);
+	    new GeneralizationAsserter(result).assertContains("computer");
+	}
+    }
      
     private static class GeneralizationAsserter {
 	private final GeneralizationResult generalizationResult;

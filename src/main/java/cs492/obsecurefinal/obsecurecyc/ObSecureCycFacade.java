@@ -45,6 +45,7 @@ public class ObSecureCycFacade implements GeneralizationFacade {
 	return instance;
     }
     
+    @Override
     public Map<NamedEntity, GeneralizationResult> generalize(List<NamedEntity> sensitiveEntities) {
 	Map<NamedEntity, GeneralizationResult> map = new TreeMap<>();
 	for (NamedEntity entity : sensitiveEntities) {
