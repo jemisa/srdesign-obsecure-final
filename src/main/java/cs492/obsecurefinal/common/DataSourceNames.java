@@ -14,7 +14,7 @@ public class DataSourceNames
 {
     public static final String LOC_MODEL_FILE = "/en-ner-location.bin";
     public static final String WORKPLACE_MODEL_FILE = "/en-ner-organization.bin";
-    public static final String TOPICS_STOPWORDS = "stoplist.txt";
+    public static final String TOPICS_STOPWORDS = "src\\main\\resources\\stoplist.txt";
     public static final String SENT_MODEL_FILE = "/en-sent.bin";
     public static final String DB_USER = "obsecure";
     public static final String DB_PWORD = "obsecure";

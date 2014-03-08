@@ -35,14 +35,16 @@ public class TopicIdentifier {
     private ParallelTopicModel model;
     private int numTopics = 5;
     private int numTopWords = 5;
+    private String DEFAULT_DOCUMENT_DIRECTORY = "\\";
     
     public TopicIdentifier(){
-        TopicBuilder tb = new TopicBuilder(numTopics, "THIS IS THE DEFAULT LOCATION FOR THE DOCUMENT DIRECTORY.");
+        TopicBuilder tb = new TopicBuilder(numTopics, DEFAULT_DOCUMENT_DIRECTORY);
         model = tb.getModel();
     }
     
     public TopicIdentifier(ParallelTopicModel ptm) {
         model = ptm;
+        numTopics = model.getNumTopics();
     }
     
     public TopicIdentifier(String location){
