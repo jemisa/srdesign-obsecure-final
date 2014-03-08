@@ -18,20 +18,25 @@ public class TopicIdentifierTest {
     private String testDirectory = "testdocs";
     private String malletFile = "\\dump.mallet";
     
-    /*@Test
+    @Test
     public void buildTopicModel(){
-        TopicBuilder tb = new TopicBuilder(numTopics, testDirectory);
-        model = tb.getModel();
-        
-        assertNotNull(model);
+        TopicBuilder tb = new TopicBuilder(numTopics);
+        tb.setIterations(10);
+        tb.loadRaw(testDirectory);
         
         tb.saveDatabase(testDirectory + malletFile);
         assertTrue(new File(testDirectory + malletFile).exists());
-    }*/
+        
+        model = tb.getModel();
+        
+        assertNotNull(model);
+    }
     
     @Test 
     public void getInferencedTopicsFromString(){         
-        TopicBuilder tb = new TopicBuilder(numTopics, testDirectory);
+        TopicBuilder tb = new TopicBuilder(numTopics);
+        tb.setIterations(10);
+        tb.loadRaw(testDirectory);
         model = tb.getModel();
         
         TopicIdentifier ti = new TopicIdentifier(model);
@@ -51,7 +56,9 @@ public class TopicIdentifierTest {
     
     @Test
     public void getInferenceTopicsFromFile(){
-        TopicBuilder tb = new TopicBuilder(numTopics, testDirectory);
+        TopicBuilder tb = new TopicBuilder(numTopics);
+        tb.setIterations(10);
+        tb.loadRaw(testDirectory);
         model = tb.getModel();
         
         TopicIdentifier ti = new TopicIdentifier(model);
