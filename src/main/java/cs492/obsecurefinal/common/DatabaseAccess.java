@@ -20,13 +20,15 @@ public class DatabaseAccess
     Connection dbConnection;
     Statement stmt;
 
-    public static final String GET_NAMES_QUERY = "SELECT PROFILENAME FROM USERPROFILES;";
+    private boolean valid;
+    
+    public static final String GET_NAMES_QUERY = "SELECT PROFILENAME FROM USERPROFILES";
     public static final String GET_PROFILE_INFO_QUERY = "SELECT LOCATION, OCCUPATION, COMPANY FROM USERPROFILES WHERE PROFILENAME='%s'";
     public static final String SAVE_PROFILE_QUERY = "UPDATE PROFILENAME SET LOCATION='%s', OCCUPATION='%s', COMPANY='%s' WHERE PROFILENAME='%s'";
     
-    public static final String LOCATION = "LOCATION";
-    public static final String OCCUPATION = "OCCUPATION";
-    public static final String WORKPLACE = "COMPANY";
+    //public static final String LOCATION = "LOCATION";
+    //public static final String OCCUPATION = "OCCUPATION";
+    //public static final String WORKPLACE = "COMPANY";
     
     
     public DatabaseAccess()
@@ -34,15 +36,23 @@ public class DatabaseAccess
         try
         {             
             Class.forName("org.apache.derby.jdbc.ClientDriver");
-            dbConnection = DriverManager.getConnection(DataSourceNames.DB_URL, DataSourceNames.DB_NAME, DataSourceNames.DB_NAME);
+            dbConnection = DriverManager.getConnection(DataSourceNames.DB_URL, DataSourceNames.DB_USER, DataSourceNames.DB_PWORD);
             stmt = dbConnection.createStatement();
         }
         catch(Exception ex)
         {
-            ex.printStackTrace(System.err);
+            ex.printStackTrace(System.out);
             stmt = null;
             dbConnection = null;
+            valid = false;
         }
+        
+        valid = true;
+    }
+    
+    public boolean isAvailable()
+    {
+        return valid;
     }
     
     public void closeConnection()
@@ -70,13 +80,14 @@ public class DatabaseAccess
             {
                 ResultSet queryResults = stmt.executeQuery(GET_NAMES_QUERY);
                 List<String> allRows = new ArrayList<String>();
-                
+                                
                 while(queryResults.next())
                 {
-                    allRows.add(queryResults.getString(0));
+                    allRows.add(queryResults.getString("PROFILENAME"));
                 }
                 
-                return (String[])allRows.toArray();
+                String[] rowsArray = new String[allRows.size()];
+                return allRows.toArray(rowsArray);
             }
             catch(Exception ex)
             {
@@ -97,12 +108,15 @@ public class DatabaseAccess
                 String query = String.format(GET_PROFILE_INFO_QUERY, name);
                 Agent agent = new Agent();
                 
-                ResultSet queryResults = stmt.executeQuery(GET_NAMES_QUERY);
+                ResultSet queryResults = stmt.executeQuery(query);
 
-                agent.setCharacteristic(EntityTypes.LOCATION, queryResults.getString(EntityTypes.LOCATION.toString()));
-                agent.setCharacteristic(EntityTypes.COMPANY, queryResults.getString(EntityTypes.COMPANY.toString()));
-                agent.setName(name);
-                agent.setCharacteristic(EntityTypes.OCCUPATION, queryResults.getString(EntityTypes.OCCUPATION.toString()));
+                if(queryResults.next())
+                {
+                    agent.setCharacteristic(EntityTypes.LOCATION, queryResults.getString(EntityTypes.LOCATION.toString()));
+                    agent.setCharacteristic(EntityTypes.COMPANY, queryResults.getString(EntityTypes.COMPANY.toString()));
+                    agent.setName(name);
+                    agent.setCharacteristic(EntityTypes.OCCUPATION, queryResults.getString(EntityTypes.OCCUPATION.toString()));
+                }
                 
                 return agent;
             }

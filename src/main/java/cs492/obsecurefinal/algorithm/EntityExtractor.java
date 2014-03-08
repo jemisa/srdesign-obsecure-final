@@ -2,6 +2,7 @@ package cs492.obsecurefinal.algorithm;
 
 import cs492.obsecurefinal.common.NamedEntity;
 import cs492.obsecurefinal.common.Sentence;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -28,7 +29,7 @@ public class EntityExtractor
     // For each strategy, get all entities that match it and return all of them together
     public List<NamedEntity> extractAll()
     {
-        Vector<NamedEntity> allEntities = new Vector<NamedEntity>();
+        ArrayList<NamedEntity> allEntities = new ArrayList<NamedEntity>();
         
         // add all the entities of different types to a single list
         for(EntityExtractorStrategy strategy: allStrats)

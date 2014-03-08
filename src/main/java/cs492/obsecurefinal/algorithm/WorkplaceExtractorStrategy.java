@@ -10,6 +10,7 @@ import cs492.obsecurefinal.common.NamedEntity;
 import cs492.obsecurefinal.common.Sentence;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 import opennlp.tools.namefind.NameFinderME;
@@ -30,16 +31,15 @@ public class WorkplaceExtractorStrategy extends EntityExtractorStrategy
     @Override
     public List<NamedEntity> getEntities() 
     {
-        List<NamedEntity> workEntities = new Vector<NamedEntity>();
+        List<NamedEntity> workEntities = new ArrayList<>();
         
         try
         {
-            // TODO: change model file name
-            InputStream modelFile = new FileInputStream(DataSourceNames.WORKPLACE_MODEL_FILE);
+            InputStream modelFile = WorkplaceExtractorStrategy.class.getResourceAsStream(DataSourceNames.WORKPLACE_MODEL_FILE);
             TokenNameFinderModel tnf = new TokenNameFinderModel(modelFile);
             NameFinderME nf = new NameFinderME(tnf);
             Span spans[] = nf.find(words);
-            String entities[] = Span.spansToStrings(spans, sentence.getText());
+            String entityStrings[] = Span.spansToStrings(spans, sentence.getText());
             
             // Add all identified workplace entities to the list
             for(Span span:spans)
