@@ -10,6 +10,7 @@ import cs492.obsecurefinal.common.NamedEntity;
 import cs492.obsecurefinal.common.Sentence;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 import opennlp.tools.namefind.NameFinderME;
@@ -30,19 +31,19 @@ public class LocationExtractorStrategy extends EntityExtractorStrategy
     @Override
     public List<NamedEntity> getEntities() 
     {
-        List<NamedEntity> locEntities = new Vector<NamedEntity>();
-        
+        List<NamedEntity> locEntities = new ArrayList<>();
+               
         try
         {
-            InputStream modelFile = new FileInputStream(DataSourceNames.LOC_MODEL_FILE);
+            InputStream modelFile = LocationExtractorStrategy.class.getResourceAsStream(DataSourceNames.LOC_MODEL_FILE);
             TokenNameFinderModel tnf = new TokenNameFinderModel(modelFile);
             NameFinderME nf = new NameFinderME(tnf);
             Span spans[] = nf.find(words);
-            String entities[] = Span.spansToStrings(spans, sentence.getText());
+            //String entityStrings[] = Span.spansToStrings(spans, sentence.getText());
             
             // Add all identified location entities to the list
             for(Span span: spans)
-                locEntities.add(new NamedEntity(sentence, span, type));
+              locEntities.add(new NamedEntity(sentence, span, type));
         }
         catch(Exception ex)
         {

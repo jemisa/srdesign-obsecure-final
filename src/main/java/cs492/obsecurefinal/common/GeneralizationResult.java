@@ -4,20 +4,21 @@
  */
 package cs492.obsecurefinal.common;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Vector;
+import java.util.List;
 
 /**
  *
- * @author JOEL
+ * @author Joel Marcinik
  */
 public class GeneralizationResult
 {
-        private final Vector<String> results = new Vector<>(); //TODO: why are we using an obsolete collection?
+        private final List<String> results = new ArrayList<>();
 
-        public Vector<String> getResults()
+        public String[] getResults()
         {
-               return results;
+               return (String[])results.toArray();
         }
 
         public void add(String result)

@@ -4,7 +4,7 @@
  */
 package cs492.obsecurefinal.algorithm;
 
-import cc.mallet.types.InstanceList;
+import cs492.obsecurefinal.builder.InferenceBuilder;
 import cs492.obsecurefinal.common.Document;
 import cs492.obsecurefinal.common.Agent;
 import cs492.obsecurefinal.common.GeneralizationResult;
@@ -12,13 +12,11 @@ import cs492.obsecurefinal.common.NamedEntity;
 import cs492.obsecurefinal.common.SanitizationHint;
 import cs492.obsecurefinal.common.SanitizationResult;
 import cs492.obsecurefinal.common.Topic;
-import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-import opennlp.tools.sentdetect.*;
-import cs492.obsecurefinal.common.DataSourceNames;
+import cs492.obsecurefinal.common.EntityTypes;
 import cs492.obsecurefinal.common.Sentence;
 import cs492.obsecurefinal.generalization.GeneralizationManager;
 import opennlp.tools.util.Span;
@@ -45,45 +43,12 @@ public class SanitizationSimple extends Sanitization
     @Override
     public SanitizationResult sanitize()
     {
-//        text = doc.getText();
-//                
-//        //split into sentences using natural language processing
-//        FileInputStream modelInput = null;
-//        SentenceModel sm = null;
-//        
-//        try
-//        { 
-//            modelInput  = new FileInputStream(DataSourceNames.SENT_MODEL_FILE);
-//            
-//            sm = new SentenceModel(modelInput);
-//        }
-//        catch(Exception ex)
-//        {
-//            ex.printStackTrace(System.out);
-//        }
-//        finally
-//        {
-//            try
-//            {
-//                if(modelInput != null)            
-//                    modelInput.close();
-//            }
-//            catch(Exception ex)
-//            {                
-//                ex.printStackTrace();
-//            }
-//        }
-        
-        // doc has been properly split into sentences
+        // check that doc has been properly split into sentences
         if(doc.isValid())
         {
             SanitizationResult finalResult = new SanitizationResult();
             
-            //SentenceDetectorME detector = new SentenceDetectorME(sm);
-        
-            //String[] sentenceStrings = detector.sentDetect(text);
-            
-            Sentence[] sentences = doc.getSentences(); //Sentence.convertStringArray(sentenceStrings);
+            Sentence[] sentences = doc.getSentences();
             
             for (int i = 0; i < sentences.length; i++)
             {
@@ -92,7 +57,7 @@ public class SanitizationSimple extends Sanitization
                 String nextSentence = "";
                 String prevSentence = "";
                 
-                if(i < sentences.length)
+                if(i + 1 < sentences.length)
                     nextSentence = sentences[i+1].getText();
                 
                 if(i > 0)
@@ -116,9 +81,8 @@ public class SanitizationSimple extends Sanitization
                         privateEntities.put(ent, Boolean.FALSE);
                         
                         // Run inference on sentence and context
-                        InstanceList documentInference = ident.readFromStrings(new String[] {prevSentence, sentence, nextSentence});
-                        Topic[] topicList = ident.instanceToTopicArray(documentInference);
-                    
+                         Topic[] topicList =  ident.readFromStrings(new String[] {prevSentence, sentence, nextSentence});
+                                           
                         // Remove entity from the sentence
                         Span entitySpan = ent.getSpan();
                         String s1 = sentence.substring(0, entitySpan.getStart());
@@ -126,11 +90,23 @@ public class SanitizationSimple extends Sanitization
                         String sentenceNoEntity = s1 + s2;                        
                                             
                         // Run the inference on the entity-less sentence and context
-                        InstanceList documentInferenceNoEntities = ident.readFromStrings(new String[] {prevSentence, sentenceNoEntity, nextSentence});
-                        Topic[] topicListNoEntities = ident.instanceToTopicArray(documentInferenceNoEntities);
-                    
-                        List<Topic[]> profileInferences = new Vector<Topic[]>(); // TODO: Load from builder
+                        Topic[] topicListNoEntities = ident.readFromStrings(new String[] {prevSentence, sentenceNoEntity, nextSentence});
+                                             
+                        List<Topic[]> profileInferences = new Vector<Topic[]>();
+                        InferenceBuilder infBuilder = new InferenceBuilder();
                         
+                        // Get all private information about the user, and topics associated
+                        // with each piece of private information
+                        for(EntityTypes type: EntityTypes.values())
+                        {
+                            String profileEntity = profile.getCharacteristic(type);
+                            Topic[] infTopics = infBuilder.loadInference(profileEntity);
+                            if(infTopics.length > 0)
+                                profileInferences.add(infTopics);
+                        }
+                        
+                        // For each topic inference related to the agent,
+                        // check if the sentence matches
                         for(Topic[] inf : profileInferences)
                         {
                             TopicMatcher matcher = new TopicMatcher(inf, topicList);

@@ -15,7 +15,8 @@ public class TopicBuilder
 	private boolean loaded;
 	private int numTopics;
 	private ParallelTopicModel database;
-	
+        private int numIterations = 1000;
+        
 	public TopicBuilder(int num)
 	{
 		loaded = false;
@@ -51,7 +52,7 @@ public class TopicBuilder
 		database.addInstances(training);
 		
 		database.setTopicDisplay(50, 20);
-		database.setNumIterations(1000);
+		database.setNumIterations(numIterations);
 		database.setOptimizeInterval(0);
 		database.setBurninPeriod(200);
 		database.setSymmetricAlpha(false);
@@ -229,5 +230,15 @@ public class TopicBuilder
 		}
 		
 		return database;
+	}
+        
+        // Added this to be able to customize iterations -Mike
+        public void setIterations(int i){
+            numIterations = i;
+        }
+        
+        // Adding this so I can get the model directly -Mike
+        public ParallelTopicModel getModel(){
+            return database;
 	}
 }

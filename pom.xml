@@ -77,6 +77,11 @@
         <scope>system</scope>
         <systemPath>${project.basedir}/lib/opencyc-4.0.140336.jar</systemPath>
     </dependency>
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derbyclient</artifactId>
+      <version>10.10.1.1</version>
+    </dependency>
   </dependencies>
   <reporting>
     <plugins>

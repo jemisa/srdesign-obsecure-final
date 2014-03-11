@@ -4,10 +4,10 @@
  */
 package cs492.obsecurefinal.common;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.InputStream;
 import opennlp.tools.sentdetect.SentenceDetectorME;
 import opennlp.tools.sentdetect.SentenceModel;
 
@@ -62,13 +62,15 @@ public class Document
         // returns true if succesful, false otherwise
         private boolean splitDocument()
         {
-            FileInputStream modelInput = null;
-            SentenceModel sm = null;
+            //FileInputStream modelInput;
+            InputStream modelInput;
+            SentenceModel sm;
 
             try
             { 
-                modelInput  = new FileInputStream(DataSourceNames.SENT_MODEL_FILE);
-
+                //modelInput  = new FileInputStream(DataSourceNames.SENT_MODEL_FILE);
+                modelInput = Document.class.getResourceAsStream(DataSourceNames.SENT_MODEL_FILE);
+                
                 sm = new SentenceModel(modelInput);
             }
             catch(Exception ex)
