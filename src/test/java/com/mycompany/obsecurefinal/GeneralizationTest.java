@@ -6,12 +6,9 @@
 
 package com.mycompany.obsecurefinal;
 
-import cs492.obsecurefinal.algorithm.LocationExtractorStrategy;
-import cs492.obsecurefinal.algorithm.WorkplaceExtractorStrategy;
 import cs492.obsecurefinal.common.EntityTypes;
 import cs492.obsecurefinal.common.GeneralizationResult;
 import cs492.obsecurefinal.common.NamedEntity;
-import cs492.obsecurefinal.common.Sentence;
 import cs492.obsecurefinal.generalization.GeneralizationManager;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +33,7 @@ public class GeneralizationTest {
 	    }
 	};
 	sensitiveEntities.add(occupation);
-	
+
 	Map<NamedEntity, GeneralizationResult> res = GeneralizationManager.generalize(sensitiveEntities);
 	for (NamedEntity entity : res.keySet()) {
 	    GeneralizationResult result = res.get(entity);
@@ -55,7 +52,7 @@ public class GeneralizationTest {
 	    }
 	};
 	sensitiveEntities.add(occupation);
-	
+
 	Map<NamedEntity, GeneralizationResult> res = GeneralizationManager.generalize(sensitiveEntities);
 	for (NamedEntity entity : res.keySet()) {
 	    GeneralizationResult result = res.get(entity);
