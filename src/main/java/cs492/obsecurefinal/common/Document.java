@@ -20,13 +20,16 @@ public class Document
         private String text;
         String filename;
         Sentence[] sentences;
-        private boolean valid;
-
+        private boolean valid, sentencesCached;
+                
         public Document(String text)
         {
             this.text = text;
             
-            valid = splitDocument();
+            valid = true;
+            sentencesCached = false;
+            
+            //valid = splitDocument();
         }
 
         public Document(File file)
@@ -49,12 +52,15 @@ public class Document
                     
                     fReader.close();
                     
-                    valid = splitDocument();
+                    //valid = splitDocument();
+                    valid = true;
+                    sentencesCached = false;
                 }
                 catch(Exception ex)
                 {
                     ex.printStackTrace(System.out);
                     valid = false;
+                    sentencesCached = false;
                 }
             }
         }
@@ -103,6 +109,13 @@ public class Document
                 return false;
             
         }
+        
+        public void setText(String newText)
+        {
+            this.text = newText;
+            valid = true;
+            sentencesCached = false;
+        }
 
         public boolean isValid()
         {
@@ -125,7 +138,20 @@ public class Document
         public Sentence[] getSentences()
         {
             if(valid)
-                return sentences;
+            {
+                if(sentencesCached)
+                    return sentences;
+                else
+                {
+                    if(splitDocument())
+                    {
+                        sentencesCached = true;
+                        return sentences;
+                    }
+                    else
+                        return new Sentence[] {};
+                }
+            }
             else
                 return new Sentence[] {};
         }
