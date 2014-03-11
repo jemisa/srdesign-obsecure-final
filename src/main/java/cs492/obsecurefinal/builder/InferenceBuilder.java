@@ -8,7 +8,12 @@ package cs492.obsecurefinal.builder;
 
 import cs492.obsecurefinal.algorithm.TopicIdentifier;
 import cs492.obsecurefinal.common.Topic;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 
 
 /**
@@ -26,11 +31,67 @@ public class InferenceBuilder
     {
         TopicIdentifier ident = new TopicIdentifier();
         Topic[] topics = ident.readFromStrings(new String[] {s});
+        
+        try
+        {
+            File f = new File(name);
+            if(f.exists() && f.canWrite())
+            {
+                BufferedWriter writer = new BufferedWriter(new FileWriter(f));
+                for(int i = 0; i < topics.length; i++)
+                {
+                    if(i > 0)
+                        writer.write(":");
+                    
+                    writer.write(topics[i].getId() + "," + topics[i].getProbability());
+                }
+            }
+        }
+        catch(Exception ex)
+        {
+            ex.printStackTrace(System.out);
+        }
     }
     
     // Loads an inference with the given name
     public Topic[] loadInference(String name)
     {
-        return null;
+        try
+        {
+            File f = new File(name);
+            if(f.exists() && f.canRead())
+            {
+                BufferedReader reader = new BufferedReader(new FileReader(f));
+                String data = reader.readLine();
+                
+                String[] topicPairs = data.split(":");
+                
+                Topic[] result = new Topic[topicPairs.length];
+                
+                for(int i = 0; i < topicPairs.length; i++)
+                {
+                    String[] topic = topicPairs[i].split(",");
+                    
+                    int id=Integer.parseInt(topic[0]);
+                    double prob=Double.parseDouble(topic[1]);
+                    
+                    Topic t = new Topic();
+                    t.setId(id);
+                    t.setProbability(prob);
+                    result[i] = t;
+                }
+                
+                return result;
+            }
+            else
+            {
+                return new Topic[] {};
+            }
+        }
+        catch(Exception ex)
+        {
+            ex.printStackTrace(System.out);
+            return new Topic[] {};
+        }
     }
 }
