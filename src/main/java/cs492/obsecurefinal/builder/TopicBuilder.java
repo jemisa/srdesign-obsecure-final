@@ -186,6 +186,13 @@ public class TopicBuilder
 				
 				int j = 0;
 				
+				ln = in.readLine();
+				if(ln == null)
+				{
+					System.err.println("Unexpected end of file");
+					return null;
+				}
+				
 				while(ln != null && !ln.equals("THISISTHETOPICTERMINATORIHOPETHISISNEVERUSEDASAWORD"))
 				{
 					String[] tokens = ln.split("\t");
@@ -209,7 +216,7 @@ public class TopicBuilder
 				if(ln == null)
 				{
 					System.err.println("Unexpected end of file");
-					System.exit(1);
+					return null;
 				}
 					
 				i++;
