@@ -186,6 +186,13 @@ public class TopicBuilder
 			int b = Integer.parseInt(tokens[1]);
 			database.typeTopicCounts = new int[a][b];
 			
+			ln = in.readLine();
+			if(ln == null)
+			{
+				System.err.println("Unexpected end of file");
+				return null;
+			}
+			
 			while(ln != null && !ln.equals("THISISTHEFILETERMINATORIHOPETHISISNEVERUSEDASAWORD"))
 			{	
 				if(Integer.parseInt(ln) != i)
