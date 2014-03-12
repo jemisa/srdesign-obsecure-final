@@ -1,11 +1,17 @@
 package cs492.obsecurefinal;
 
+import cc.mallet.topics.ParallelTopicModel;
 import cs492.obsecurefinal.algorithm.SanitizationSimple;
+import cs492.obsecurefinal.builder.InferenceBuilder;
+import cs492.obsecurefinal.builder.TopicBuilder;
 import cs492.obsecurefinal.common.Agent;
 import cs492.obsecurefinal.common.DatabaseAccess;
 import cs492.obsecurefinal.common.Document;
 import cs492.obsecurefinal.common.SanitizationHint;
 import cs492.obsecurefinal.common.SanitizationResult;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -59,11 +65,57 @@ public class App
         }
         else if (args.length > 0 && args[0].equals("-builder"))
         {
-            // builder
+            TopicBuilder tb = new TopicBuilder(10);
+            tb.setIterations(10);
+            tb.loadRaw("modelFiles");
+            ParallelTopicModel model = tb.getModel();        
+        }
+        else if (args.length > 0 && args[0].equals("-inferencer"))
+        {
+            if(args.length == 3)
+            {
+                 // TODO: REMOVE
+                TopicBuilder tb = new TopicBuilder(10);
+                tb.setIterations(10);
+                tb.loadRaw("modelFiles");
+                ParallelTopicModel model = tb.getModel();        
+                // END REMOVE
+                
+                InferenceBuilder ib = new InferenceBuilder(model);
+                
+                try
+                {
+                    File f = new File(args[1]);
+                    
+                    if(f.exists() && f.canRead())
+                    {
+                        String text = "", line = "";
+                        String newLine = System.getProperty("line.separator");
+                        BufferedReader reader = new BufferedReader(new FileReader(f));
+                        while(line != null)
+                        {
+                            line = reader.readLine();
+                            text += line + newLine;
+                        }
+                    
+                        ib.saveInference(text, args[2]);
+                        
+                        reader.close();
+                    }                    
+                }
+                catch(Exception ex)
+                {
+                    ex.printStackTrace(System.out);
+                }                
+            }
+            else
+            {
+                System.out.println("-inference <input file> <output file>");
+            }
         }
         else
         {
-            // launch ui
+            // launch gui
         }
     }
 }
