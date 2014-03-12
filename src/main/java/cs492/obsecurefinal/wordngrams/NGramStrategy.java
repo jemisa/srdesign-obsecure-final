@@ -16,10 +16,20 @@
  */
 package cs492.obsecurefinal.wordngrams;
 
+import java.util.HashMap;
+
 /**
  *
  * @author JOEL
  */
-public abstract class NGramStrategy {
+public abstract class NGramStrategy 
+{
+    protected HashMap<String, Integer> distribution;
     
+    public NGramStrategy()
+    {
+        distribution = new HashMap<String, Integer>();
+    }
+    
+    public abstract HashMap<String, Integer> getNGramDistribution(String sentence);
 }

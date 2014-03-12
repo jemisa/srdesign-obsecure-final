@@ -22,28 +22,28 @@ import java.util.HashMap;
  *
  * @author JOEL
  */
-public class WordNGramExtractor 
+public class BigramStrategy extends NGramStrategy
 {
-    String sentence;
-    NGramStrategy[] strats;
-    
-    // create a new n-gram extractor
-    public WordNGramExtractor(String sentence)
+
+    @Override
+    public HashMap<String, Integer> getNGramDistribution(String sentence) 
     {
-        this.sentence = sentence;
-        strats = new NGramStrategy[] {new UnigramStrategy(), new BigramStrategy(), new TrigramStrategy()};
-        
-    }
-    
-    // returns all n-grams of a certain size
-    public HashMap<String, Integer> getAllNGrams(int size)
-    {
-       int sizeIndex = size - 1;
+       String[] words = sentence.split(" ");
        
-       if(sizeIndex > 0 && sizeIndex < strats.length)
-           return strats[sizeIndex].getNGramDistribution(sentence);
-       else
-           return new HashMap<String, Integer>();
-        
+       if(words.length > 2)
+       {
+           for(int i = 0; i < words.length-1; i++)
+           {
+               String bigram = words[i] + words[i+1];
+               
+               if(distribution.containsKey(bigram))
+                    distribution.put(bigram, distribution.get(bigram) + 1);
+               else
+                   distribution.put(bigram, 1);
+           }
+       }
+       
+       return distribution;
     }
+    
 }
