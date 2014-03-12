@@ -7,20 +7,21 @@ package cs492.obsecurefinal.algorithm;
 import cc.mallet.topics.ParallelTopicModel;
 import cs492.obsecurefinal.builder.InferenceBuilder;
 import cs492.obsecurefinal.builder.TopicBuilder;
-import cs492.obsecurefinal.common.Document;
+import cs492.obsecurefinal.cluster.BrownClusters;
 import cs492.obsecurefinal.common.Agent;
+import cs492.obsecurefinal.common.Document;
+import cs492.obsecurefinal.common.EntityTypes;
 import cs492.obsecurefinal.common.GeneralizationResult;
 import cs492.obsecurefinal.common.NamedEntity;
 import cs492.obsecurefinal.common.SanitizationHint;
 import cs492.obsecurefinal.common.SanitizationResult;
+import cs492.obsecurefinal.common.Sentence;
 import cs492.obsecurefinal.common.Topic;
+import cs492.obsecurefinal.generalization.GeneralizationManager;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-import cs492.obsecurefinal.common.EntityTypes;
-import cs492.obsecurefinal.common.Sentence;
-import cs492.obsecurefinal.generalization.GeneralizationManager;
 import opennlp.tools.util.Span;
 
 /**
@@ -62,15 +63,15 @@ public class SanitizationSimple extends Sanitization
             for (int i = 0; i < sentences.length; i++)
             {
                 // Get this sentence and the sentences surrounding it
-                String sentence = sentences[i].getText();
+                String sentence = BrownClusters.getInstance().clusterSentence(sentences[i].getText());
                 String nextSentence = "";
                 String prevSentence = "";
                 
                 if(i + 1 < sentences.length)
-                    nextSentence = sentences[i+1].getText();
+                    nextSentence = BrownClusters.getInstance().clusterSentence(sentences[i+1].getText());
                 
                 if(i > 0)
-                    prevSentence = sentences[i-1].getText();
+                    prevSentence = BrownClusters.getInstance().clusterSentence(sentences[i-1].getText());
                 
                 // extract entities from the current sentence
                 EntityExtractor extractor = new EntityExtractor(sentences[i]);
