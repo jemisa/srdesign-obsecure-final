@@ -94,10 +94,10 @@ public class SanitizationSimple extends Sanitization
                          Topic[] topicList =  ident.readFromStrings(new String[] {prevSentence, sentence, nextSentence});
                                            
                         // Remove entity from the sentence
-                        Span entitySpan = ent.getSpan();
-                        String s1 = sentence.substring(0, entitySpan.getStart());
-                        String s2 = sentence.substring(entitySpan.getEnd(), sentence.length() - 1);
-                        String sentenceNoEntity = s1 + s2;                        
+                        //Span entitySpan = ent.getSpan();
+                        //String s1 = sentence.substring(0, entitySpan.getStart());
+                        //String s2 = sentence.substring(entitySpan.getEnd(), sentence.length() - 1);
+                        String sentenceNoEntity = ent.getSentenceNoEntity().getText();
                                             
                         // Run the inference on the entity-less sentence and context
                         Topic[] topicListNoEntities = ident.readFromStrings(new String[] {prevSentence, sentenceNoEntity, nextSentence});

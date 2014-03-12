@@ -89,13 +89,14 @@ public class App
                     
                     if(f.exists() && f.canRead())
                     {
-                        String text = "", line = "";
+                        String text = "";
                         String newLine = System.getProperty("line.separator");
                         BufferedReader reader = new BufferedReader(new FileReader(f));
+                        String line = reader.readLine();
                         while(line != null)
-                        {
-                            line = reader.readLine();
+                        {                            
                             text += line + newLine;
+                            line = reader.readLine();
                         }
                     
                         ib.saveInference(text, args[2]);

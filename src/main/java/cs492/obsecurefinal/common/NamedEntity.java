@@ -12,12 +12,14 @@ public class NamedEntity implements Comparable
     private EntityTypes type;
     private Sentence sentence;
     private Span entitySpan;
+    private String[] words;
     
     public NamedEntity(Sentence sentence, Span entitySpan, EntityTypes type)
     {
         this.sentence = sentence;
         this.entitySpan = entitySpan;
         this.type = type;
+        words = sentence.getText().split(" ");
     }
     
     public EntityTypes getType()
@@ -27,10 +29,26 @@ public class NamedEntity implements Comparable
     
     public String getText()
     {
-        return entitySpan.getCoveredText(sentence.getText()).toString();
+        //return entitySpan.get
+        String text = "";
+        
+        boolean wordAdded = false;
+        for(int i = 0; i < words.length; i++)
+        {
+            if(i >= entitySpan.getStart() && i < entitySpan.getEnd())
+            {
+                if(wordAdded)
+                    text += " ";
+
+                text += words[i];
+                wordAdded = true;
+            }
+        }
+        
+        return text;
     }
 
-    public Span getSpan()
+    private Span getSpan()
     {
         return entitySpan;
     }
@@ -38,6 +56,26 @@ public class NamedEntity implements Comparable
     public Sentence getSentence()
     {
         return sentence;
+    }
+    
+    public Sentence getSentenceNoEntity()
+    {
+        String newSentence = "";
+        
+        boolean wordAdded = false;
+        for(int i = 0; i < words.length; i++)
+        {
+            if(i < entitySpan.getStart() || i >= entitySpan.getEnd())
+            {
+                if(wordAdded)
+                    newSentence += " ";
+
+                newSentence += words[i];
+                wordAdded = true;
+            }
+        }
+        
+        return new Sentence(newSentence, sentence.getIndex());
     }
     
     @Override
