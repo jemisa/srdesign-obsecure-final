@@ -6,6 +6,7 @@
 
 package cs492.obsecurefinal.builder;
 
+import cc.mallet.topics.ParallelTopicModel;
 import cs492.obsecurefinal.algorithm.TopicIdentifier;
 import cs492.obsecurefinal.common.Topic;
 import java.io.BufferedReader;
@@ -22,14 +23,29 @@ import java.io.FileWriter;
  */
 public class InferenceBuilder 
 {
+    ParallelTopicModel model;
+    
     public InferenceBuilder()
-    {   }
+    {
+        model = null;
+    }
+    
+    public InferenceBuilder(ParallelTopicModel model)
+    {
+        this.model = model;
+    }
     
     // s is string to build the inference from, 
     // name is the name of the saved inference
     public void saveInference(String s, String name)
     {
-        TopicIdentifier ident = new TopicIdentifier();
+        TopicIdentifier ident;
+        
+        if(model == null)
+            ident = new TopicIdentifier();
+        else
+            ident = new TopicIdentifier(model);
+        
         Topic[] topics = ident.readFromStrings(new String[] {s});
         
         try
