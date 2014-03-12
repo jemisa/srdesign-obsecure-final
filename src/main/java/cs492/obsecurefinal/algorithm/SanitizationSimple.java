@@ -50,7 +50,7 @@ public class SanitizationSimple extends Sanitization
     public SanitizationResult sanitize()
     {
         // TODO: REMOVE
-        TopicBuilder tb = new TopicBuilder(10);
+        TopicBuilder tb = new TopicBuilder(100);
         tb.setIterations(10);
         tb.loadRaw("modelFiles");
         ParallelTopicModel model = tb.getModel();        
@@ -119,8 +119,8 @@ public class SanitizationSimple extends Sanitization
                                              
                         List<Topic[]> profileInferences = new ArrayList<>();
                                                
-                        // Get all private information about the user, and topics associated
-                        // with each piece of private information
+                        // Get all private information about the agent, and topic distribution
+                        // associated with characteristic of the agent
                         for(EntityTypes type: EntityTypes.values())
                         {
                             String profileEntity = profile.getCharacteristic(type);
@@ -129,17 +129,24 @@ public class SanitizationSimple extends Sanitization
                                 profileInferences.add(infTopics);
                         }
                         
+                        // Load topic distributions for the type of privacy data to which the entity
+                        // belongs
+                        Topic[] infPrivacyType = infBuilder.loadInference(ent.getType().toString());
+                        
                         // For each topic inference related to the agent,
                         // check if the sentence matches
                         for(Topic[] inf : profileInferences)
                         {
                             TopicMatcher matcher = new TopicMatcher(inf, topicList);
-                            TopicMatcher matcherNoEntities = new TopicMatcher(inf, topicListNoEntities);
+                            TopicMatcher matcherNoEntities = new TopicMatcher(inf, topicListNoEntities);                            
+                            TopicMatcher matcherInfoType = new TopicMatcher(inf, infPrivacyType);
                             
                             double matchWithEntities = matcher.getMatchValue();
                             double matchWithNoEntities = matcherNoEntities.getMatchValue();
-                                                     
-                            if (matchWithEntities > EQUALITY_THRESHOLD && matchWithNoEntities < matchWithEntities) // TODO: adjust threshold value
+                            double matchType = matcherInfoType.getMatchValue();
+                            
+                            //if (matchWithEntities > EQUALITY_THRESHOLD && matchWithNoEntities < matchWithEntities) // TODO: adjust threshold value
+                            if(matchWithEntities > EQUALITY_THRESHOLD && matchType > EQUALITY_THRESHOLD)
                             {
                                 // mark entity as private
                                 privateEntities.put(ent, Boolean.TRUE);     
