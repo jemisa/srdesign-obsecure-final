@@ -150,6 +150,7 @@ public class TopicBuilder
 		}
 		
 		database = new ParallelTopicModel(numTopics);
+		database.alphabet = new Alphabet();
 		
 		try
 		{
