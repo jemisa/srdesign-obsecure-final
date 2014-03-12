@@ -20,15 +20,13 @@ package cs492.obsecurefinal.common;
  *
  * @author JOEL
  */
-public class BuildConfig 
+public class Debug 
 {
-    public static final int DEBUG = 0;
-    public static final int RELEASE = 1;
+    private static boolean debug = true;
     
-    private static int status = DEBUG;
-    
-    public static int getStatus()
+    public static void println(String s)
     {
-        return status;
+        if(debug)
+            System.out.println(s);
     }
 }
