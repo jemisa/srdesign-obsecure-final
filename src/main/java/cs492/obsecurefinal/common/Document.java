@@ -17,120 +17,147 @@ import opennlp.tools.sentdetect.SentenceModel;
  */
 public class Document
 {
-        private String text;
-        String filename;
-        Sentence[] sentences;
-        private boolean valid;
+    private String text;
+    String filename;
+    Sentence[] sentences;
+    private boolean valid, sentencesCached;
 
-        public Document(String text)
-        {
-            this.text = text;
-            
-            valid = splitDocument();
-        }
+    public Document(String text)
+    {
+        this.text = text;
 
-        public Document(File file)
+        valid = true;
+        sentencesCached = false;
+
+        //valid = splitDocument();
+    }
+
+    public Document(File file)
+    {
+        if(file.exists())
         {
-            if(file.exists())
-            {
-                filename = file.getAbsolutePath();
-                
-                text = "";
-                
-                try
-                {
-                    FileReader fReader = new FileReader(file);
-                    
-                    int c = fReader.read();
-                    while(c != -1)
-                    {
-                        text += (char)c;
-                    }
-                    
-                    fReader.close();
-                    
-                    valid = splitDocument();
-                }
-                catch(Exception ex)
-                {
-                    ex.printStackTrace(System.out);
-                    valid = false;
-                }
-            }
-        }
-        
-        // returns true if succesful, false otherwise
-        private boolean splitDocument()
-        {
-            //FileInputStream modelInput;
-            InputStream modelInput;
-            SentenceModel sm;
+            filename = file.getAbsolutePath();
+
+            text = "";
 
             try
-            { 
-                //modelInput  = new FileInputStream(DataSourceNames.SENT_MODEL_FILE);
-                modelInput = Document.class.getResourceAsStream(DataSourceNames.SENT_MODEL_FILE);
-                
-                sm = new SentenceModel(modelInput);
+            {
+                FileReader fReader = new FileReader(file);
+
+                int c = fReader.read();
+                while(c != -1)
+                {
+                    text += (char)c;
+                }
+
+                fReader.close();
+
+                //valid = splitDocument();
+                valid = true;
+                sentencesCached = false;
             }
             catch(Exception ex)
             {
                 ex.printStackTrace(System.out);
-                return false;
+                valid = false;
+                sentencesCached = false;
             }
-            
-            try
-            {
-                if(modelInput != null)            
-                    modelInput.close();
-            }
-            catch(Exception ex)
-            {                
-                ex.printStackTrace(System.out);
-                return false;
-            }
-            
-            if(sm != null)
-            {
-                SentenceDetectorME detector = new SentenceDetectorME(sm);
+        }
+    }
 
-                String[] sentenceStrings = detector.sentDetect(text);                
-                sentences = Sentence.convertStringArray(sentenceStrings);
-                
-                return true;
-            }
-            else
-                return false;
-            
+    // returns true if succesful, false otherwise
+    private boolean splitDocument()
+    {
+        //FileInputStream modelInput;
+        InputStream modelInput;
+        SentenceModel sm;
+
+        try
+        { 
+            //modelInput  = new FileInputStream(DataSourceNames.SENT_MODEL_FILE);
+            modelInput = Document.class.getResourceAsStream(DataSourceNames.SENT_MODEL_FILE);
+
+            sm = new SentenceModel(modelInput);
+        }
+        catch(Exception ex)
+        {
+            ex.printStackTrace(System.out);
+            return false;
         }
 
-        public boolean isValid()
+        try
         {
-            return valid;
+            if(modelInput != null)            
+                modelInput.close();
         }
-        
-        public void saveToFile(File f)
-        {
-        
+        catch(Exception ex)
+        {                
+            ex.printStackTrace(System.out);
+            return false;
         }
 
-        public String getText()
+        if(sm != null)
         {
-            if(valid)
-                return text;
-            else
-                return "";
+            SentenceDetectorME detector = new SentenceDetectorME(sm);
+
+            String[] sentenceStrings = detector.sentDetect(text);                
+            sentences = Sentence.convertStringArray(sentenceStrings);
+
+            return true;
         }
+        else
+            return false;
+
+    }
+
+    public void setText(String newText)
+    {
+        this.text = newText;
+        valid = true;
+        sentencesCached = false;
+    }
+
+    public boolean isValid()
+    {
+        return valid;
+    }
+
+    public void saveToFile(File f)
+    {
+
+    }
+
+    public String getText()
+    {
+        if(valid)
+            return text;
+        else
+            return "";
+    }
         
-        public Sentence[] getSentences()
+    public Sentence[] getSentences()
+    {
+        if(valid)
         {
-            if(valid)
+            if(sentencesCached)
                 return sentences;
             else
-                return new Sentence[] {};
+            {
+                if(splitDocument())
+                {
+                    sentencesCached = true;
+                    valid = true;
+                    return sentences;                    
+                }
+                else
+                {
+                    valid = false;
+                    sentencesCached = false;
+                    return new Sentence[] {};                
+                }
+            }
         }
-        
-        //public TokenSplitDocument createTokenSplitDocument()
-        //{              
-        //}
+        else
+            return new Sentence[] {};
+    }
 }
