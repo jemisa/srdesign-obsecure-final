@@ -16,7 +16,7 @@ public class TopicBuilder
 	private boolean loaded;
 	private int numTopics;
 	private ParallelTopicModel database;
-        private int numIterations = 1000;
+    private int numIterations = 1000;
         
 	public TopicBuilder(int num)
 	{
@@ -134,6 +134,9 @@ public class TopicBuilder
 			System.err.println("Error writing to database file");
 			return;
 		}
+		
+		// Extra considerations for backup
+		database.write(new File(file + ".bak"));
 	}
 	
 	public ParallelTopicModel loadDatabase(String file)
@@ -176,6 +179,7 @@ public class TopicBuilder
 			if(tokens.length != 2)
 			{
 				System.err.println("Incorrectly formatted database file");
+				in.close();
 				return null;
 			}
 			
@@ -190,14 +194,19 @@ public class TopicBuilder
 			if(ln == null)
 			{
 				System.err.println("Unexpected end of file");
+				in.close();
 				return null;
 			}
+
 			
 			while(ln != null && !ln.equals("THISISTHEFILETERMINATORIHOPETHISISNEVERUSEDASAWORD"))
 			{	
+				
+				
 				if(Integer.parseInt(ln) != i)
 				{
 					System.err.println("Incorrectly formatted database file");
+					in.close();
 					return null;
 				}
 				
@@ -205,6 +214,7 @@ public class TopicBuilder
 				if(ln == null)
 				{
 					System.err.println("Unexpected end of file");
+					in.close();
 					return null;
 				}
 				
@@ -217,6 +227,7 @@ public class TopicBuilder
 				if(ln == null)
 				{
 					System.err.println("Unexpected end of file");
+					in.close();
 					return null;
 				}
 				
@@ -227,6 +238,7 @@ public class TopicBuilder
 					if(tokens2.length != 2)
 					{
 						System.err.println("Incorrectly formatted database file");
+						in.close();
 						return null;
 					}
 					
@@ -235,27 +247,15 @@ public class TopicBuilder
 					
 					// Add tokens[1] (the weight) to the weight indices table
 					// This uses a strange format involving bitwise shifts
-					database.typeTopicCounts[i][j] = (j << topicBits) + i;
+					//database.typeTopicCounts[i][j] = (j << topicBits) + i;
 							
 					j++;
-				}
-				
-				if(ln == null)
-				{
-					System.err.println("Unexpected end of file");
-					return null;
 				}
 					
 				i++;
 			}
 			
 			in.close();
-			
-			if(ln == null)
-			{
-				System.err.println("Unexpected end of file");
-				return null;
-			}
 		}
 		catch(IOException e)
 		{
@@ -263,7 +263,16 @@ public class TopicBuilder
 			return null;
 		}
 		
-		return database;
+		// Extra considerations for backup
+		try
+		{
+			return ParallelTopicModel.read(new File(file + ".bak"));
+		}
+		catch(Exception e)
+		{
+			System.err.println("Error reading database file backup");
+			return null;
+		}
 	}
         
         // Added this to be able to customize iterations -Mike
