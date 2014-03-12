@@ -4,7 +4,9 @@
  */
 package cs492.obsecurefinal.algorithm;
 
+import cc.mallet.topics.ParallelTopicModel;
 import cs492.obsecurefinal.builder.InferenceBuilder;
+import cs492.obsecurefinal.builder.TopicBuilder;
 import cs492.obsecurefinal.common.Document;
 import cs492.obsecurefinal.common.Agent;
 import cs492.obsecurefinal.common.GeneralizationResult;
@@ -43,6 +45,13 @@ public class SanitizationSimple extends Sanitization
     @Override
     public SanitizationResult sanitize()
     {
+        // TODO: REMOVE
+        TopicBuilder tb = new TopicBuilder(10);
+        tb.setIterations(10);
+        tb.loadRaw("modelFiles");
+        ParallelTopicModel model = tb.getModel();        
+        // END REMOVE
+        
         // check that doc has been properly split into sentences
         if(doc.isValid())
         {
@@ -72,7 +81,7 @@ public class SanitizationSimple extends Sanitization
                 {
                     // send sentences to topic modeller to see if a match is found against the privacy profile
 
-                   TopicIdentifier ident = new TopicIdentifier();
+                   TopicIdentifier ident = new TopicIdentifier(model); //new TopicIdentifier();
                     
                    HashMap<NamedEntity, Boolean> privateEntities = new HashMap<NamedEntity, Boolean>();
                                         

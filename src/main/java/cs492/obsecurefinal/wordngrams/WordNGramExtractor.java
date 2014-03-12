@@ -32,11 +32,11 @@ public class WordNGramExtractor
     {
         this.sentence = sentence;
         strats = new NGramStrategy[] {new UnigramStrategy(), new BigramStrategy(), new TrigramStrategy()};
-        
+        // index must correspond to the number of words in the n-gram
     }
     
     // returns all n-grams of a certain size
-    public HashMap<String, Integer> getAllNGrams(int size)
+    public HashMap<String, Integer> getAllNGramDistributions(int size)
     {
        int sizeIndex = size - 1;
        
