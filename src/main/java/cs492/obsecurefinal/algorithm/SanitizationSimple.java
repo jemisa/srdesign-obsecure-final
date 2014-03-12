@@ -13,17 +13,19 @@ import cs492.obsecurefinal.common.Debug;
 import cs492.obsecurefinal.common.Document;
 import cs492.obsecurefinal.common.EntityTypes;
 import cs492.obsecurefinal.common.GeneralizationResult;
+import cs492.obsecurefinal.common.HintNoReplacements;
 import cs492.obsecurefinal.common.NamedEntity;
+import cs492.obsecurefinal.common.HintWithReplacements;
+import cs492.obsecurefinal.common.PrivacyStatus;
 import cs492.obsecurefinal.common.SanitizationHint;
 import cs492.obsecurefinal.common.SanitizationResult;
 import cs492.obsecurefinal.common.Sentence;
 import cs492.obsecurefinal.common.Topic;
 import cs492.obsecurefinal.generalization.GeneralizationManager;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
-import opennlp.tools.util.Span;
 
 /**
  *
@@ -57,12 +59,19 @@ public class SanitizationSimple extends Sanitization
         // check that doc has been properly split into sentences
         if(doc.isValid())
         {
+            TopicIdentifier ident = new TopicIdentifier(model); //new TopicIdentifier();
+            InferenceBuilder infBuilder = new InferenceBuilder(model); //new InferenceBuilder();
+            
             SanitizationResult finalResult = new SanitizationResult();
             
             Sentence[] sentences = doc.getSentences();
             
+            HashMap<Sentence, PrivacyStatus> sentencePrivacyValue = new HashMap<>();
+            
             for (int i = 0; i < sentences.length; i++)
             {
+                sentencePrivacyValue.put(sentences[i], PrivacyStatus.UNKNOWN);
+                
                 // Get this sentence and the sentences surrounding it
                 String sentence = BrownClusters.getInstance().clusterSentence(sentences[i].getText());
                 String nextSentence = "";
@@ -81,16 +90,16 @@ public class SanitizationSimple extends Sanitization
                 
                 if(allEntities.size() > 0)
                 {
+                    sentencePrivacyValue.put(sentences[i], PrivacyStatus.YES);
+                    
                     // Debug code                  
                     Debug.println("All located entities:");
                     for(NamedEntity testEnt: allEntities)
-                        Debug.println(testEnt.getText());
-                   
+                        Debug.println(testEnt.getText());                   
                     
                     // send sentences to topic modeller to see if a match is found against the privacy profile
-                   TopicIdentifier ident = new TopicIdentifier(model); //new TopicIdentifier();
-                    
-                   HashMap<NamedEntity, Boolean> privateEntities = new HashMap<NamedEntity, Boolean>();
+                                    
+                   HashMap<NamedEntity, Boolean> privateEntities = new HashMap<>();
                                         
                     for(NamedEntity ent: allEntities)
                     {
@@ -108,9 +117,8 @@ public class SanitizationSimple extends Sanitization
                         // Run the inference on the entity-less sentence and context
                         Topic[] topicListNoEntities = ident.readFromStrings(new String[] {prevSentence, sentenceNoEntity, nextSentence});
                                              
-                        List<Topic[]> profileInferences = new Vector<Topic[]>();
-                        InferenceBuilder infBuilder = new InferenceBuilder();
-                        
+                        List<Topic[]> profileInferences = new ArrayList<>();
+                                               
                         // Get all private information about the user, and topics associated
                         // with each piece of private information
                         for(EntityTypes type: EntityTypes.values())
@@ -150,7 +158,7 @@ public class SanitizationSimple extends Sanitization
                         {
                             if(privateEntities.get(ent) == Boolean.TRUE)
                             {
-                                SanitizationHint hint = new SanitizationHint(ent, generalizedResults.get(ent));
+                                SanitizationHint hint = new HintWithReplacements(ent, generalizedResults.get(ent));
                                 finalResult.addHint(hint);
                             }
                         }
@@ -159,6 +167,44 @@ public class SanitizationSimple extends Sanitization
                     {
                         ex.printStackTrace(System.out);
                     }                    
+                }
+            }
+            
+            // Check sentences which contained no entities, and see if they contain private information
+            // that can't be manually taken out.
+            for(int i = 0; i < sentences.length; i++)
+            {
+                if(sentencePrivacyValue.get(sentences[i]) == PrivacyStatus.UNKNOWN)
+                {
+                    Topic[] topicList = ident.readFromStrings(new String[] {sentences[i].getText()});
+                    
+                     List<Topic[]> profileInferences = new ArrayList<>();
+                    
+                    // Get all private information about the user, and topics associated
+                    // with each piece of private information
+                    for(EntityTypes type: EntityTypes.values())
+                    {
+                        String profileEntity = profile.getCharacteristic(type);
+                        Topic[] infTopics = infBuilder.loadInference(profileEntity);
+                        if(infTopics.length > 0)
+                            profileInferences.add(infTopics);
+                    }
+                    
+                    // For each topic inference related to the agent,
+                    // check if the sentence matches
+                    
+                    for(Topic[] inf : profileInferences)
+                    {
+                        TopicMatcher matcher = new TopicMatcher(inf, topicList);         
+                        double match = matcher.getMatchValue();
+                        
+                        if(match > EQUALITY_THRESHOLD)
+                        {
+                            SanitizationHint hint = new HintNoReplacements(sentences[i], match);
+                            finalResult.addHint(hint);
+                            break;
+                        }   
+                    }
                 }
             }
             

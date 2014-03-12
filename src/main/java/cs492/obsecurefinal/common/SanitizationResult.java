@@ -21,7 +21,7 @@ public class SanitizationResult
 
         public void addHint(SanitizationHint hint)
         {
-                
+            results.add(hint);
         }
 
         public Vector<SanitizationHint> getResults()

@@ -20,7 +20,30 @@ package cs492.obsecurefinal.common;
  *
  * @author JOEL
  */
-public interface SanitizationHint 
-{    
-    public String getText();
+public class HintNoReplacements implements SanitizationHint
+{
+    private Sentence sentence;
+    private double matchValue;
+    
+    public HintNoReplacements(Sentence s, double val)
+    {
+        sentence = s;
+        matchValue = val;
+    }
+    
+    public Sentence getSentence()
+    {
+        return sentence;
+    }
+    
+    public double getMatchValue()
+    {
+        return matchValue;
+    }
+
+    @Override
+    public String getText() 
+    {
+        return sentence.getText();
+    }
 }

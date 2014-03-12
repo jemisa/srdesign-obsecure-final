@@ -20,7 +20,9 @@ package cs492.obsecurefinal.common;
  *
  * @author JOEL
  */
-public interface SanitizationHint 
-{    
-    public String getText();
+public enum PrivacyStatus 
+{
+    YES,
+    NO,
+    UNKNOWN
 }

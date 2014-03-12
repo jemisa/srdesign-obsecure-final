@@ -7,6 +7,8 @@ import cs492.obsecurefinal.builder.TopicBuilder;
 import cs492.obsecurefinal.common.Agent;
 import cs492.obsecurefinal.common.DatabaseAccess;
 import cs492.obsecurefinal.common.Document;
+import cs492.obsecurefinal.common.HintNoReplacements;
+import cs492.obsecurefinal.common.HintWithReplacements;
 import cs492.obsecurefinal.common.SanitizationHint;
 import cs492.obsecurefinal.common.SanitizationResult;
 import java.io.BufferedReader;
@@ -58,8 +60,17 @@ public class App
 
                 for(SanitizationHint match:result.getResults())
                 {
-                    System.out.print("Term that reveals private information:");
-                    System.out.print("Blach bhla");
+                    if(match instanceof HintWithReplacements)
+                    {
+                        System.out.println("The following phrase may reveal private information:");
+                        System.out.println(match.getText());
+                    }
+                    else if (match instanceof HintNoReplacements)
+                    {
+                        System.out.println("The following sentence contains private data," +
+                                           " but cannot be computationally sanitized:");
+                        System.out.println(match.getText());
+                    } 
                 }
             }
         }
