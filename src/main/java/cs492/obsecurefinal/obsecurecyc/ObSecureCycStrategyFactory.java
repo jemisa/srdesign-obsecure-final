@@ -23,6 +23,8 @@ public class ObSecureCycStrategyFactory {
 	    strategy = new LocationStrategy();
 	} else if (EntityTypes.OCCUPATION == entityType) {
 	    strategy = new OccupationStrategy();
+	} else if (EntityTypes.MEDICAL == entityType) {
+	    strategy = new MedicalStrategy();
 	} else {
 	    strategy = new PersonStrategy();
 	}

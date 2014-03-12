@@ -18,7 +18,8 @@ public class GeneralizationResult
 
         public String[] getResults()
         {
-               return (String[])results.toArray();
+	    String[] result = new String[results.size()];
+	    return results.toArray(result);
         }
 
         public void add(String result)

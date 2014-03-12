@@ -26,6 +26,9 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -50,7 +53,27 @@ public class BrownClusters {
     }
     
     public String cluster(String word) {
+	if (word.contains(" ")) {
+	    return clusterSentence(word);
+	}
 	return cluster.get(word);
+    }
+    
+    public String clusterSentence(String sentence) {
+	StringBuilder sb = new StringBuilder();
+	String[] oldSentence = sentence.split(" ");
+	Pattern p = Pattern.compile("\\b\\W"); //find special character at end of word
+	for (String word : oldSentence) {
+	    Matcher m = p.matcher(word);
+	    String special = StringUtils.EMPTY;
+	    if (m.find()) {    //preserve formatting
+		special = m.group();
+		word = word.substring(0,m.regionEnd()-1);
+	    }
+	    String alias = cluster(word);
+	    sb.append(alias != null ? alias : word).append(special).append(" ");
+	}
+	return sb.toString().trim();
     }
     
     private void init() {

@@ -37,5 +37,32 @@ public class BrownClusterTest {
 	assertEquals(expectedCluster, cluster.cluster(word));
     }
     
+    @Test
+    public void wordClusterWithoutSpecialCharOnTarget() throws Exception {
+	BrownClusters cluster = BrownClusters.getInstance();
+	final String format = "I would %s die!";
+	final String badWord = "rathr";
+	final String expectedGoodWord = "rather";
+	
+	String sentence = String.format(format, badWord);
+	final String expected = String.format(format, expectedGoodWord);
+	
+	String clusteredSentence = cluster.clusterSentence(sentence);
+	assertEquals(expected, clusteredSentence);
+    }
+    
+    @Test
+    public void wordClusterWithSpecialCharOnTarget() throws Exception {
+	BrownClusters cluster = BrownClusters.getInstance();
+	final String format = "The things I would do %s!";
+	final String badWord = "rathr";
+	final String expectedGoodWord = "rather";
+	
+	String sentence = String.format(format, badWord);
+	final String expected = String.format(format, expectedGoodWord);
+	
+	String clusteredSentence = cluster.clusterSentence(sentence);
+	assertEquals(expected, clusteredSentence);
+    }
     
 }
