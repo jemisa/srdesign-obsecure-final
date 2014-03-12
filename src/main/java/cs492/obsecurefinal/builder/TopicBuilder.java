@@ -9,6 +9,7 @@ import cc.mallet.classify.tui.Text2Vectors;
 import cc.mallet.topics.ParallelTopicModel;
 import cc.mallet.types.IDSorter;
 import cc.mallet.types.InstanceList;
+import cc.mallet.types.Alphabet;
 
 public class TopicBuilder
 {
@@ -96,9 +97,13 @@ public class TopicBuilder
 		{
 			ArrayList<TreeSet<IDSorter>> wordlist = database.getSortedWords();
 			
+			// Format is as follows:
+			// - Size of typeTopicCounts array, tab-delimited, on its own line
+			out.write(database.typeTopicCounts.length + "\t");
+			out.write(database.typeTopicCounts[0].length + "\n");
+			
 			for(int i = 0; i < database.numTopics; i++)
 			{
-				// Format is as follows:
 				// - Index number of topic on its own line
 				out.write(i + "\n");
 				// - Weight of topic on its own line
@@ -150,7 +155,6 @@ public class TopicBuilder
 		}
 		
 		database = new ParallelTopicModel(numTopics);
-		database.alphabet = new Alphabet();
 		
 		try
 		{
@@ -166,6 +170,21 @@ public class TopicBuilder
 		{
 			String ln = in.readLine();
 			int i = 0;
+			
+			String[] tokens = ln.split("\t");
+			
+			if(tokens.length != 2)
+			{
+				System.err.println("Incorrectly formatted database file");
+				return null;
+			}
+			
+			// Create needed parts of database
+			database.alphabet = new Alphabet();
+			
+			int a = Integer.parseInt(tokens[0]);
+			int b = Integer.parseInt(tokens[1]);
+			database.typeTopicCounts = new int[a][b];
 			
 			while(ln != null && !ln.equals("THISISTHEFILETERMINATORIHOPETHISISNEVERUSEDASAWORD"))
 			{	
@@ -196,16 +215,16 @@ public class TopicBuilder
 				
 				while(ln != null && !ln.equals("THISISTHETOPICTERMINATORIHOPETHISISNEVERUSEDASAWORD"))
 				{
-					String[] tokens = ln.split("\t");
+					String[] tokens2 = ln.split("\t");
 					
-					if(tokens.length != 2)
+					if(tokens2.length != 2)
 					{
 						System.err.println("Incorrectly formatted database file");
 						return null;
 					}
 					
 					// Add tokens[0] (the word) to the word list
-					database.alphabet.lookupIndex(tokens[0]);
+					database.alphabet.lookupIndex(tokens2[0]);
 					
 					// Add tokens[1] (the weight) to the weight indices table
 					// This uses a strange format involving bitwise shifts
