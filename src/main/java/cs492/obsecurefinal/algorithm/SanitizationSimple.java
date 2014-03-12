@@ -9,6 +9,7 @@ import cs492.obsecurefinal.builder.InferenceBuilder;
 import cs492.obsecurefinal.builder.TopicBuilder;
 import cs492.obsecurefinal.cluster.BrownClusters;
 import cs492.obsecurefinal.common.Agent;
+import cs492.obsecurefinal.common.BuildConfig;
 import cs492.obsecurefinal.common.Document;
 import cs492.obsecurefinal.common.EntityTypes;
 import cs492.obsecurefinal.common.GeneralizationResult;
@@ -80,8 +81,14 @@ public class SanitizationSimple extends Sanitization
                 
                 if(allEntities.size() > 0)
                 {
+                   if(BuildConfig.getStatus() == BuildConfig.DEBUG)
+                   {
+                       System.out.println("All located entities:");
+                       for(NamedEntity testEnt: allEntities)
+                           System.out.println(testEnt.getText());
+                   }
+                    
                     // send sentences to topic modeller to see if a match is found against the privacy profile
-
                    TopicIdentifier ident = new TopicIdentifier(model); //new TopicIdentifier();
                     
                    HashMap<NamedEntity, Boolean> privateEntities = new HashMap<NamedEntity, Boolean>();
