@@ -33,7 +33,7 @@ import java.util.Map;
  */
 public class SanitizationSimple extends Sanitization
 {
-    public static final double EQUALITY_THRESHOLD = 0.75;
+    public static final double EQUALITY_THRESHOLD = 0.1;
     
     Document doc;
     Agent profile;
@@ -75,15 +75,19 @@ public class SanitizationSimple extends Sanitization
                 sentencePrivacyValue.put(sentences[i], PrivacyStatus.UNKNOWN);
                 
                 // Get this sentence and the sentences surrounding it
-                String sentence = BrownClusters.getInstance().clusterSentence(sentences[i].getText());
+                String sentence = sentences[i].getText(); //BrownClusters.getInstance().clusterSentence(sentences[i].getText());
                 String nextSentence = "";
                 String prevSentence = "";
                 
                 if(i + 1 < sentences.length)
-                    nextSentence = BrownClusters.getInstance().clusterSentence(sentences[i+1].getText());
+                    nextSentence = sentences[i+1].getText(); //BrownClusters.getInstance().clusterSentence(sentences[i+1].getText());
+                else
+                    nextSentence = sentences[i].getText();
                 
                 if(i > 0)
-                    prevSentence = BrownClusters.getInstance().clusterSentence(sentences[i-1].getText());
+                    prevSentence = sentences[i-1].getText(); //BrownClusters.getInstance().clusterSentence(sentences[i-1].getText());
+                else
+                    prevSentence = sentences[i].getText();
                 
                 // extract entities from the current sentence
                 EntityExtractor extractor = new EntityExtractor(sentences[i]);
@@ -148,7 +152,8 @@ public class SanitizationSimple extends Sanitization
                             double matchType = matcherInfoType.getMatchValue();
                             
                             //if (matchWithEntities > EQUALITY_THRESHOLD && matchWithNoEntities < matchWithEntities) // TODO: adjust threshold value
-                            if(matchWithEntities > EQUALITY_THRESHOLD && matchType > EQUALITY_THRESHOLD)
+                            //if(matchWithEntities > EQUALITY_THRESHOLD && matchType > EQUALITY_THRESHOLD)
+                            if(matchWithEntities > matchWithNoEntities)
                             {
                                 // mark entity as private
                                 privateEntities.put(ent, Boolean.TRUE);     
@@ -194,7 +199,7 @@ public class SanitizationSimple extends Sanitization
                     for(EntityTypes type: EntityTypes.values())
                     {
                         String profileEntity = profile.getCharacteristic(type);
-                        Topic[] infTopics = infBuilder.loadInference(profileEntity);
+                        Topic[] infTopics = infBuilder.loadInference(profileEntity.toUpperCase());
                         if(infTopics.length > 0)
                             profileInferences.add(infTopics);
                     }

@@ -53,8 +53,23 @@ public class TopicIdentifier {
     }
     
     public Topic[] readFromStrings(String[] s){
+        String text = "";
+        int iteration = 0;
+        while(text.length() < 100)
+        {
+            int index=iteration % s.length;
+            
+            if(iteration > 0)
+                text += " ";
+            
+            text += s[index];
+            iteration++;
+        }
+        
+        String[] textArray = new String[] {text};
+        
         InstanceList instances = new InstanceList (buildPipe());        
-        instances.addThruPipe(new StringArrayIterator(s));
+        instances.addThruPipe(new StringArrayIterator(textArray));
         
         Topic[] topicArray = getInference(instances);
         

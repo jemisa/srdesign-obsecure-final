@@ -11,8 +11,8 @@ import java.util.Arrays;
  */
 public class TopicMatcher 
 {
-    public static final double THRESHOLD_MULTIPLIER = 0.1;
-    public static final double MIN_VALUE = 0.05;
+    public static final double THRESHOLD_MULTIPLIER = 0.05;
+    public static final double MIN_VALUE = 0.0;
     
     private  Topic[] topicListA, topicListB;
     

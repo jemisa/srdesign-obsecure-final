@@ -58,8 +58,10 @@ public class App
                 SanitizationSimple sanitizer = new SanitizationSimple(doc, currentProfile);
                 SanitizationResult result = sanitizer.sanitize();
 
-                for(SanitizationHint match:result.getResults())
+                for(int i = 0; i < result.getResults().size(); i++)
                 {
+                    SanitizationHint match = result.getResults().get(i);
+                    
                     if(match instanceof HintWithReplacements)
                     {
                         System.out.println("The following phrase may reveal private information:");

@@ -4,7 +4,8 @@
  */
 package cs492.obsecurefinal.common;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -12,11 +13,11 @@ import java.util.Vector;
  */
 public class SanitizationResult
 {
-        private Vector<SanitizationHint> results;
+        private List<SanitizationHint> results;
 
         public SanitizationResult()
         {
-         
+            results = new ArrayList<>();
         }
 
         public void addHint(SanitizationHint hint)
@@ -24,7 +25,7 @@ public class SanitizationResult
             results.add(hint);
         }
 
-        public Vector<SanitizationHint> getResults()
+        public List<SanitizationHint> getResults()
         {
             return results;
         }
