@@ -86,11 +86,11 @@ public class App
             if(args.length == 3)
             {
                  // TODO: REMOVE
-                TopicBuilder tb = new TopicBuilder(10);
-                tb.setIterations(10);
+                TopicBuilder tb = new TopicBuilder(100);
+                tb.setIterations(50);
                 tb.loadRaw("modelFiles");
                 ParallelTopicModel model = tb.getModel();        
-                // END REMOVE
+                // END REMOVE   
                 
                 InferenceBuilder ib = new InferenceBuilder(model);
                 
@@ -100,6 +100,8 @@ public class App
                     
                     if(f.exists() && f.canRead())
                     {
+                        System.out.println("Creating inference from contents of " + args[1]);
+                        
                         String text = "";
                         String newLine = System.getProperty("line.separator");
                         BufferedReader reader = new BufferedReader(new FileReader(f));
@@ -111,6 +113,8 @@ public class App
                         }
                     
                         ib.saveInference(text, args[2]);
+                        
+                        System.out.println("Inference result saved to " + args[2]);
                         
                         reader.close();
                     }                    

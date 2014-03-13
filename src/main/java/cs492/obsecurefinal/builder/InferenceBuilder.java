@@ -51,7 +51,7 @@ public class InferenceBuilder
         try
         {
             File f = new File(name);
-            if(f.exists() && f.canWrite())
+            if(f.createNewFile() || f.canWrite())
             {
                 BufferedWriter writer = new BufferedWriter(new FileWriter(f));
                 for(int i = 0; i < topics.length; i++)
@@ -61,6 +61,8 @@ public class InferenceBuilder
                     
                     writer.write(topics[i].getId() + "," + topics[i].getProbability());
                 }
+                
+                writer.close();
             }
         }
         catch(Exception ex)
@@ -96,6 +98,8 @@ public class InferenceBuilder
                     t.setProbability(prob);
                     result[i] = t;
                 }
+                
+                reader.close();
                 
                 return result;
             }

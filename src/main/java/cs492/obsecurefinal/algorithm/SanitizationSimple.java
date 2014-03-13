@@ -49,6 +49,8 @@ public class SanitizationSimple extends Sanitization
     @Override
     public SanitizationResult sanitize()
     {
+        Debug.println("Begin sanitization");
+        
         // TODO: REMOVE
         TopicBuilder tb = new TopicBuilder(100);
         tb.setIterations(10);
@@ -123,7 +125,7 @@ public class SanitizationSimple extends Sanitization
                         // associated with characteristic of the agent
                         for(EntityTypes type: EntityTypes.values())
                         {
-                            String profileEntity = profile.getCharacteristic(type);
+                            String profileEntity = profile.getCharacteristic(type).toUpperCase();
                             Topic[] infTopics = infBuilder.loadInference(profileEntity);
                             if(infTopics.length > 0)
                                 profileInferences.add(infTopics);
