@@ -68,7 +68,7 @@ public class TopicMatcher
                 //}
             //}
 
-            return countCloseMatch/(double)(uniqueTopics.size());
+            return countCloseMatch;//(double)(uniqueTopics.size());
         }
         else
             return 0.0;
