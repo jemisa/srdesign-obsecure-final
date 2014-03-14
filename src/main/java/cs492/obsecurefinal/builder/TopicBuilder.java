@@ -202,7 +202,6 @@ public class TopicBuilder
 			while(ln != null && !ln.equals("THISISTHEFILETERMINATORIHOPETHISISNEVERUSEDASAWORD"))
 			{	
 				
-				
 				if(Integer.parseInt(ln) != i)
 				{
 					System.err.println("Incorrectly formatted database file");
@@ -250,6 +249,19 @@ public class TopicBuilder
 					//database.typeTopicCounts[i][j] = (j << topicBits) + i;
 							
 					j++;
+					
+					ln = in.readLine();
+				}
+				
+				if(ln == null)
+				{
+					System.err.println("Unexpected end of file");
+					in.close();
+					return null;
+				}
+				else if(ln.equals("THISISTHETOPICTERMINATORIHOPETHISISNEVERUSEDASAWORD"))
+				{
+					ln = in.readLine();
 				}
 					
 				i++;
@@ -275,13 +287,15 @@ public class TopicBuilder
 		}
 	}
         
-        // Added this to be able to customize iterations -Mike
-        public void setIterations(int i){
-            numIterations = i;
-        }
+    // Added this to be able to customize iterations -Mike
+    public void setIterations(int i)
+    {
+    	numIterations = i;
+    }
         
-        // Adding this so I can get the model directly -Mike
-        public ParallelTopicModel getModel(){
-            return database;
+    // Adding this so I can get the model directly -Mike
+	public ParallelTopicModel getModel()
+	{
+		return database;
 	}
 }
