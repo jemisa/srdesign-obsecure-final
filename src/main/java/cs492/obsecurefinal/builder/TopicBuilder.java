@@ -18,17 +18,59 @@ public class TopicBuilder
 	private ParallelTopicModel database;
     private int numIterations = 1000;
         
+    // Standard constructor
 	public TopicBuilder(int num)
 	{
 		loaded = false;
 		numTopics = num;
 	}
 	
+	// Auto-load from directory
 	public TopicBuilder(int num, String dir)
 	{
 		loaded = false;
 		numTopics = num;
 		loadRaw(dir);
+	}
+	
+	// Auto-load from model file
+	public TopicBuilder(String file)
+	{
+		loaded = false;
+		numTopics = 0;
+		BufferedReader in;
+		
+		try
+		{
+			in = new BufferedReader(new FileReader(file));
+		}
+		catch(FileNotFoundException e)
+		{
+			System.err.println("Could not find the specified database file");
+			return;
+		}
+		
+		try
+		{
+			String ln = in.readLine();
+			
+			// Count the number of topic terminators and use that as the number of topics
+			while(ln != null)
+			{
+				if(ln.equals("THISISTHETOPICTERMINATORIHOPETHISISNEVERUSEDASAWORD"))
+				numTopics++;
+			}
+			
+			in.close();
+		}
+		catch(IOException e)
+		{
+			System.err.println("Error reading database file");
+			return;
+		}
+		
+		// Now use the number of topics to load a file
+		loadDatabase(file);
 	}
 	
 	public void loadRaw(String dir)
