@@ -5,6 +5,7 @@ import cs492.obsecurefinal.algorithm.SanitizationSimple;
 import cs492.obsecurefinal.builder.InferenceBuilder;
 import cs492.obsecurefinal.builder.TopicBuilder;
 import cs492.obsecurefinal.common.Agent;
+import cs492.obsecurefinal.common.DataSourceNames;
 import cs492.obsecurefinal.common.DatabaseAccess;
 import cs492.obsecurefinal.common.Document;
 import cs492.obsecurefinal.common.HintNoReplacements;
@@ -58,30 +59,60 @@ public class App
                 SanitizationSimple sanitizer = new SanitizationSimple(doc, currentProfile);
                 SanitizationResult result = sanitizer.sanitize();
 
-                for(int i = 0; i < result.getResults().size(); i++)
+                if(result != null)
                 {
-                    SanitizationHint match = result.getResults().get(i);
-                    
-                    if(match instanceof HintWithReplacements)
+                    for(int i = 0; i < result.getResults().size(); i++)
                     {
-                        System.out.println("The following phrase may reveal private information:");
-                        System.out.println(match.getText());
+                        SanitizationHint match = result.getResults().get(i);
+
+                        if(match instanceof HintWithReplacements)
+                        {
+                            System.out.println("The following phrase may reveal private information:");
+                            System.out.println(match.getText());
+                            
+                            HintWithReplacements hint = (HintWithReplacements)match;
+                            String[] results =  hint.getReplacements().getResults();
+                            
+                            System.out.println("Suggested replacements:");
+                            for(int j = 0; j < results.length; j++)
+                            {
+                                System.out.println(results[j]);
+                            }                            
+                        }
+                        else if (match instanceof HintNoReplacements)
+                        {
+                            System.out.println("The following sentence contains private data," +
+                                               " but cannot be computationally sanitized:");
+                            System.out.println(match.getText());
+                        } 
                     }
-                    else if (match instanceof HintNoReplacements)
-                    {
-                        System.out.println("The following sentence contains private data," +
-                                           " but cannot be computationally sanitized:");
-                        System.out.println(match.getText());
-                    } 
                 }
+                else
+                    System.out.println("An error occured in the sanitization process");
             }
         }
         else if (args.length > 0 && args[0].equals("-builder"))
         {
-            TopicBuilder tb = new TopicBuilder(10);
-            tb.setIterations(10);
-            tb.loadRaw("modelFiles");
-            ParallelTopicModel model = tb.getModel();        
+            if(args.length == 4)
+            {
+                System.out.println("Creating master topic model");
+                
+                try
+                {
+                    int topics = Integer.parseInt(args[1]);
+                    int iterations = Integer.parseInt(args[2]);
+                    String folder = args[3];
+                    
+                    TopicBuilder tb = new TopicBuilder(topics);
+                    tb.setIterations(iterations);
+                    tb.loadRaw(folder);
+                    tb.saveDatabase(DataSourceNames.MASTER_MODEL);
+                }
+                catch(Exception ex)
+                {
+                    ex.printStackTrace(System.out);
+                }
+            }
         }
         else if (args.length > 0 && args[0].equals("-inferencer"))
         {

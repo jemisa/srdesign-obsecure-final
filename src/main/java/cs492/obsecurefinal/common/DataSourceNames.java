@@ -12,6 +12,7 @@ package cs492.obsecurefinal.common;
  */
 public class DataSourceNames 
 {
+    public static final String MASTER_MODEL = "topics.mallet";
     public static final String LOC_MODEL_FILE = "/en-ner-location.bin";
     public static final String WORKPLACE_MODEL_FILE = "/en-ner-organization.bin";
     public static final String TOPICS_STOPWORDS = "src\\main\\resources\\stoplist.txt";

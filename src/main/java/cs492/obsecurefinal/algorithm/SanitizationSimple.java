@@ -9,6 +9,7 @@ import cs492.obsecurefinal.builder.InferenceBuilder;
 import cs492.obsecurefinal.builder.TopicBuilder;
 import cs492.obsecurefinal.cluster.BrownClusters;
 import cs492.obsecurefinal.common.Agent;
+import cs492.obsecurefinal.common.DataSourceNames;
 import cs492.obsecurefinal.common.Debug;
 import cs492.obsecurefinal.common.Document;
 import cs492.obsecurefinal.common.EntityTypes;
@@ -51,18 +52,14 @@ public class SanitizationSimple extends Sanitization
     {
         Debug.println("Begin sanitization");
         
-        // TODO: REMOVE
-        TopicBuilder tb = new TopicBuilder(100);
-        tb.setIterations(10);
-        tb.loadRaw("modelFiles");
-        ParallelTopicModel model = tb.getModel();        
-        // END REMOVE
-        
         // check that doc has been properly split into sentences
         if(doc.isValid())
         {
-            TopicIdentifier ident = new TopicIdentifier(model); //new TopicIdentifier();
-            InferenceBuilder infBuilder = new InferenceBuilder(model); //new InferenceBuilder();
+            TopicBuilder builder = new TopicBuilder(200);
+            ParallelTopicModel master = builder.loadDatabase(DataSourceNames.MASTER_MODEL);
+            
+            TopicIdentifier ident = new TopicIdentifier(master); //new TopicIdentifier();
+            InferenceBuilder infBuilder = new InferenceBuilder(master); //new InferenceBuilder();
             
             SanitizationResult finalResult = new SanitizationResult();
             
