@@ -58,6 +58,12 @@ public class SanitizationSimple extends Sanitization
             TopicBuilder builder = new TopicBuilder(200);
             ParallelTopicModel master = builder.loadDatabase(DataSourceNames.MASTER_MODEL);
             
+            if(master == null)
+            {
+                System.out.println("No topic model loaded!");
+                return null;
+            }
+            
             TopicIdentifier ident = new TopicIdentifier(master); //new TopicIdentifier();
             InferenceBuilder infBuilder = new InferenceBuilder(master); //new InferenceBuilder();
             
