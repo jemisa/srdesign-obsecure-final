@@ -27,8 +27,11 @@ public class TopicIdentifierTest {
         tb.saveDatabase(testDirectory + malletFile);
         assertTrue(new File(testDirectory + malletFile).exists());
         
-        model = tb.getModel();
+        model = tb.loadDatabase(testDirectory + malletFile);
+        //model = tb.getModel();
         
+        junit.framework.Assert.assertTrue(model.getData().size() > 0);
+        assertEquals(model.getNumTopics(), 10);
         assertNotNull(model);
     }
     
