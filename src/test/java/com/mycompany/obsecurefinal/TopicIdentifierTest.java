@@ -38,9 +38,7 @@ public class TopicIdentifierTest {
     @Test 
     public void getInferencedTopicsFromString(){         
         TopicBuilder tb = new TopicBuilder(numTopics);
-        tb.setIterations(10);
-        tb.loadRaw(testDirectory);
-        model = tb.getModel();
+        model = tb.loadDatabase(testDirectory + malletFile);
         
         TopicIdentifier ti = new TopicIdentifier(model);
         String[] s = new String[] {
@@ -60,9 +58,7 @@ public class TopicIdentifierTest {
     @Test
     public void getInferenceTopicsFromFile(){
         TopicBuilder tb = new TopicBuilder(numTopics);
-        tb.setIterations(10);
-        tb.loadRaw(testDirectory);
-        model = tb.getModel();
+        model = tb.loadDatabase(testDirectory + malletFile);
         
         TopicIdentifier ti = new TopicIdentifier(model);
         Topic[] topicArray = null;

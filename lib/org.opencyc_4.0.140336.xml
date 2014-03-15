@@ -19,7 +19,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <version>4.0.140336</version>
     <packaging>jar</packaging>
     <generatePom>true</generatePom>
-    <file>org.opencyc.jar</file>
+    <file>org.opencyc_4.0.140336.jar</file>
   </properties>
    <!-- end edit -->
 
