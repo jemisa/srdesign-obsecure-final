@@ -1,0 +1,44 @@
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <!-- edit these as appropriate -->
+  <groupId>org</groupId>
+  <artifactId>opencyc</artifactId>
+  <version>4.0.140336</version>
+  
+  <description>
+    Required for linguistic processing and word type identification and association of synsets
+  </description>
+
+  <properties> 
+    <localRepositoryPath>localRepos</localRepositoryPath>
+    <repositoryLayout>default</repositoryLayout>
+    <groupId>org</groupId>
+    <artifactId>opencyc</artifactId>
+    <version>4.0.140336</version>
+    <packaging>jar</packaging>
+    <generatePom>true</generatePom>
+    <file>org.opencyc.jar</file>
+  </properties>
+   <!-- end edit -->
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-install-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>install</phase>
+            <goals>
+              <goal>install-file</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
+

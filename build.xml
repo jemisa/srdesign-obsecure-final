@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (C) 2014 Benjamin Arnold
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<project name="InstallObSecureDependencies" xmlns:artifact="antlib:org.apache.maven.artifact.ant" xmlns:ac="antlib:net.sf.antcontrib" basedir="." default="install-static">
+     <!-- setup ant classpath -->
+     <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+        <classpath>
+            <pathelement location="lib/ant-deps/ant-contrib-0.3.jar"/>
+        </classpath>
+     </taskdef>
+     
+     <path id="maven-ant-tasks.classpath">
+        <fileset dir="lib/ant-deps">
+            <include name="*.jar"/>
+        </fileset>
+     </path>
+
+     <typedef resource="org/apache/maven/artifact/ant/antlib.xml"
+           uri="antlib:org.apache.maven.artifact.ant"
+           classpathref="maven-ant-tasks.classpath" />
+    
+    <target name="echoInstall">
+        <echo message="installing static jars" />
+    </target>
+    
+    <property name="static.lib.dir" value="lib"/>
+    
+    <!-- precondition:  jar must be in static-lib dir-->
+    <!-- precondition:  xml configurations for jar must be colocated with jar and referened with <file><NAME>.jar</file> in xml -->
+    <target name="install-static" depends="echoInstall">
+        <!-- add xmls for static jars here -->
+        <installDependency pom.name="edu.mit.jwi_2.3.0"/>  
+        <installDependency pom.name="org.opencyc_4.0.140336"/>    
+    </target>
+    
+    
+    <!-- install jar matching name based on matching pom.xml -->
+    <macrodef name="installDependency">
+        <attribute name="pom.name" />
+        <sequential>
+            <echo message="Installing @{pom.name}.jar" />
+
+            <artifact:mvn pom="${static.lib.dir}/@{pom.name}.xml">
+                <arg value="install"/>
+            </artifact:mvn>
+              <artifact:pom id="mypom" file="pom.xml" />
+        </sequential>
+    </macrodef> 
+
+</project>
