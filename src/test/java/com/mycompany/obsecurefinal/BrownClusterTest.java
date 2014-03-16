@@ -18,9 +18,11 @@
 package com.mycompany.obsecurefinal;
 
 import cs492.obsecurefinal.cluster.BrownClusters;
-import org.junit.Test;
+import static junit.framework.Assert.assertEquals;
 
 import static junit.framework.Assert.assertEquals;
+import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  *
@@ -63,6 +65,15 @@ public class BrownClusterTest {
 	
 	String clusteredSentence = cluster.clusterSentence(sentence);
 	assertEquals(expected, clusteredSentence);
+    }
+    
+    @Test
+    public void nonSynonymClusterTest() throws Exception {
+	BrownClusters cluster = BrownClusters.getInstance();
+	final String initial = "I visited the Liberty Bell this weekend";
+	
+	String clusteredSentence = cluster.clusterSentence(initial);
+	assertEquals(initial, clusteredSentence);
     }
     
 }
