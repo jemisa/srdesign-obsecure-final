@@ -55,8 +55,8 @@ public class SanitizationSimple extends Sanitization
         // check that doc has been properly split into sentences
         if(doc.isValid())
         {
-            TopicBuilder builder = new TopicBuilder(200);
-            ParallelTopicModel master = builder.loadDatabase(DataSourceNames.MASTER_MODEL);
+            TopicBuilder builder = new TopicBuilder(DataSourceNames.MASTER_MODEL);
+            ParallelTopicModel master = builder.getModel();
             
             if(master == null)
             {
