@@ -46,7 +46,7 @@ public class BrownClusters {
     private static final Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); 
     
     private static final BrownClusters instance = new BrownClusters();
-    
+        
     private final TreeMap<String, String> cluster = new TreeMap<>();
     
     private BrownClusters() {
@@ -74,7 +74,6 @@ public class BrownClusters {
 	    String special = StringUtils.EMPTY;
 	    if (m.find()) {    //preserve formatting
 		special = m.group();
-		log.log(Level.FINEST, "Detected {0} in {1}", new Object[]{m.group(), word});
 		word = word.substring(0,m.start());
 		
 	    }
@@ -124,7 +123,6 @@ public class BrownClusters {
 		}
 	    }
 	    put(tCluster);
-	    list();
 	} catch (IOException | SecurityException | IllegalArgumentException ex) {
 	    log.log(Level.WARNING, "Error initializing brown clusters: ", ex);
 	}

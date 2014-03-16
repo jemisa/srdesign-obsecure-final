@@ -52,6 +52,7 @@ import org.apache.commons.lang3.StringUtils;
 public class WordNetDictionary {
     private static final Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);  
 
+    private boolean initialized = false;
     private static final WordNetDictionary instance = new WordNetDictionary();
     private IRAMDictionary dictionary;
     private WordnetStemmer stemmer;
@@ -61,6 +62,7 @@ public class WordNetDictionary {
     private WordNetDictionary() {
 	//singleton
 	init();
+	initialized = true;
     }
     
     public static final WordNetDictionary getInstance() {
@@ -71,7 +73,6 @@ public class WordNetDictionary {
 	EnumMap<POS,Set<String>> originMap = getBaseWordPosMap(original);
 	EnumMap<POS,Set<String>> candidMap = getBaseWordPosMap(candidate);
 	boolean result = (originMap.isEmpty() || candidMap.isEmpty()) ? true : areRelated(originMap, candidMap);
-	log.log(Level.FINEST, "{0} and {1} are {2} related", new Object[]{original, candidate, result ? StringUtils.EMPTY : "not"});
 	return result;
     }
     
