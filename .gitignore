@@ -6,3 +6,4 @@ nbactions.xml
 testdocs/dump.mallet
 temp.mallet
 *.log
+src/main/java/org/opencyc/
