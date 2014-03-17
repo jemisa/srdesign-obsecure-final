@@ -22,10 +22,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Collection;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
@@ -39,9 +43,11 @@ import org.jsoup.select.Elements;
  * @author Benjamin Arnold
  */
 public class BrownClusters {
-    private static final BrownClusters instance = new BrownClusters();
+    private static final Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); 
     
-    private TreeMap<String, String> cluster = new TreeMap<>();
+    private static final BrownClusters instance = new BrownClusters();
+        
+    private final TreeMap<String, String> cluster = new TreeMap<>();
     
     private BrownClusters() {
 	//singleton
@@ -68,43 +74,86 @@ public class BrownClusters {
 	    String special = StringUtils.EMPTY;
 	    if (m.find()) {    //preserve formatting
 		special = m.group();
-		word = word.substring(0,m.regionEnd()-1);
+		word = word.substring(0,m.start());
+		
 	    }
 	    String alias = cluster(word);
-	    sb.append(alias != null ? alias : word).append(special).append(" ");
+	    String result = alias != null ? alias : word;
+	    if (!word.equals(result)) {
+		log.log(Level.FINEST, "{0} clustered to {1}", new Object[]{word, alias});
+	    }
+	    sb.append(result).append(special).append(" ");
 	}
 	return sb.toString().trim();
     }
     
     private void init() {
-	InputStream inStream = BrownClusters.class.getResourceAsStream(DataSourceNames.CLUSTERING_DATA);
-	BufferedReader reader = new BufferedReader(new InputStreamReader(inStream));  
-	StringBuilder sb = new StringBuilder();
-	String line = null;
+	Handler handler;
 	try {
+	    handler = new FileHandler("BrownCluster.log");
+	     handler.setFormatter(new SimpleFormatter());
+	    log.addHandler(handler);
+	    log.setLevel(Level.WARNING);
+	    
+	    InputStream inStream = BrownClusters.class.getResourceAsStream(DataSourceNames.CLUSTERING_DATA);
+	    BufferedReader reader = new BufferedReader(new InputStreamReader(inStream));  
+	    StringBuilder sb = new StringBuilder();
+	    String line = null;
 	    while ((line = reader.readLine()) != null) {
 		sb.append(line);
 	    }
-	} catch (IOException ex) {
-	    Logger.getLogger(BrownClusters.class.getName()).log(Level.SEVERE, null, ex);
-	}
-	
-	Document doc = Jsoup.parse(sb.toString());
-	Element table = doc.getElementsByTag("table").get(0).child(0);
-	Elements rows = table.children();
-	
-	for (Element row : rows) {
-	    Elements contents = row.getElementsByTag("td");
-	    if (contents.size() > 0) {
-		Element valuesCell = contents.last();
-		String valuesText = valuesCell.text();
-		StringTokenizer tokens = new StringTokenizer(valuesText, " ");
-		String key = tokens.nextToken();
-		while (tokens.hasMoreTokens()) {
-		    cluster.put(tokens.nextToken(), key);  //alias all results to intended key
+
+	    Document doc = Jsoup.parse(sb.toString());
+	    Element table = doc.getElementsByTag("table").get(0).child(0);
+	    Elements rows = table.children();
+	    
+	    TreeMap<String, String> tCluster = new TreeMap<>();
+	    for (Element row : rows) {
+		Elements contents = row.getElementsByTag("td");
+		if (contents.size() > 0) {
+		    Element valuesCell = contents.last();
+		    String valuesText = valuesCell.text();
+		    StringTokenizer tokens = new StringTokenizer(valuesText, " ");
+		    String key = tokens.nextToken();
+		    tCluster.put(key, key);  //self alias
+		    while (tokens.hasMoreTokens()) {
+			String token = tokens.nextToken();
+			putWord(tCluster, key, token);
+		    }
 		}
 	    }
+	    put(tCluster);
+	} catch (IOException | SecurityException | IllegalArgumentException ex) {
+	    log.log(Level.WARNING, "Error initializing brown clusters: ", ex);
 	}
     }
     
+    private void putWord(TreeMap<String, String> tCluster, String key, String word) {
+	String token = Filter.scrub(word, Filter.TAG, Filter.APOSTRAPHE, Filter.UNDERSCORE);
+	if (token != null && !StringUtils.EMPTY.equals(token)) {
+	    if (WordNetDictionary.getInstance().areRelated(key, token)) {
+		tCluster.put(token, key);  //alias all results to intended key
+	    } 
+	}
+    }
+    
+    private void put(TreeMap<String, String> tCluster ) {
+	Collection<String> values = tCluster.values();
+	
+	for (String alias : tCluster.keySet()) {
+	    if (!values.contains(alias)) {
+		cluster.put(alias, tCluster.get(alias));
+	    }
+	}
+	
+    }
+    
+    private void list() {
+	log.log(Level.INFO, "Listing cluster mappings:");
+	for (String key : cluster.keySet()) {
+	    log.log(Level.INFO, "{0} => {1}", new Object[]{key, cluster.get(key)});
+	}
+    }
+  
 }
+ 
