@@ -1,8 +1,6 @@
 package cs492.obsecurefinal.algorithm;
 
 import cs492.obsecurefinal.common.Topic;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  *
