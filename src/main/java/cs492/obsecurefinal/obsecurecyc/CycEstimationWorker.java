@@ -53,9 +53,7 @@ public class CycEstimationWorker implements Callable<Integer> {
 
     private boolean related(String s) {
 	for (String orig : original) {
-	    System.out.println("Comparing " + orig + " and " + s);
 	    if (BrownClusters.getInstance().coPooled(orig, s) || WordNetDictionary.getInstance().areRelated(orig, s)) {
-		System.out.println(orig +  "::" + s + " GOOD");
 		return true;
 	    }
 	}

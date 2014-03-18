@@ -135,7 +135,6 @@ public class GeneralizationTest {
 	void assertContains(String target) {
 	    boolean matched = false;
 	    for (String result : generalizationResult.getResults()) {
-		System.out.println(result);
 		if (result !=  null && (result.contains(target))) {
 		    matched = true;
 		    break;
