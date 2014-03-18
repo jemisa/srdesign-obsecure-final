@@ -17,7 +17,7 @@ public class ObSecureCycStrategyFactory {
     public static CycQueryStrategy lookupStrategy(EntityTypes entityType) {
 	CycQueryStrategy strategy;
 	
-	if (EntityTypes.ORGANIZATION == entityType) {
+	if (EntityTypes.COMPANY == entityType) {
 	    strategy = new OrganizationStrategy(entityType);
 	} else if (EntityTypes.LOCATION == entityType) {
 	    strategy = new LocationStrategy(entityType);

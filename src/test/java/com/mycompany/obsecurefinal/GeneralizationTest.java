@@ -60,7 +60,7 @@ public class GeneralizationTest {
 	    }
 	};
 	List<NamedEntity> sensitiveEntities = new ArrayList<>();
-	NamedEntity occupation = new NamedEntity(sentence, null, EntityTypes.ORGANIZATION) {
+	NamedEntity occupation = new NamedEntity(sentence, null, EntityTypes.COMPANY) {
 	    @Override
 	    public String getText() {
 		return text;

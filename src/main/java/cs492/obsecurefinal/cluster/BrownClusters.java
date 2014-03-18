@@ -153,7 +153,7 @@ public class BrownClusters {
 	    
 	    TreeMap<String, String> auxCluster = new TreeMap<>();
 	    augment(auxCluster, EntityTypes.OCCUPATION);
-	    augment(auxCluster, EntityTypes.ORGANIZATION);
+	    augment(auxCluster, EntityTypes.COMPANY);
 	    augment(auxCluster, EntityTypes.LOCATION);
 	    putAuxillary(auxCluster);
 	} catch (IOException | SecurityException | IllegalArgumentException ex) {

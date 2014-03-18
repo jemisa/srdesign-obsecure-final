@@ -25,7 +25,7 @@ public class WorkplaceExtractorStrategy extends EntityExtractorStrategy
 {
     public WorkplaceExtractorStrategy(Sentence sentence)
     {
-        super(sentence, EntityTypes.ORGANIZATION);
+        super(sentence, EntityTypes.COMPANY);
     }
     
     @Override

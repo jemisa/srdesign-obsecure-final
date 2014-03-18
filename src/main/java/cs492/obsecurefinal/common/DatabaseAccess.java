@@ -28,7 +28,7 @@ public class DatabaseAccess
     
     //public static final String LOCATION = "LOCATION";
     //public static final String OCCUPATION = "OCCUPATION";
-    //public static final String WORKPLACE = "ORGANIZATION";
+    //public static final String WORKPLACE = "COMPANY";
     
     
     public DatabaseAccess()
@@ -113,7 +113,7 @@ public class DatabaseAccess
                 if(queryResults.next())
                 {
                     agent.setCharacteristic(EntityTypes.LOCATION, queryResults.getString(EntityTypes.LOCATION.toString()));
-                    agent.setCharacteristic(EntityTypes.ORGANIZATION, queryResults.getString(EntityTypes.ORGANIZATION.toString()));
+                    agent.setCharacteristic(EntityTypes.COMPANY, queryResults.getString(EntityTypes.COMPANY.toString()));
                     agent.setName(name);
                     agent.setCharacteristic(EntityTypes.OCCUPATION, queryResults.getString(EntityTypes.OCCUPATION.toString()));
                 }
@@ -138,7 +138,7 @@ public class DatabaseAccess
             {
                 String query = String.format(SAVE_PROFILE_QUERY, agent.getCharacteristic(EntityTypes.LOCATION), 
                                              agent.getCharacteristic(EntityTypes.OCCUPATION), 
-                                             agent.getCharacteristic(EntityTypes.ORGANIZATION), agent.getName());
+                                             agent.getCharacteristic(EntityTypes.COMPANY), agent.getName());
                  
                 ResultSet queryResults = stmt.executeQuery(GET_NAMES_QUERY);
             }
