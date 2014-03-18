@@ -78,19 +78,21 @@ public class SanitizationSimple extends Sanitization
                 sentencePrivacyValue.put(sentences[i], PrivacyStatus.UNKNOWN);
                 
                 // Get this sentence and the sentences surrounding it
-                String sentence = sentences[i].getText(); //BrownClusters.getInstance().clusterSentence(sentences[i].getText());
+                String sentence = BrownClusters.getInstance().clusterSentence(sentences[i].getText());
                 String nextSentence = "";
                 String prevSentence = "";
                 
                 if(i + 1 < sentences.length)
-                    nextSentence = sentences[i+1].getText(); //BrownClusters.getInstance().clusterSentence(sentences[i+1].getText());
+                    nextSentence = sentences[i+1].getText();
                 else
                     nextSentence = sentences[i].getText();
-                
+                nextSentence = BrownClusters.getInstance().clusterSentence(nextSentence);
+		
                 if(i > 0)
-                    prevSentence = sentences[i-1].getText(); //BrownClusters.getInstance().clusterSentence(sentences[i-1].getText());
+                    prevSentence = sentences[i-1].getText();
                 else
                     prevSentence = sentences[i].getText();
+		prevSentence = BrownClusters.getInstance().clusterSentence(prevSentence);
                 
                 // extract entities from the current sentence
                 EntityExtractor extractor = new EntityExtractor(sentences[i]);
