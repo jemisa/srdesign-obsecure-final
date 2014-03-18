@@ -19,7 +19,7 @@ public class NamedEntity implements Comparable
         this.sentence = sentence;
         this.entitySpan = entitySpan;
         this.type = type;
-        words = sentence != null ? sentence.getText().split(" ") : new String[]{};
+        words = sentence.getText().split(" ");
     }
     
     public EntityTypes getType()
