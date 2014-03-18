@@ -9,12 +9,14 @@ package com.mycompany.obsecurefinal;
 import cs492.obsecurefinal.common.EntityTypes;
 import cs492.obsecurefinal.common.GeneralizationResult;
 import cs492.obsecurefinal.common.NamedEntity;
+import cs492.obsecurefinal.common.Sentence;
 import cs492.obsecurefinal.generalization.GeneralizationManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import static junit.framework.Assert.assertTrue;
 import org.junit.Test;
+import org.opencyc.util.StringUtils;
 
 /**
  * OpenCyc must be running for these test cases to pass
@@ -25,8 +27,15 @@ public class GeneralizationTest {
     @Test
     public void generalizeLocation() throws Exception {
 	final String text = "Philadelphia";
+	Sentence sentence = new Sentence("",1) {
+	    @Override
+	    public String getText() {
+		return "";
+	    }
+	};
+	
 	List<NamedEntity> sensitiveEntities = new ArrayList<>();
-	NamedEntity occupation = new NamedEntity(null, null, EntityTypes.LOCATION) {
+	NamedEntity occupation = new NamedEntity(sentence, null, EntityTypes.LOCATION) {
 	    @Override
 	    public String getText() {
 		return text;
@@ -44,8 +53,14 @@ public class GeneralizationTest {
     @Test
      public void generalizeOrganization() throws Exception {
 	final String text = "Merck";
+	Sentence sentence = new Sentence("",1) {
+	    @Override
+	    public String getText() {
+		return "";
+	    }
+	};
 	List<NamedEntity> sensitiveEntities = new ArrayList<>();
-	NamedEntity occupation = new NamedEntity(null, null, EntityTypes.ORGANIZATION) {
+	NamedEntity occupation = new NamedEntity(sentence, null, EntityTypes.ORGANIZATION) {
 	    @Override
 	    public String getText() {
 		return text;
@@ -62,9 +77,15 @@ public class GeneralizationTest {
      
      @Test 
      public void generalizeOccupation() throws Exception {
+	 Sentence sentence = new Sentence("",1) {
+	    @Override
+	    public String getText() {
+		return "";
+	    }
+	};
 	List<NamedEntity> sensitiveEntities = new ArrayList<>();
 	final String systemAdministrator = "system administrator";
-	NamedEntity occupation = new NamedEntity(null, null, EntityTypes.OCCUPATION) {
+	NamedEntity occupation = new NamedEntity(sentence, null, EntityTypes.OCCUPATION) {
 	    @Override
 	    public String getText() {
 		return systemAdministrator;
@@ -81,9 +102,15 @@ public class GeneralizationTest {
      
      @Test
      public void generalizeKnownArtifact() throws Exception {
+	 Sentence sentence = new Sentence("",1) {
+	    @Override
+	    public String getText() {
+		return "";
+	    }
+	};
 	List<NamedEntity> sensitiveEntities = new ArrayList<>();
 	final String libertyBell = "Liberty Bell";
-	NamedEntity artifact = new NamedEntity(null, null, EntityTypes.LOCATION) {
+	NamedEntity artifact = new NamedEntity(sentence, null, EntityTypes.LOCATION) {
 	    @Override
 	    public String getText() {
 		return libertyBell;
