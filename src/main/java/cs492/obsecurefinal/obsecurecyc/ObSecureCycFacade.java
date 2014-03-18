@@ -53,7 +53,8 @@ public class ObSecureCycFacade implements GeneralizationFacade {
 	    EntityTypes type = entity.getType();
 	    CycQueryStrategy strategy = ObSecureCycStrategyFactory.lookupStrategy(type);
 	    try {
-		List<String> results = new CycQuery(strategy,cycAccess).execute(entity.getText());
+		WordBall wordBall = new WordBall(entity.getText());  //encapsulate word metamorphis
+		List<String> results = new CycQuery(strategy,cycAccess).execute(wordBall);
 		for (Iterator<String> it = results.iterator(); it.hasNext();) {
 		    result.add(it.next());
 		}

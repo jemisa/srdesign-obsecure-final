@@ -39,7 +39,7 @@ public class CycQueryBuilder {
     }
     
     protected static enum QueryType {
-	BROADER("broaderTerm"),PRETTY("prettyString"),PRETTY_CANONICAL("prettyString-Canonical");
+	BROADER("broaderTerm"),PRETTY("prettyString"),PRETTY_CANONICAL("prettyString-Canonical"),ISA("isa");
 	
 	private final String query;
 	

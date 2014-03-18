@@ -50,7 +50,7 @@ public class DictionaryTest  {
     public void synonym() throws Exception {
 	WordNetDictionary dictionary = WordNetDictionary.getInstance();
         final String word = "visited";
-	final String nonSynonym = "travelled"; 
-	assertTrue(dictionary.areRelated(word, nonSynonym));
+	final String synonym = "travelled"; 
+	assertTrue(dictionary.areRelated(word, synonym));
     }
 }

@@ -30,8 +30,9 @@ public class CycQuery {
 	this.cycAccess = cycAccess;
     }
     
-    public List<String> execute(String text) throws IOException {
-	CycList cycList = strategy.exec(cycAccess, text);
+    public List<String> execute(WordBall wordBall) throws IOException {
+	
+	CycList cycList = strategy.delegate(cycAccess, wordBall);
 	List<String> results = new ArrayList<>();
 	CycVariable variable = CycQueryBuilder.makeVariable();
 	for (Iterator it = cycList.iterator(); it.hasNext();) {

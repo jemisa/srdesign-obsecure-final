@@ -50,7 +50,7 @@ public class GeneralizationManager {
  
     
     private static enum GeneralizationMethod {
-	CYC(EntityTypes.LOCATION, EntityTypes.OCCUPATION, EntityTypes.COMPANY, EntityTypes.MEDICAL) {
+	CYC(EntityTypes.LOCATION, EntityTypes.OCCUPATION, EntityTypes.ORGANIZATION, EntityTypes.MEDICAL) {
 	    @Override
 	    GeneralizationFacade getFacade() throws Exception {
 		return ObSecureCycFacade.getInstance();

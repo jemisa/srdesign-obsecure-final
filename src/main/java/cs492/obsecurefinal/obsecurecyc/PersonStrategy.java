@@ -6,10 +6,12 @@
 
 package cs492.obsecurefinal.obsecurecyc;
 
+import cs492.obsecurefinal.common.EntityTypes;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import org.opencyc.api.CycAccess;
 import org.opencyc.cycobject.CycList;
+import org.opencyc.cycobject.CycObject;
 
 /**
  *
@@ -17,8 +19,19 @@ import org.opencyc.cycobject.CycList;
  */
 public class PersonStrategy extends CycQueryStrategy {
 
+    public PersonStrategy(EntityTypes type) {
+	super(type);
+    }
+
     @Override
-    public CycList exec(CycAccess cycAccess, String text) throws UnknownHostException, IOException {
-	return cycAccess.getGenls(getAllCycConstantsContainingText(cycAccess, text));
+    public CycList exec(final CycAccess cycAccess, CycList constants) throws UnknownHostException, IOException {
+	CycQueryExecutor executor = new CycQueryExecutor() {
+	    @Override
+	    public CycList loop(CycObject cycObject) throws UnknownHostException, IOException {
+		return cycAccess.getGenls(cycObject);
+	    }
+	};
+	
+	return executor.execute(constants);
     }
 }

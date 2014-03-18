@@ -45,7 +45,7 @@ public class GeneralizationTest {
      public void generalizeOrganization() throws Exception {
 	final String text = "Merck";
 	List<NamedEntity> sensitiveEntities = new ArrayList<>();
-	NamedEntity occupation = new NamedEntity(null, null, EntityTypes.COMPANY) {
+	NamedEntity occupation = new NamedEntity(null, null, EntityTypes.ORGANIZATION) {
 	    @Override
 	    public String getText() {
 		return text;
@@ -60,7 +60,7 @@ public class GeneralizationTest {
 	}
     }
      
-     @Test //FIXME: when we get the strategy we should reenable this
+     @Test 
      public void generalizeOccupation() throws Exception {
 	List<NamedEntity> sensitiveEntities = new ArrayList<>();
 	final String systemAdministrator = "system administrator";
@@ -79,6 +79,25 @@ public class GeneralizationTest {
 	}
     }
      
+     @Test
+     public void generalizeKnownArtifact() throws Exception {
+	List<NamedEntity> sensitiveEntities = new ArrayList<>();
+	final String libertyBell = "Liberty Bell";
+	NamedEntity artifact = new NamedEntity(null, null, EntityTypes.LOCATION) {
+	    @Override
+	    public String getText() {
+		return libertyBell;
+	    }
+	};
+	sensitiveEntities.add(artifact);
+	
+	Map<NamedEntity, GeneralizationResult> res = GeneralizationManager.generalize(sensitiveEntities);
+	for (NamedEntity entity : res.keySet()) {
+	    GeneralizationResult result = res.get(entity);
+	    new GeneralizationAsserter(result).assertContains("place");
+	}
+     }
+     
     private static class GeneralizationAsserter {
 	private final GeneralizationResult generalizationResult;
 	
@@ -89,7 +108,8 @@ public class GeneralizationTest {
 	void assertContains(String target) {
 	    boolean matched = false;
 	    for (String result : generalizationResult.getResults()) {
-		if (result !=  null && result.contains(target)) {
+		System.out.println(result);
+		if (result !=  null && (result.contains(target))) {
 		    matched = true;
 		    break;
 		}

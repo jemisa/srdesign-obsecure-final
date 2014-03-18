@@ -21,7 +21,7 @@ import cs492.obsecurefinal.cluster.BrownClusters;
 import static junit.framework.Assert.assertEquals;
 
 import static junit.framework.Assert.assertEquals;
-import org.junit.Ignore;
+import static junit.framework.Assert.assertTrue;
 import org.junit.Test;
 
 /**
@@ -74,6 +74,36 @@ public class BrownClusterTest {
 	
 	String clusteredSentence = cluster.clusterSentence(initial);
 	assertEquals(initial, clusteredSentence);
+    }
+    
+    @Test
+    public void coPoolSameCaseTest() throws Exception {
+	BrownClusters cluster = BrownClusters.getInstance();
+	final String initial = "location";
+	final String replacement = "place";
+	
+	boolean coPooled = cluster.coPooled(initial, replacement);
+	assertTrue(initial, coPooled);
+    }
+    
+    @Test
+    public void coPoolDiffCaseTest() throws Exception {
+	BrownClusters cluster = BrownClusters.getInstance();
+	final String initial = "location";
+	final String replacement = "Place";
+	
+	boolean coPooled = cluster.coPooled(initial, replacement);
+	assertTrue(initial, coPooled);
+    }
+    
+    @Test
+    public void coPoolTest() throws Exception {
+	BrownClusters cluster = BrownClusters.getInstance();
+	final String initial = "location";
+	final String replacement = "site";
+	
+	boolean coPooled = cluster.coPooled(initial, replacement);
+	assertTrue(initial, coPooled);
     }
     
 }

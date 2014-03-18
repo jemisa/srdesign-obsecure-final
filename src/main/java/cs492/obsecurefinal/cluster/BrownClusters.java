@@ -18,10 +18,17 @@
 package cs492.obsecurefinal.cluster;
 
 import cs492.obsecurefinal.common.DataSourceNames;
+import cs492.obsecurefinal.common.EntityTypes;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
@@ -32,6 +39,8 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.io.Charsets;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -47,7 +56,8 @@ public class BrownClusters {
     
     private static final BrownClusters instance = new BrownClusters();
         
-    private final TreeMap<String, String> cluster = new TreeMap<>();
+    private final TreeMap<String, String> primaryCluster = new TreeMap<>();
+    private final TreeMap<String, String> auxillaryClusters = new TreeMap<>();
     
     private BrownClusters() {
 	//singleton
@@ -58,11 +68,28 @@ public class BrownClusters {
 	return instance;
     }
     
+    public boolean coPooled(String word, String word2) {
+	boolean coPooled = checkCoPool(auxillaryClusters, word, word2);
+	if (!coPooled) {
+	    coPooled = checkCoPool(primaryCluster, word, word2);
+	}
+	if (coPooled) {
+	    log.log(Level.FINE, "(coPooled  {0} {1}) : {2}", new Object[]{word, word2, coPooled});
+	}
+	return coPooled;
+    }
+    
+    private boolean checkCoPool(TreeMap<String, String> cluster, String word, String word2) {
+	String aliasA = cluster.get(word);
+	String aliasB = cluster.get(word2);
+	return ((aliasA != null) && (aliasB != null) && (aliasA.equals(aliasB)));
+    }
+    
     public String cluster(String word) {
 	if (word.contains(" ")) {
 	    return clusterSentence(word);
 	}
-	return cluster.get(word);
+	return primaryCluster.get(word);
     }
     
     public String clusterSentence(String sentence) {
@@ -91,7 +118,7 @@ public class BrownClusters {
 	Handler handler;
 	try {
 	    handler = new FileHandler("BrownCluster.log");
-	     handler.setFormatter(new SimpleFormatter());
+	    handler.setFormatter(new SimpleFormatter());
 	    log.addHandler(handler);
 	    log.setLevel(Level.WARNING);
 	    
@@ -123,11 +150,52 @@ public class BrownClusters {
 		}
 	    }
 	    put(tCluster);
+	    
+	    TreeMap<String, String> auxCluster = new TreeMap<>();
+	    augment(auxCluster, EntityTypes.OCCUPATION);
+	    augment(auxCluster, EntityTypes.ORGANIZATION);
+	    augment(auxCluster, EntityTypes.LOCATION);
+	    putAuxillary(auxCluster);
 	} catch (IOException | SecurityException | IllegalArgumentException ex) {
 	    log.log(Level.WARNING, "Error initializing brown clusters: ", ex);
 	}
     }
     
+    private void addend(TreeMap<String, String> tCluster, String alias, String pool) {
+	String properAlias = StringUtils.capitalize(alias);
+	tCluster.put(alias, pool);
+	tCluster.put(properAlias, pool);
+    }
+    
+    private void augment(TreeMap<String, String> tCluster, EntityTypes type) {
+	String name = type.name().toLowerCase();
+	
+	if (tCluster.containsKey(name)) {
+	    tCluster.remove(name);
+	}
+	addend(tCluster, name, name); //self-alias
+
+	String filename = String.format("src/main/resources/%s.csv", name);
+	Charset charset = Charsets.UTF_8;
+	try (BufferedReader reader = Files.newBufferedReader(getFilePath(filename), charset)) {
+		String line;
+		while ((line = reader.readLine()) != null) {
+		    StringTokenizer tokenz = new StringTokenizer(line, ",");
+		    
+		    while (tokenz.hasMoreTokens()) {
+			String tok = tokenz.nextToken().trim();
+			if (!tCluster.containsKey(tok)) {
+			    addend(tCluster, tok, name);
+			}
+		    }
+		}
+
+	} catch (IOException ex) {
+	    log.log(Level.WARNING, "Error augmenting brown clusters: ", ex);
+	}
+	
+    }
+     
     private void putWord(TreeMap<String, String> tCluster, String key, String word) {
 	String token = Filter.scrub(word, Filter.TAG, Filter.APOSTRAPHE, Filter.UNDERSCORE);
 	if (token != null && !StringUtils.EMPTY.equals(token)) {
@@ -142,17 +210,26 @@ public class BrownClusters {
 	
 	for (String alias : tCluster.keySet()) {
 	    if (!values.contains(alias)) {
-		cluster.put(alias, tCluster.get(alias));
+		primaryCluster.put(alias, tCluster.get(alias));
 	    }
 	}
-	
+    }
+    
+    private void putAuxillary(TreeMap<String, String> auxCluster) {
+	auxillaryClusters.putAll(auxCluster);
     }
     
     private void list() {
 	log.log(Level.INFO, "Listing cluster mappings:");
-	for (String key : cluster.keySet()) {
-	    log.log(Level.INFO, "{0} => {1}", new Object[]{key, cluster.get(key)});
+	for (String key : primaryCluster.keySet()) {
+	    log.log(Level.INFO, "{0} => {1}", new Object[]{key, primaryCluster.get(key)});
 	}
+    }
+    
+     private static Path getFilePath(String name) {
+            //convert separators to Windows/Unix format depending on host system
+        String systemPath = FilenameUtils.separatorsToSystem(name);
+	return FileSystems.getDefault().getPath(systemPath, StringUtils.EMPTY);
     }
   
 }

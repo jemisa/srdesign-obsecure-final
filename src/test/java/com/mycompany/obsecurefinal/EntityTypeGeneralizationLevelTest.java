@@ -39,7 +39,7 @@ public class EntityTypeGeneralizationLevelTest {
 	final int expectedPersonalAttacksLevel=EntityTypes.DEFAULT_LEVEL;
 	final int expectedSterotypingLevel=EntityTypes.DEFAULT_LEVEL;
 		
-	assertEquals(expectedCompanyLevel,EntityTypes.COMPANY.getGeneralizationLevel());
+	assertEquals(expectedCompanyLevel,EntityTypes.ORGANIZATION.getGeneralizationLevel());
 	assertEquals(expectedOccupationLevel,EntityTypes.OCCUPATION.getGeneralizationLevel());
 	assertEquals(expectedDrugAlcoholLevel,EntityTypes.DRUG_ALCOHOL.getGeneralizationLevel());
 	assertEquals(expectedEmotionLevel,EntityTypes.EMOTION.getGeneralizationLevel());

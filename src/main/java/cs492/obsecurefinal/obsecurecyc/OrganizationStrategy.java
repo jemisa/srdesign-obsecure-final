@@ -6,10 +6,10 @@
 
 package cs492.obsecurefinal.obsecurecyc;
 
+import cs492.obsecurefinal.common.EntityTypes;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import org.opencyc.api.CycAccess;
-import org.opencyc.cycobject.CycConstant;
 import org.opencyc.cycobject.CycList;
 import org.opencyc.cycobject.CycObject;
 
@@ -18,15 +18,26 @@ import org.opencyc.cycobject.CycObject;
  * @author Ben
  */
 public class OrganizationStrategy extends CycQueryStrategy {
-
+    
+    OrganizationStrategy(EntityTypes type) {
+	super(type);
+    }
+    
     @Override
-    public CycList exec(CycAccess cycAccess, String text) throws UnknownHostException, IOException {
-	CycList constants = getAllCycConstantsWithPrefix(cycAccess, text);
-	CycObject cycObject = (CycObject) constants.get(0);
+    public CycList exec(final CycAccess cycAccess, CycList constants) throws UnknownHostException, IOException {
+	CycQueryExecutor executor = new CycQueryExecutor() {
+	    @Override
+	    public CycList loop(CycObject cycObject) throws UnknownHostException, IOException {
+		return cycAccess.getIsas(cycObject);
+	    }
+	    
+   	    @Override
+	    public CycList filter(CycList input) throws IOException {
+		return CycFilter.filter(cycAccess, input, CycFilter.INDIVIDUAL);
+	    }
+	};
 	
-	CycList isAs = cycAccess.getIsas(cycObject);
-	CycConstant  individual = cycAccess.getKnownConstantByName("Individual");
-	filter(isAs, individual);
-	return isAs;
+	CycList result = executor.execute(constants);
+	return result;
     }
 }

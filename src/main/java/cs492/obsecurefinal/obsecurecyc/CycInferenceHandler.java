@@ -17,34 +17,17 @@
 
 package cs492.obsecurefinal.obsecurecyc;
 
-import cs492.obsecurefinal.common.EntityTypes;
-import java.io.IOException;
-import java.net.UnknownHostException;
-import org.opencyc.api.CycAccess;
-import org.opencyc.cycobject.CycList;
-import org.opencyc.cycobject.CycObject;
+import java.util.Set;
 
 /**
  *
  * @author Benjamin Arnold
  */
-public class MedicalStrategy extends CycQueryStrategy {
-
-    public MedicalStrategy(EntityTypes type) {
-	super(type);
-    }
+public class CycInferenceHandler implements CycResultHandler {
 
     @Override
-    public CycList exec(final CycAccess cycAccess, CycList constants) throws UnknownHostException, IOException {
-	CycQueryExecutor executor = new CycQueryExecutor() {
-	    @Override
-	    public CycList loop(CycObject cycObject) throws UnknownHostException, IOException {
-		return cycAccess.getGenls(cycObject);
-	    }
-	};
-	CycList generalizations = executor.execute(constants);
-		
-	return generalizations;
+    public Set<String> handle(Object o) {
+	throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

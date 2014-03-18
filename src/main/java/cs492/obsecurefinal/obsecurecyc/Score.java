@@ -17,34 +17,50 @@
 
 package cs492.obsecurefinal.obsecurecyc;
 
-import cs492.obsecurefinal.common.EntityTypes;
-import java.io.IOException;
-import java.net.UnknownHostException;
-import org.opencyc.api.CycAccess;
-import org.opencyc.cycobject.CycList;
-import org.opencyc.cycobject.CycObject;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author Benjamin Arnold
  */
-public class MedicalStrategy extends CycQueryStrategy {
-
-    public MedicalStrategy(EntityTypes type) {
-	super(type);
+class Score implements Comparable {
+    private Double score;
+    private final List<Integer> scores = new ArrayList<>();
+    
+    Score(int bias) {
+	scores.add(bias);
+	score();
+    }	
+    
+    Score() {
+	this(0);
+    }
+    
+    synchronized void success() {
+	scores.add(1);
+	score();
+    }
+    
+    synchronized void fail() {
+	scores.add(0);
+	score();
+    }
+    
+    private void score() {
+	int val = 0;
+	for (Integer i : scores) {
+	    val += i;
+	}
+	score = val / (scores.size()*-1.0);  //negative puts biggest scores first in map
     }
 
     @Override
-    public CycList exec(final CycAccess cycAccess, CycList constants) throws UnknownHostException, IOException {
-	CycQueryExecutor executor = new CycQueryExecutor() {
-	    @Override
-	    public CycList loop(CycObject cycObject) throws UnknownHostException, IOException {
-		return cycAccess.getGenls(cycObject);
-	    }
-	};
-	CycList generalizations = executor.execute(constants);
-		
-	return generalizations;
+    public int compareTo(Object o) {
+	return (o instanceof Score) ? score.compareTo(((Score) o).score) : 1;
+	
     }
+    
+    
     
 }

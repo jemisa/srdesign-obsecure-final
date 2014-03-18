@@ -13,20 +13,20 @@ import cs492.obsecurefinal.common.EntityTypes;
  * @author Ben
  */
 public class ObSecureCycStrategyFactory {
-      
+    
     public static CycQueryStrategy lookupStrategy(EntityTypes entityType) {
-	CycQueryStrategy strategy = null;
+	CycQueryStrategy strategy;
 	
-	if (EntityTypes.COMPANY == entityType) {
-	    strategy = new OrganizationStrategy();
+	if (EntityTypes.ORGANIZATION == entityType) {
+	    strategy = new OrganizationStrategy(entityType);
 	} else if (EntityTypes.LOCATION == entityType) {
-	    strategy = new LocationStrategy();
+	    strategy = new LocationStrategy(entityType);
 	} else if (EntityTypes.OCCUPATION == entityType) {
-	    strategy = new OccupationStrategy();
+	    strategy = new OccupationStrategy(entityType);
 	} else if (EntityTypes.MEDICAL == entityType) {
-	    strategy = new MedicalStrategy();
+	    strategy = new MedicalStrategy(entityType);
 	} else {
-	    strategy = new PersonStrategy();
+	    strategy = new PersonStrategy(entityType);
 	}
 	
 	return strategy;
