@@ -58,7 +58,9 @@ public class TopicBuilder
 			while(ln != null)
 			{
 				if(ln.equals("THISISTHETOPICTERMINATORIHOPETHISISNEVERUSEDASAWORD"))
-				numTopics++;
+					numTopics++;
+				
+				ln = in.readLine();
 			}
 			
 			in.close();
@@ -320,13 +322,15 @@ public class TopicBuilder
 		// Extra considerations for backup
 		try
 		{
-			return ParallelTopicModel.read(new File(file + ".bak"));
+			database = ParallelTopicModel.read(new File(file + ".bak"));
 		}
 		catch(Exception e)
 		{
 			System.err.println("Error reading database file backup");
 			return null;
 		}
+		
+		return database;
 	}
         
     // Added this to be able to customize iterations -Mike
