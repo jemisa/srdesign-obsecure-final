@@ -90,11 +90,6 @@
 	<artifactId>opencsv</artifactId>
 	<version>2.3</version>
     </dependency>
-    <dependency>
-      <groupId>Opencyc</groupId>
-      <artifactId>OpenCyc</artifactId>
-      <version>4.0.140336</version>
-    </dependency>
   </dependencies>
   <reporting>
     <plugins>
