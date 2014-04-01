@@ -149,9 +149,9 @@ public abstract class CycQueryStrategy {
 		    CycList subList = (CycList) entry;
 		    for (Object o: subList) {
 			String name = o.toString();
-			if (name != null && !(name.contains("Collection") || name.contains("collection") || name.contains("___"))) {
+//			if (name != null && !(name.contains("Collection") || name.contains("collection") || name.contains("___"))) {
 			    values.add(name);
-			}
+//			}
 		    }
 		} else {
 		    String name = StringUtils.uncapitalize(entry.toString());

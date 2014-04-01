@@ -113,7 +113,7 @@ public class CycEstimator {
 	
 	for (Iterator<Integer> it = vals.iterator(); it.hasNext();) {
 	    Integer score = it.next();
-	    if (score >= MATCH_SCORE) {
+	    if (score >= MATCH_SCORE || vals.size() < 10) {
 		CycList list = sortedValues.get(score);
 		if (list != null) {
 		    result.addAll(list);
