@@ -24,7 +24,7 @@ public class EntityExtractor
         allStrats = new Vector<EntityExtractorStrategy>();
         allStrats.add(new LocationExtractorStrategy(sentence));
         allStrats.add(new WorkplaceExtractorStrategy(sentence));
-        allStrats.add(new OccupationExtractorStrategy(sentence));
+        //allStrats.add(new OccupationExtractorStrategy(sentence));
     }
     
     // For each strategy, get all entities that match it and return all of them together
