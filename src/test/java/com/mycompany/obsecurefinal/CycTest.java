@@ -19,6 +19,10 @@ package com.mycompany.obsecurefinal;
 
 import cs492.obsecurefinal.common.EntityTypes;
 import cs492.obsecurefinal.obsecurecyc.LocationStrategy;
+import cs492.obsecurefinal.obsecurecyc.MedicalStrategy;
+import cs492.obsecurefinal.obsecurecyc.OccupationStrategy;
+import cs492.obsecurefinal.obsecurecyc.OrganizationStrategy;
+import cs492.obsecurefinal.obsecurecyc.PersonStrategy;
 import java.io.IOException;
 import static junit.framework.Assert.*;
 import org.junit.Test;
@@ -40,5 +44,42 @@ public class CycTest
         LocationStrategy query = new LocationStrategy(type);
         CycList list = query.exec(CycAccess.sharedCycAccessInstance, CycList.EMPTY_CYC_LIST);
         assertTrue(list.isEmpty());
+        
+    }
+    
+    @Test
+    public void MedicalTest() throws IOException
+    {
+        MedicalStrategy query = new MedicalStrategy(type);
+        CycList list = query.exec(CycAccess.sharedCycAccessInstance, CycList.EMPTY_CYC_LIST);
+        assertTrue(list.isEmpty());
+        
+    }
+    
+    @Test
+    public void OccupationTest() throws IOException
+    {
+        OccupationStrategy query = new OccupationStrategy(type);
+        CycList list = query.exec(CycAccess.sharedCycAccessInstance, CycList.EMPTY_CYC_LIST);
+        assertTrue(list.isEmpty());
+        
+    }
+    
+    @Test
+    public void OrganizationTest() throws IOException
+    {
+        OrganizationStrategy query = new OrganizationStrategy(type);
+        CycList list = query.exec(CycAccess.sharedCycAccessInstance, CycList.EMPTY_CYC_LIST);
+        assertTrue(list.isEmpty());
+        
+    }
+    
+    @Test
+    public void PersonTest() throws IOException
+    {
+        PersonStrategy query = new PersonStrategy(type);
+        CycList list = query.exec(CycAccess.sharedCycAccessInstance, CycList.EMPTY_CYC_LIST);
+        assertTrue(list.isEmpty());
+        
     }
 }
