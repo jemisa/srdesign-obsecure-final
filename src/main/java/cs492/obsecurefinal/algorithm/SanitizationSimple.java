@@ -38,8 +38,8 @@ public class SanitizationSimple extends Sanitization
     public static final double EQUALITY_THRESHOLD = 0.5;
     public static final int MAX_WINDOW = 3;
     public static final int MIN_WINDOW = 2;
-    public static final int MIN_LENGTH_FOR_MODELLING = 100;
-    public static final int SS_MIN_LENGTH_FOR_MODELLING = 25;
+    public static final int MIN_LENGTH_FOR_MODELLING = 500;
+    public static final int SS_MIN_LENGTH_FOR_MODELLING = 100;
     
     Document doc;
     Agent profile;
@@ -266,7 +266,7 @@ public class SanitizationSimple extends Sanitization
                 {
                     Debug.println("Manual check of sentence \"" + sentences[i].getText() + "\"");
                     
-                    if(sentences[i].getText().length() > SS_MIN_LENGTH_FOR_MODELLING && checkSentenceTopicMatch(sentences[i], profileInferences, ident))
+                    if(sentences[i].getText().length() >= SS_MIN_LENGTH_FOR_MODELLING && checkSentenceTopicMatch(sentences[i], profileInferences, ident))
                     {
                         Debug.println("Found private data via topic matching");
                         SanitizationHint hint = new HintNoReplacements(sentences[i], 1);
