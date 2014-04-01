@@ -3,10 +3,12 @@ package cs492.obsecurefinal;
 import cc.mallet.topics.ParallelTopicModel;
 import cs492.obsecurefinal.algorithm.SanitizationSimple;
 import cs492.obsecurefinal.builder.InferenceBuilder;
+import cs492.obsecurefinal.builder.NGramBuilder;
 import cs492.obsecurefinal.builder.TopicBuilder;
 import cs492.obsecurefinal.common.Agent;
 import cs492.obsecurefinal.common.DataSourceNames;
 import cs492.obsecurefinal.common.DatabaseAccess;
+import cs492.obsecurefinal.common.Debug;
 import cs492.obsecurefinal.common.Document;
 import cs492.obsecurefinal.common.EntityTypes;
 import cs492.obsecurefinal.common.GeneralizationResult;
@@ -212,6 +214,45 @@ public class App
 		 }
 	     }  
 	}
+        else if (args.length > 0 && args[0].equals("-ngrams"))
+        {
+            if(args.length == 3)
+            {
+                try
+                {
+                    File inputFile = new File(args[1]);
+                    if(inputFile.exists() && inputFile.canRead())
+                    {
+                        BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+
+                        String text = "";
+                        
+                        String line = reader.readLine();
+                        while(line != null)
+                        {
+                            text += line + " ";
+                            line = reader.readLine();
+                        }
+                     
+                        reader.close();
+                        
+                        Debug.println("Creating ngrams from source document");
+                        
+                        Document d = new Document(text);
+                        
+                        NGramBuilder builder = new NGramBuilder();
+                        builder.CreateNGrams(d.getSentences(), args[2], 3);
+
+                    }
+                }
+                catch(Exception ex)
+                {
+                    ex.printStackTrace(System.out);
+                }  
+            }
+            else
+                System.out.println("-ngrams <input file> <output file>");
+        }
         else
         {
             // launch gui

@@ -47,6 +47,7 @@ public class NGramBuilder
         
     }
     
+    // Loads a map of ngrams and their weight from a file
     // name is the name of a file containing extracted n-grams
     public HashMap<String, Integer> LoadNGrams(String name)
     {
@@ -62,11 +63,13 @@ public class NGramBuilder
                 String line = reader.readLine();
                 while(line != null)
                 {
-                    String[] ngrams = line.split("|");
+                    // ngrams seperated by vertical bar
+                    String[] ngrams = line.split(":");
                     
                     for(String ngram: ngrams)
                     {
-                        String[] parts = ngram.split(":");
+                        // weight and text separated by colon
+                        String[] parts = ngram.split(",");
                         
                         String ngramText = parts[0];
                         int ngramCount = Integer.parseInt(parts[1]);
@@ -81,11 +84,13 @@ public class NGramBuilder
         catch(Exception ex)
         {
             ex.printStackTrace(System.out);
+            return nGramCount;
         }
         
         return nGramCount;
     }
     
+    // extracts ngrams from a set of sentences
     // text is the text to extract n-grams from
     // name is the name of the file to save results to
     public void CreateNGrams(Sentence[] sentences, String name, int maxSize)
@@ -94,18 +99,24 @@ public class NGramBuilder
         
         for(Sentence s: sentences)
         {       
+            // remove punctuation from sentence
             String sentenceNoPunct = s.getText().replaceAll("\\p{Punct}", "");
             
             WordNGramExtractor extractor = new WordNGramExtractor(sentenceNoPunct);
-            HashMap<String, Integer> nGramsForSentence = extractor.getAllNGramDistributions(maxSize);
             
-            for(String key: nGramsForSentence.keySet())
+            // collect ngrams for each size less than the max size
+            for(int size = 0; size < maxSize; size++)
             {
-                nGramCount.put(key, (nGramCount.get(key) == null ? 0 : nGramCount.get(key)) + 1);
+                HashMap<String, Integer> nGramsForSentence = extractor.getAllNGramDistributions(size + 1);
+
+                for(String key: nGramsForSentence.keySet())
+                {
+                    nGramCount.put(key, (nGramCount.get(key) == null ? 0 : nGramCount.get(key)) + nGramsForSentence.get(key));
+                }
             }
         }
         
-        sortByValues(nGramCount);
+        Map<String, Integer> sortedMap = sortByValues(nGramCount);
         
         try
         {
@@ -113,14 +124,14 @@ public class NGramBuilder
             BufferedWriter writer = new BufferedWriter(new FileWriter(f));
 
             int i = 0;
-            for(String ngram: nGramCount.keySet())
+            for(String ngram: sortedMap.keySet())
             {
                 if(i < COUNT_NGRAMS)
                 {
                     if(i > 0)
-                        writer.write("|");
+                        writer.write(":");
 
-                    writer.write(ngram + ":" + nGramCount.get(ngram));
+                    writer.write(ngram + "," + sortedMap.get(ngram));
 
                     i++;
                 }
@@ -138,19 +149,19 @@ public class NGramBuilder
     
     public static <K extends Comparable,V extends Comparable> Map<K,V> sortByValues(Map<K,V> map)
     {
-        List<Map.Entry<K,V>> entries = new LinkedList<Map.Entry<K,V>>(map.entrySet());
+        List<Map.Entry<K,V>> entries = new LinkedList<>(map.entrySet());
      
         Collections.sort(entries, new Comparator<Map.Entry<K,V>>() {
 
             @Override
             public int compare(Entry<K, V> o1, Entry<K, V> o2) {
-                return o1.getValue().compareTo(o2.getValue());
+                return o2.getValue().compareTo(o1.getValue());
             }
         });
      
         //LinkedHashMap will keep the keys in the order they are inserted
         //which is currently sorted on natural ordering
-        Map<K,V> sortedMap = new LinkedHashMap<K,V>();
+        Map<K,V> sortedMap = new LinkedHashMap<>();
      
         for(Map.Entry<K,V> entry: entries){
             sortedMap.put(entry.getKey(), entry.getValue());

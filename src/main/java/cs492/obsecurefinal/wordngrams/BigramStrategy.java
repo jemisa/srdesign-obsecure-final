@@ -34,7 +34,7 @@ public class BigramStrategy extends NGramStrategy
        {
            for(int i = 0; i < words.length-1; i++)
            {
-               String bigram = words[i] + words[i+1];
+               String bigram = words[i] + " " + words[i+1];
                
                if(distribution.containsKey(bigram))
                     distribution.put(bigram, distribution.get(bigram) + 1);
