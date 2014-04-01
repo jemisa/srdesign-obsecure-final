@@ -26,8 +26,24 @@ public class TrigramStrategy extends NGramStrategy
 {
 
     @Override
-    public HashMap<String, Integer> getNGramDistribution(String sentence) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public HashMap<String, Integer> getNGramDistribution(String sentence) 
+    {
+       String[] words = sentence.split(" ");
+       
+       if(words.length > 3)
+       {
+           for(int i = 0; i < words.length-2; i++)
+           {
+               String trigram = words[i] + words[i+1] + words[i+2];
+               
+               if(distribution.containsKey(trigram))
+                    distribution.put(trigram, distribution.get(trigram) + 1);
+               else
+                   distribution.put(trigram, 1);
+           }
+       }
+       
+       return distribution;
     }
     
 }

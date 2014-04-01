@@ -34,9 +34,9 @@ public class InferenceBuilder
         this.model = model;
     }
     
-    // s is string to build the inference from, 
+    // text is string to build the inference from, 
     // name is the name of the saved inference
-    public void saveInference(String s, String name)
+    public void saveInference(String text, String name)
     {
         TopicIdentifier ident;
         
@@ -45,7 +45,7 @@ public class InferenceBuilder
         else
             ident = new TopicIdentifier(model);
         
-        Topic[] topics = ident.readFromStrings(new String[] {s});
+        Topic[] topics = ident.readFromStrings(new String[] {text});
         
         try
         {

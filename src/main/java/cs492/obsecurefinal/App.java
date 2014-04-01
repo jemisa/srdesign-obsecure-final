@@ -91,7 +91,7 @@ public class App
                     System.out.println("An error occured in the sanitization process");
             }
         }
-        else if (args.length > 0 && args[0].equals("-builder"))
+        else if (args.length > 0 && (args[0].equals("-builder") || args[0].equals("-bob")))
         {
             if(args.length == 4)
             {
@@ -119,9 +119,7 @@ public class App
             if(args.length == 3)
             {
                  // TODO: REMOVE
-                TopicBuilder tb = new TopicBuilder(100);
-                tb.setIterations(50);
-                tb.loadRaw("modelFiles");
+                TopicBuilder tb = new TopicBuilder(DataSourceNames.MASTER_MODEL);
                 ParallelTopicModel model = tb.getModel();        
                 // END REMOVE   
                 
