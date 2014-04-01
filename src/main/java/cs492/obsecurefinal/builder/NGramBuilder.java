@@ -105,7 +105,7 @@ public class NGramBuilder
             }
         }
         
-        sortByValues(nGramCount);
+        Map<String, Integer> sortedMap = sortByValues(nGramCount);
         
         try
         {
@@ -113,14 +113,14 @@ public class NGramBuilder
             BufferedWriter writer = new BufferedWriter(new FileWriter(f));
 
             int i = 0;
-            for(String ngram: nGramCount.keySet())
+            for(String ngram: sortedMap.keySet())
             {
                 if(i < COUNT_NGRAMS)
                 {
                     if(i > 0)
                         writer.write("|");
 
-                    writer.write(ngram + ":" + nGramCount.get(ngram));
+                    writer.write(ngram + ":" + sortedMap.get(ngram));
 
                     i++;
                 }
