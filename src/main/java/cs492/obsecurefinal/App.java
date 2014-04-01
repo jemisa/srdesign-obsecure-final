@@ -8,20 +8,29 @@ import cs492.obsecurefinal.common.Agent;
 import cs492.obsecurefinal.common.DataSourceNames;
 import cs492.obsecurefinal.common.DatabaseAccess;
 import cs492.obsecurefinal.common.Document;
+import cs492.obsecurefinal.common.EntityTypes;
+import cs492.obsecurefinal.common.GeneralizationResult;
 import cs492.obsecurefinal.common.HintNoReplacements;
 import cs492.obsecurefinal.common.HintWithReplacements;
+import cs492.obsecurefinal.common.NamedEntity;
 import cs492.obsecurefinal.common.SanitizationHint;
 import cs492.obsecurefinal.common.SanitizationResult;
+import cs492.obsecurefinal.common.Sentence;
+import cs492.obsecurefinal.generalization.GeneralizationManager;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
+import org.apache.commons.lang3.math.NumberUtils;
 
 public class App 
 {
     // Console interface for sanitization prototype
-    public static void main( String[] args )
+    public static void main( String[] args ) throws Exception
     {
         if(args.length > 0 && args[0].equals("-text"))
         {
@@ -159,7 +168,50 @@ public class App
             {
                 System.out.println("-inference <input file> <output file>");
             }
-        }
+        }  else if (args.length > 0 && args[0].equals("-generalize"))
+	{
+	    System.out.print("Enter text to generalize:");    
+	    Scanner scan = new Scanner(System.in);
+            final String text = scan.nextLine();
+	    EntityTypes[] types = new EntityTypes[] {
+		EntityTypes.COMPANY,EntityTypes.LOCATION, EntityTypes.OCCUPATION
+	    };
+	     
+	    System.out.println("enter type of entity");
+	    int _i = 0;
+	    for (EntityTypes type : types) {
+		System.out.println("\t" + _i + ") " + type.name());
+	    }
+	    String entry = scan.nextLine();
+	    if (NumberUtils.isNumber(entry)) {
+		int index = Integer.parseInt(entry);
+		if (index > -1 && index < types.length) {
+		    List<NamedEntity> sensitiveEntities = new ArrayList<>();
+		    Sentence sentence = new Sentence("",1) {
+			@Override
+			public String getText() {
+			    return "";
+			}
+		    };
+		    NamedEntity occupation = new NamedEntity(sentence, null, types[index]) {
+			@Override
+			public String getText() {
+			    return text;
+			}
+		    };
+		    sensitiveEntities.add(occupation);
+		    Map<NamedEntity, GeneralizationResult> results = GeneralizationManager.generalize(sensitiveEntities);
+		    for (NamedEntity ne : results.keySet()) {
+			GeneralizationResult result = results.get(ne);
+			String sResults[] = result.getResults();
+			System.out.println("Alternatives for " + ne.getText() + ": ");
+			for (String s : sResults) {
+			    System.out.println("\t" + s);
+			}
+		    }
+		 }
+	     }  
+	}
         else
         {
             // launch gui

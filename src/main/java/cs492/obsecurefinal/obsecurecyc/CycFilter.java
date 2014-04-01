@@ -50,7 +50,17 @@ public enum CycFilter {
     }
     
     protected CycList filter(CycList rawResults, CycConstant filter) {
-	CycList result = rawResults.flatten().removeDuplicates();
+	CycList cycList = new CycList();
+	for (Object co : rawResults) {
+	    if (co instanceof CycNart) {
+		cycList.addAll(((CycNart)co).toDeepCycList());
+	    } else if (co instanceof CycList) {
+		cycList.addAll((CycList)co);
+	    } else {
+		cycList.add(co);
+	    }
+	}
+	CycList result = cycList.flatten().removeDuplicates();
 	result.remove(filter);
 	
 	return result;

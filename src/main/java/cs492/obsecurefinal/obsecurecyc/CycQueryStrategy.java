@@ -93,8 +93,9 @@ public abstract class CycQueryStrategy {
 		result = execPlanB(cycAccess, constants);
 	    }
 	}
+	CycList estimation = CycEstimator.getInstance().estimate(type, cycAccess, this,result);
 	
-	return result;
+	return estimation;
     }
     
     
@@ -132,9 +133,7 @@ public abstract class CycQueryStrategy {
 	};
 	CycList result = executor.execute(constants);
 	
-	CycList estimation = CycEstimator.getInstance().estimate(type, cycAccess, this,result);
-	
-	return estimation;
+	return result;
     }
 
    
@@ -149,7 +148,7 @@ public abstract class CycQueryStrategy {
 		if (entry instanceof CycList) {
 		    CycList subList = (CycList) entry;
 		    for (Object o: subList) {
-			String name = StringUtils.uncapitalize(o.toString());
+			String name = o.toString();
 			if (name != null && !(name.contains("Collection") || name.contains("collection") || name.contains("___"))) {
 			    values.add(name);
 			}

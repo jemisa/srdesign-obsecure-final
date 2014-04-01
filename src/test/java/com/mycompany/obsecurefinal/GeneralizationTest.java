@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import static junit.framework.Assert.assertTrue;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.opencyc.util.StringUtils;
 
@@ -24,6 +25,7 @@ import org.opencyc.util.StringUtils;
  */
 public class GeneralizationTest {
 
+    @Ignore
     @Test
     public void generalizeLocation() throws Exception {
 	final String text = "Philadelphia";
@@ -75,6 +77,7 @@ public class GeneralizationTest {
 	}
     }
      
+     @Ignore
      @Test 
      public void generalizeOccupation() throws Exception {
 	 Sentence sentence = new Sentence("",1) {

@@ -20,10 +20,8 @@ package cs492.obsecurefinal.obsecurecyc;
 import cs492.obsecurefinal.common.EntityTypes;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.NavigableSet;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
@@ -36,6 +34,7 @@ import java.util.logging.Logger;
 import org.opencyc.api.CycAccess;
 import org.opencyc.cycobject.CycConstant;
 import org.opencyc.cycobject.CycList;
+import org.opencyc.cycobject.CycNart;
 import org.opencyc.cycobject.CycObject;
 
 /**
@@ -57,11 +56,29 @@ public class CycEstimator {
 	return instance;
     }
     
+    private CycList flattenCandidates(CycList candidates) {
+	CycList vettedCandidates = new CycList();
+	boolean changed = false;
+	for (Object candidate : candidates) {
+	    if (candidate instanceof CycNart) {
+		vettedCandidates.addAll(((CycNart)candidate).toDeepCycList());
+		changed = true;
+	    } else if (candidate instanceof CycList) {
+		vettedCandidates.addAll(((CycList)candidate).flatten());
+		changed = true;
+	    } else {
+		vettedCandidates.add(candidate);
+	    }
+	}
+	return changed ? flattenCandidates(vettedCandidates) : vettedCandidates;
+    }
+    
     public CycList estimate(EntityTypes type, CycAccess cycAccess, CycQueryStrategy strategy, CycList candidates) throws IOException {
 	List<Future<Integer>> scores = new ArrayList<Future<Integer>>();
 	List<CycObject> values = new ArrayList<>();
+	CycList vettedCandidates = flattenCandidates(candidates);
 	
-	for (Object candidate : candidates) {
+	for (Object candidate : vettedCandidates) {
 	    CycConstant cc = (CycConstant) candidate;
 	    List<String> thing = strategy.disambiguate(cycAccess, cc);
 	    Callable<Integer> callable = new CycEstimationWorker(thing, type);
@@ -90,15 +107,26 @@ public class CycEstimator {
 	CycList result = new CycList();
 	NavigableSet<Integer> vals = sortedValues.descendingKeySet();
 	
-	for (Iterator<Integer> it = vals.descendingIterator(); it.hasNext();) {
+	for (Iterator<Integer> it = vals.iterator(); it.hasNext();) {
 	    Integer score = it.next();
 	    if (score >= MATCH_SCORE) {
 		CycList list = sortedValues.get(score);
 		if (list != null) {
 		    result.addAll(list);
+		    list(result, score);
 		}
 	    }
 	}
 	return result;
+    }
+    
+    private void list(CycList result, Integer score) {
+	StringBuilder sb = new StringBuilder();
+	sb.append(score).append( ": \n");
+	for (Object o : result) {
+	    CycObject co = (CycObject)  o;
+	    sb.append(co.toString()).append("\n");
+	}
+	System.out.println(sb.toString());
     }
 }
