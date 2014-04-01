@@ -22,4 +22,6 @@ public class DataSourceNames
     public static final String DB_PWORD = "obsecure";
     public static final String DB_URL = "jdbc:derby://localhost:1527/obsecure-final";
     public static final String CLUSTERING_DATA = "/cluster_viewer.html";
+    public static final String CLUSTERING_DATA_VETTED = "/cluster-vetted.ser";
+    
 }
