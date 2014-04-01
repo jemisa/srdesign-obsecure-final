@@ -186,7 +186,7 @@ public class SanitizationSimple extends Sanitization
                             List<Map<String, Integer>> storedNgrams = new ArrayList<>();
                             for(EntityTypes type: EntityTypes.values())
                             {
-                                Map<String, Integer> ngramset = ngramBuilder.LoadNGrams(text.toUpperCase() + "_NGRAM");
+                                Map<String, Integer> ngramset = ngramBuilder.LoadNGrams(type.toString().toUpperCase() + "_NGRAMS");
                                 storedNgrams.add(ngramset);
                             }
                             
@@ -245,7 +245,7 @@ public class SanitizationSimple extends Sanitization
             List<Map<String, Integer>> storedNgrams = new ArrayList<>();
             for(EntityTypes type: EntityTypes.values())
             {
-                Map<String, Integer> ngramset = ngramBuilder.LoadNGrams(text.toUpperCase() + "_NGRAM");
+                Map<String, Integer> ngramset = ngramBuilder.LoadNGrams(type.toString().toUpperCase() + "_NGRAMS");
                 storedNgrams.add(ngramset);
             }
             

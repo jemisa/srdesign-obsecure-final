@@ -64,12 +64,12 @@ public class NGramBuilder
                 while(line != null)
                 {
                     // ngrams seperated by vertical bar
-                    String[] ngrams = line.split("|");
+                    String[] ngrams = line.split(":");
                     
                     for(String ngram: ngrams)
                     {
                         // weight and text separated by colon
-                        String[] parts = ngram.split(":");
+                        String[] parts = ngram.split(",");
                         
                         String ngramText = parts[0];
                         int ngramCount = Integer.parseInt(parts[1]);
@@ -84,6 +84,7 @@ public class NGramBuilder
         catch(Exception ex)
         {
             ex.printStackTrace(System.out);
+            return nGramCount;
         }
         
         return nGramCount;
@@ -128,9 +129,9 @@ public class NGramBuilder
                 if(i < COUNT_NGRAMS)
                 {
                     if(i > 0)
-                        writer.write("|");
+                        writer.write(":");
 
-                    writer.write(ngram + ":" + sortedMap.get(ngram));
+                    writer.write(ngram + "," + sortedMap.get(ngram));
 
                     i++;
                 }
