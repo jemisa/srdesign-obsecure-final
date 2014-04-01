@@ -123,6 +123,8 @@ public class SanitizationSimple extends Sanitization
                         
                         if(prevSentence.length() + sentence.length() + nextSentence.length() > 100)
                         {                        
+                            Debug.println("sentences long enough for topic modelling");
+                            
                             // Run inference on sentence and context
                              Topic[] topicList =  ident.readFromStrings(new String[] {prevSentence, sentence, nextSentence});
 
@@ -177,6 +179,8 @@ public class SanitizationSimple extends Sanitization
                         }
                         else // if not enough text, use ngrams to check for privacy contents
                         {
+                            Debug.println("Using ngrams due to sentence length");
+                            
                             // Get ngrams associated with each topic value
                             List<Map<String, Integer>> storedNgrams = new ArrayList<>();
                             for(EntityTypes type: EntityTypes.values())
@@ -194,6 +198,7 @@ public class SanitizationSimple extends Sanitization
                                     if(text.contains(keyTerm.toUpperCase()))
                                     {
                                         privateEntities.put(ent, Boolean.TRUE);
+                                        Debug.println("Ngram found: " + keyTerm);
                                         break;
                                     }
                                 }
@@ -211,6 +216,7 @@ public class SanitizationSimple extends Sanitization
                         {
                             if(privateEntities.get(ent) == Boolean.TRUE)
                             {
+                                Debug.println("Sanitizing entity: " + ent.getText());
                                 SanitizationHint hint = new HintWithReplacements(ent, generalizedResults.get(ent));
                                 finalResult.addHint(hint);
                             }
@@ -247,8 +253,11 @@ public class SanitizationSimple extends Sanitization
             {
                 if(sentencePrivacyValue.get(sentences[i]) == PrivacyStatus.UNKNOWN)
                 {
+                    Debug.println("Manual check of sentence \"" + sentences[i].getText() + "\"");
+                    
                     if(checkSentenceNgramMatch(sentences[i], storedNgrams))
                     {
+                        Debug.println("Found private data");
                         SanitizationHint hint = new HintNoReplacements(sentences[i], 1);
                         finalResult.addHint(hint);
                     }
@@ -257,6 +266,8 @@ public class SanitizationSimple extends Sanitization
                     //    SanitizationHint hint = new HintNoReplacements(sentences[i], 1);
                     //    finalResult.addHint(hint);
                     //}
+                    else
+                        Debug.println("Nothing found");
                 }
             }
             
