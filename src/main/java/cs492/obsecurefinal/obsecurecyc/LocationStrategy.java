@@ -24,7 +24,7 @@ import org.opencyc.cycobject.CycVariable;
  */
 public class LocationStrategy extends CycQueryStrategy {
 
-    public LocationStrategy(EntityTypes type) {
+    protected LocationStrategy(EntityTypes type) {
 	super(type);
     }
     

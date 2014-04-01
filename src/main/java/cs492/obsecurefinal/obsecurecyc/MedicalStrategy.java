@@ -30,7 +30,7 @@ import org.opencyc.cycobject.CycObject;
  */
 public class MedicalStrategy extends CycQueryStrategy {
 
-    public MedicalStrategy(EntityTypes type) {
+    protected MedicalStrategy(EntityTypes type) {
 	super(type);
     }
 

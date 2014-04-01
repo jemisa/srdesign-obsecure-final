@@ -20,7 +20,7 @@ import org.opencyc.cycobject.CycObject;
  */
 public class OccupationStrategy extends CycQueryStrategy {
 
-    public OccupationStrategy(EntityTypes type) {
+    protected OccupationStrategy(EntityTypes type) {
 	super(type);
     }
 

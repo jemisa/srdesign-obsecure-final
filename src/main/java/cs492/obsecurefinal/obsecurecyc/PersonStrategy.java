@@ -19,7 +19,7 @@ import org.opencyc.cycobject.CycObject;
  */
 public class PersonStrategy extends CycQueryStrategy {
 
-    public PersonStrategy(EntityTypes type) {
+    protected PersonStrategy(EntityTypes type) {
 	super(type);
     }
 
