@@ -21,10 +21,12 @@ import cs492.obsecurefinal.common.DataSourceNames;
 import cs492.obsecurefinal.common.EntityTypes;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -52,12 +54,12 @@ import org.jsoup.select.Elements;
  * @author Benjamin Arnold
  */
 public class BrownClusters {
-    private static final Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); 
+    
+    protected static final Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); 
     
     private static final BrownClusters instance = new BrownClusters();
-        
-    private final TreeMap<String, String> primaryCluster = new TreeMap<>();
     private final TreeMap<String, String> auxillaryClusters = new TreeMap<>();
+    private PrimaryCluster primaryCluster;
     
     private BrownClusters() {
 	//singleton
@@ -71,7 +73,7 @@ public class BrownClusters {
     public boolean coPooled(String word, String word2) {
 	boolean coPooled = checkCoPool(auxillaryClusters, word, word2);
 	if (!coPooled) {
-	    coPooled = checkCoPool(primaryCluster, word, word2);
+	    coPooled = primaryCluster.checkCoPool(word, word2);
 	}
 	if (coPooled) {
 	    log.log(Level.FINE, "(coPooled  {0} {1}) : {2}", new Object[]{word, word2, coPooled});
@@ -122,43 +124,30 @@ public class BrownClusters {
 	    log.addHandler(handler);
 	    log.setLevel(Level.WARNING);
 	    
-	    InputStream inStream = BrownClusters.class.getResourceAsStream(DataSourceNames.CLUSTERING_DATA);
-	    BufferedReader reader = new BufferedReader(new InputStreamReader(inStream));  
-	    StringBuilder sb = new StringBuilder();
-	    String line = null;
-	    while ((line = reader.readLine()) != null) {
-		sb.append(line);
+	    ClusterLoadStrategy strategy = new ClusterLoadingStrategy();
+	    try {
+		strategy.load(this);
+	    } catch (FileNotFoundException | ClassNotFoundException fnfx) {
+		strategy = new ClusterVettingStrategy();
+		strategy.load(this);
 	    }
-
-	    Document doc = Jsoup.parse(sb.toString());
-	    Element table = doc.getElementsByTag("table").get(0).child(0);
-	    Elements rows = table.children();
-	    
-	    TreeMap<String, String> tCluster = new TreeMap<>();
-	    for (Element row : rows) {
-		Elements contents = row.getElementsByTag("td");
-		if (contents.size() > 0) {
-		    Element valuesCell = contents.last();
-		    String valuesText = valuesCell.text();
-		    StringTokenizer tokens = new StringTokenizer(valuesText, " ");
-		    String key = tokens.nextToken();
-		    tCluster.put(key, key);  //self alias
-		    while (tokens.hasMoreTokens()) {
-			String token = tokens.nextToken();
-			putWord(tCluster, key, token);
-		    }
-		}
-	    }
-	    put(tCluster);
 	    
 	    TreeMap<String, String> auxCluster = new TreeMap<>();
 	    augment(auxCluster, EntityTypes.OCCUPATION);
 	    augment(auxCluster, EntityTypes.COMPANY);
 	    augment(auxCluster, EntityTypes.LOCATION);
 	    putAuxillary(auxCluster);
-	} catch (IOException | SecurityException | IllegalArgumentException ex) {
+	} catch (IOException | ClassNotFoundException | SecurityException | IllegalArgumentException ex) {
 	    log.log(Level.WARNING, "Error initializing brown clusters: ", ex);
 	}
+    }
+    
+    protected void setPrimaryCluster(PrimaryCluster cluster) {
+	primaryCluster = cluster;
+    }
+    
+    protected PrimaryCluster getPrimaryCluster() {
+	return primaryCluster;
     }
     
     private void addend(TreeMap<String, String> tCluster, String alias, String pool) {
@@ -196,40 +185,18 @@ public class BrownClusters {
 	
     }
      
-    private void putWord(TreeMap<String, String> tCluster, String key, String word) {
-	String token = Filter.scrub(word, Filter.TAG, Filter.APOSTRAPHE, Filter.UNDERSCORE);
-	if (token != null && !StringUtils.EMPTY.equals(token)) {
-	    if (WordNetDictionary.getInstance().areRelated(key, token)) {
-		tCluster.put(token, key);  //alias all results to intended key
-	    } 
-	}
-    }
-    
-    private void put(TreeMap<String, String> tCluster ) {
-	Collection<String> values = tCluster.values();
-	
-	for (String alias : tCluster.keySet()) {
-	    if (!values.contains(alias)) {
-		primaryCluster.put(alias, tCluster.get(alias));
-	    }
-	}
-    }
-    
     private void putAuxillary(TreeMap<String, String> auxCluster) {
 	auxillaryClusters.putAll(auxCluster);
-    }
-    
-    private void list() {
-	log.log(Level.INFO, "Listing cluster mappings:");
-	for (String key : primaryCluster.keySet()) {
-	    log.log(Level.INFO, "{0} => {1}", new Object[]{key, primaryCluster.get(key)});
-	}
     }
     
      private static Path getFilePath(String name) {
             //convert separators to Windows/Unix format depending on host system
         String systemPath = FilenameUtils.separatorsToSystem(name);
 	return FileSystems.getDefault().getPath(systemPath, StringUtils.EMPTY);
+    }
+
+    void setCluster(TreeMap<String, String> tCluster) {
+	throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
   
 }
