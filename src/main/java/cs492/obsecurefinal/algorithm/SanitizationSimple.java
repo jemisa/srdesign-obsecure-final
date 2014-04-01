@@ -39,10 +39,11 @@ public class SanitizationSimple extends Sanitization
     public static final int MAX_WINDOW = 3;
     public static final int MIN_WINDOW = 2;
     public static final int MIN_LENGTH_FOR_MODELLING = 100;
+    public static final int SS_MIN_LENGTH_FOR_MODELLING = 25;
     
     Document doc;
     Agent profile;
-    String text;
+    //String documenttext;
     
     // TODO: Take in document object instead of string
     public SanitizationSimple(Document d, Agent agent)
@@ -253,23 +254,25 @@ public class SanitizationSimple extends Sanitization
             // that can't be manually taken out.
             for(int i = 0; i < sentences.length; i++)
             {
+                // only operate on sentences we haven't confirmed to be privacy violations
                 if(sentencePrivacyValue.get(sentences[i]) == PrivacyStatus.UNKNOWN)
                 {
                     Debug.println("Manual check of sentence \"" + sentences[i].getText() + "\"");
                     
-                    if(checkSentenceNgramMatch(sentences[i], storedNgrams))
+                    if(sentences[i].getText().length() > SS_MIN_LENGTH_FOR_MODELLING && checkSentenceTopicMatch(sentences[i], profileInferences, ident))
                     {
-                        Debug.println("Found private data");
+                        Debug.println("Found private data via topic matching");
                         SanitizationHint hint = new HintNoReplacements(sentences[i], 1);
                         finalResult.addHint(hint);
                     }
-                    //else if(checkSentenceTopicMatch(sentences[i], profileInferences, ident))
-                    //{
-                    //    SanitizationHint hint = new HintNoReplacements(sentences[i], 1);
-                    //    finalResult.addHint(hint);
-                    //}
+                    if(checkSentenceNgramMatch(sentences[i], storedNgrams))
+                    {
+                        Debug.println("Found private data via ngram matching");
+                        SanitizationHint hint = new HintNoReplacements(sentences[i], 1);
+                        finalResult.addHint(hint);
+                    }                    
                     else
-                        Debug.println("Nothing found");
+                        Debug.println("Nothing found in sentence");
                 }
             }
             
@@ -281,7 +284,7 @@ public class SanitizationSimple extends Sanitization
     
     private boolean checkSentenceTopicMatch(Sentence sentence, List<Topic[]> profileInferences, TopicIdentifier ident)
     {
-        // only operate on sentences we haven't confirmed to be privacy violations
+        
                 
         // get inference on full sentence
          Topic[] topicList = ident.readFromStrings(new String[] {sentence.getText()});
