@@ -191,7 +191,8 @@ public class SanitizationSimple extends Sanitization
                             }
                             
                             String text = sentence.toUpperCase();
-        
+                            text = text.replaceAll("\\p{Punct}", "");
+                            
                             for(Map<String, Integer> topicalNGram: storedNgrams)
                             {
                                 for(String keyTerm: topicalNGram.keySet())
@@ -338,6 +339,7 @@ public class SanitizationSimple extends Sanitization
     private boolean checkSentenceNgramMatch(Sentence sentence, List<Map<String, Integer>> ngrams)
     {
         String text = sentence.getText().toUpperCase();
+        text = text.replaceAll("\\p{Punct}", "");
         
         for(Map<String, Integer> topicalNGram: ngrams)
         {

@@ -47,6 +47,7 @@ public class NGramBuilder
         
     }
     
+    // Loads a map of ngrams and their weight from a file
     // name is the name of a file containing extracted n-grams
     public HashMap<String, Integer> LoadNGrams(String name)
     {
@@ -62,10 +63,12 @@ public class NGramBuilder
                 String line = reader.readLine();
                 while(line != null)
                 {
+                    // ngrams seperated by vertical bar
                     String[] ngrams = line.split("|");
                     
                     for(String ngram: ngrams)
                     {
+                        // weight and text separated by colon
                         String[] parts = ngram.split(":");
                         
                         String ngramText = parts[0];
@@ -86,6 +89,7 @@ public class NGramBuilder
         return nGramCount;
     }
     
+    // extracts ngrams from a set of sentences
     // text is the text to extract n-grams from
     // name is the name of the file to save results to
     public void CreateNGrams(Sentence[] sentences, String name, int maxSize)
@@ -94,14 +98,20 @@ public class NGramBuilder
         
         for(Sentence s: sentences)
         {       
+            // remove punctuation from sentence
             String sentenceNoPunct = s.getText().replaceAll("\\p{Punct}", "");
             
             WordNGramExtractor extractor = new WordNGramExtractor(sentenceNoPunct);
-            HashMap<String, Integer> nGramsForSentence = extractor.getAllNGramDistributions(maxSize);
             
-            for(String key: nGramsForSentence.keySet())
+            // collect ngrams for each size less than the max size
+            for(int size = 0; size < maxSize; size++)
             {
-                nGramCount.put(key, (nGramCount.get(key) == null ? 0 : nGramCount.get(key)) + 1);
+                HashMap<String, Integer> nGramsForSentence = extractor.getAllNGramDistributions(size + 1);
+
+                for(String key: nGramsForSentence.keySet())
+                {
+                    nGramCount.put(key, (nGramCount.get(key) == null ? 0 : nGramCount.get(key)) + nGramsForSentence.get(key));
+                }
             }
         }
         
@@ -144,7 +154,7 @@ public class NGramBuilder
 
             @Override
             public int compare(Entry<K, V> o1, Entry<K, V> o2) {
-                return o1.getValue().compareTo(o2.getValue());
+                return o2.getValue().compareTo(o1.getValue());
             }
         });
      
