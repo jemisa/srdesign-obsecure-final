@@ -38,6 +38,7 @@ public class SanitizationSimple extends Sanitization
     public static final double EQUALITY_THRESHOLD = 0.5;
     public static final int MAX_WINDOW = 3;
     public static final int MIN_WINDOW = 2;
+    public static final int MIN_LENGTH_FOR_MODELLING = 100;
     
     Document doc;
     Agent profile;
@@ -121,7 +122,7 @@ public class SanitizationSimple extends Sanitization
                     {
                         privateEntities.put(ent, Boolean.FALSE);
                         
-                        if(prevSentence.length() + sentence.length() + nextSentence.length() > 100)
+                        if(prevSentence.length() + sentence.length() + nextSentence.length() >= MIN_LENGTH_FOR_MODELLING)
                         {                        
                             Debug.println("sentences long enough for topic modelling");
                             

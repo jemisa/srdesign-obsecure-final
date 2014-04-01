@@ -34,7 +34,7 @@ public class TrigramStrategy extends NGramStrategy
        {
            for(int i = 0; i < words.length-2; i++)
            {
-               String trigram = words[i] + words[i+1] + words[i+2];
+               String trigram = words[i] + " " + words[i+1] + " " + words[i+2];
                
                if(distribution.containsKey(trigram))
                     distribution.put(trigram, distribution.get(trigram) + 1);
