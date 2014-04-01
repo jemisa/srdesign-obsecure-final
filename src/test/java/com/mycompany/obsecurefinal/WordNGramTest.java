@@ -20,6 +20,7 @@ package com.mycompany.obsecurefinal;
 import cs492.obsecurefinal.wordngrams.WordNGramExtractor;
 import java.util.HashMap;
 import static junit.framework.Assert.*;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -31,6 +32,7 @@ public class WordNGramTest
     String sentance = "This is my Sentance";
     int size = 3;
     
+    @Ignore
     @Test
     public void NGramTest()
     {
