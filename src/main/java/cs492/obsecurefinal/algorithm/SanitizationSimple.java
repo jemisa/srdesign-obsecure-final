@@ -194,11 +194,18 @@ public class SanitizationSimple extends Sanitization
                             String text = sentence.toUpperCase();
                             text = text.replaceAll("\\p{Punct}", "");
                             
+                            String nextText = nextSentence.toUpperCase();
+                            nextText = nextText.replaceAll("\\p{Punct}", "");
+                            
+                            String prevText = prevSentence.toUpperCase();
+                            prevText = prevText.replaceAll("\\p{Punct}", "");
+                            
                             for(Map<String, Integer> topicalNGram: storedNgrams)
                             {
                                 for(String keyTerm: topicalNGram.keySet())
                                 {
-                                    if(text.contains(keyTerm.toUpperCase()))
+                                    if(text.contains(keyTerm.toUpperCase()) || nextText.contains(keyTerm.toUpperCase()) ||
+                                                                               prevText.contains(keyTerm.toUpperCase()))
                                     {
                                         privateEntities.put(ent, Boolean.TRUE);
                                         Debug.println("Ngram found: " + keyTerm);
