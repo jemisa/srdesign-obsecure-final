@@ -189,7 +189,7 @@ public class App
                         Document d = new Document(text);
                         
                         NGramBuilder builder = new NGramBuilder();
-                        builder.CreateNGrams(d.getSentences(), args[1], 3);
+                        builder.CreateNGrams(d.getSentences(), args[2], 3);
 
                     }
                 }
