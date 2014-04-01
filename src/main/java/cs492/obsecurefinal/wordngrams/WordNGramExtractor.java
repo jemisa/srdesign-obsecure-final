@@ -31,7 +31,7 @@ public class WordNGramExtractor
     public WordNGramExtractor(String sentence)
     {
         this.sentence = sentence;
-        strats = new NGramStrategy[] {new UnigramStrategy(), new BigramStrategy(), new TrigramStrategy()};
+        strats = new NGramStrategy[] {null, new BigramStrategy(), new TrigramStrategy()};
         // index must correspond to the number of words in the n-gram
     }
     
@@ -40,10 +40,10 @@ public class WordNGramExtractor
     {
        int sizeIndex = size - 1;
        
-       if(sizeIndex > 0 && sizeIndex < strats.length)
+       if(sizeIndex > 0 && sizeIndex < strats.length && strats[sizeIndex] != null)
            return strats[sizeIndex].getNGramDistribution(sentence);
        else
-           return new HashMap<String, Integer>();
+           return new HashMap<>();
         
     }
 }
