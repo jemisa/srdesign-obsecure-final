@@ -19,6 +19,7 @@ import cs492.obsecurefinal.common.SanitizationHint;
 import cs492.obsecurefinal.common.SanitizationResult;
 import cs492.obsecurefinal.common.Sentence;
 import cs492.obsecurefinal.generalization.GeneralizationManager;
+import cs492.obsecurefinal.obsecurecyc.CycEstimator;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -182,7 +183,7 @@ public class App
 	    System.out.println("enter type of entity");
 	    int _i = 0;
 	    for (EntityTypes type : types) {
-		System.out.println("\t" + _i + ") " + type.name());
+		System.out.println("\t" + _i++ + ") " + type.name());
 	    }
 	    String entry = scan.nextLine();
 	    if (NumberUtils.isNumber(entry)) {
@@ -211,6 +212,7 @@ public class App
 			    System.out.println("\t" + s);
 			}
 		    }
+		    CycEstimator.getInstance().shutDown();
 		 }
 	     }  
 	}
@@ -257,5 +259,6 @@ public class App
         {
             // launch gui
         }
+	System.exit(0);
     }
 }

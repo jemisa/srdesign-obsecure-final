@@ -73,6 +73,10 @@ public class CycEstimator {
 	return changed ? flattenCandidates(vettedCandidates) : vettedCandidates;
     }
     
+    public void shutDown() {
+	pool.shutdown();
+    }
+    
     public CycList estimate(EntityTypes type, CycAccess cycAccess, CycQueryStrategy strategy, CycList candidates) throws IOException {
 	List<Future<Integer>> scores = new ArrayList<Future<Integer>>();
 	List<CycObject> values = new ArrayList<>();
