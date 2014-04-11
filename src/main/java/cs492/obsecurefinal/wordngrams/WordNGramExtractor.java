@@ -16,7 +16,14 @@
  */
 package cs492.obsecurefinal.wordngrams;
 
+import cs492.obsecurefinal.common.DataSourceNames;
+import cs492.obsecurefinal.common.Debug;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  *
@@ -26,12 +33,38 @@ public class WordNGramExtractor
 {
     String sentence;
     NGramStrategy[] strats;
+    List<String> stopwords;
     
     // create a new n-gram extractor
     public WordNGramExtractor(String sentence)
     {
+        stopwords = new ArrayList<>();
+        
+        try
+        {
+            File stoplistFile = new File(DataSourceNames.TOPICS_STOPWORDS);
+            if(stoplistFile.exists() && stoplistFile.canRead())
+            {
+                BufferedReader reader = new BufferedReader(new FileReader(stoplistFile));
+
+                String word = reader.readLine();
+                while(word != null)
+                {
+                    stopwords.add(word);
+                    
+                    word = reader.readLine();
+                }
+                
+                reader.close();
+            }
+        }
+        catch(Exception ex)
+        {
+            Debug.println("Cannot find stoplist file, common words will be included");
+        }
+        
         this.sentence = sentence;
-        strats = new NGramStrategy[] {null, new BigramStrategy(), new TrigramStrategy()};
+        strats = new NGramStrategy[] {null, new BigramStrategy(stopwords), new TrigramStrategy(stopwords)};
         // index must correspond to the number of words in the n-gram
     }
     

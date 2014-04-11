@@ -35,6 +35,8 @@ public class App
     // Console interface for sanitization prototype
     public static void main( String[] args ) throws Exception
     {
+        Debug.println("At start of main function");
+        
         if(args.length > 0 && args[0].equals("-text"))
         {
             DatabaseAccess dbAccess = new DatabaseAccess();

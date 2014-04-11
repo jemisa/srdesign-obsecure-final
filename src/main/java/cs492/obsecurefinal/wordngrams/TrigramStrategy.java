@@ -17,6 +17,7 @@
 package cs492.obsecurefinal.wordngrams;
 
 import java.util.HashMap;
+import java.util.List;
 
 /**
  *
@@ -24,7 +25,13 @@ import java.util.HashMap;
  */
 public class TrigramStrategy extends NGramStrategy
 {
-
+    private List<String> stopwords;
+    
+    public TrigramStrategy(List<String> stopwords)
+    {
+        this.stopwords = stopwords;
+    }
+    
     // Extract all sets of 3 words from a sentence
     @Override
     public HashMap<String, Integer> getNGramDistribution(String sentence) 
