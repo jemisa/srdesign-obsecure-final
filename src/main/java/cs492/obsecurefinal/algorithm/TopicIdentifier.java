@@ -54,16 +54,11 @@ public class TopicIdentifier {
     
     public Topic[] readFromStrings(String[] s){
         String text = "";
-        int iteration = 0;
-        while(text.length() < 100)
+        for(int i = 0; i < s.length; i++)
         {
-            int index=iteration % s.length;
-            
-            if(iteration > 0)
+            if(i > 0)
                 text += " ";
-            
-            text += s[index];
-            iteration++;
+            text += s[i];
         }
         
         String[] textArray = new String[] {text};
