@@ -13,9 +13,9 @@ import cc.mallet.types.Alphabet;
 
 public class TopicBuilder
 {
-	private boolean loaded;
-	private int numTopics;
-	private ParallelTopicModel database;
+    private boolean loaded;
+    private int numTopics;
+    private ParallelTopicModel database;
     private int numIterations = 1000;
         
     // Standard constructor
