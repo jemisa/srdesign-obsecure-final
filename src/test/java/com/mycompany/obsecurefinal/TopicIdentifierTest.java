@@ -16,7 +16,7 @@ public class TopicIdentifierTest {
     private int numTopics = 10;
     private ParallelTopicModel model = null;
     private String testDirectory = "testdocs";
-    private String malletFile = "\\dump.mallet";
+    private String malletFile = "\\test.mallet";
     
     @Test
     public void buildTopicModel(){
@@ -27,8 +27,10 @@ public class TopicIdentifierTest {
         tb.saveDatabase(testDirectory + malletFile);
         assertTrue(new File(testDirectory + malletFile).exists());
         
-        model = tb.loadDatabase(testDirectory + malletFile);
-        //model = tb.getModel();
+        tb = null;
+        tb = new TopicBuilder(numTopics);
+        tb.loadDatabase(testDirectory + malletFile);
+        model = tb.getModel();
         
         junit.framework.Assert.assertTrue(model.getData().size() > 0);
         assertEquals(model.getNumTopics(), 10);
@@ -38,7 +40,8 @@ public class TopicIdentifierTest {
     @Test 
     public void getInferencedTopicsFromString(){         
         TopicBuilder tb = new TopicBuilder(numTopics);
-        model = tb.loadDatabase(testDirectory + malletFile);
+        tb.loadDatabase(testDirectory + malletFile);
+        model = tb.getModel();
         
         TopicIdentifier ti = new TopicIdentifier(model);
         String[] s = new String[] {
@@ -58,7 +61,8 @@ public class TopicIdentifierTest {
     @Test
     public void getInferenceTopicsFromFile(){
         TopicBuilder tb = new TopicBuilder(numTopics);
-        model = tb.loadDatabase(testDirectory + malletFile);
+        tb.loadDatabase(testDirectory + malletFile);
+        model = tb.getModel();
         
         TopicIdentifier ti = new TopicIdentifier(model);
         Topic[] topicArray = null;

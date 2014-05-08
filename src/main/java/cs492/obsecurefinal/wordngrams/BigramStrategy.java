@@ -17,6 +17,7 @@
 package cs492.obsecurefinal.wordngrams;
 
 import java.util.HashMap;
+import java.util.List;
 
 /**
  *
@@ -24,7 +25,14 @@ import java.util.HashMap;
  */
 public class BigramStrategy extends NGramStrategy
 {
+    
+    List<String> stopwords;
 
+    public BigramStrategy(List<String> stopwords)
+    {
+        this.stopwords = stopwords;
+    }
+    
     @Override
     public HashMap<String, Integer> getNGramDistribution(String sentence) 
     {
@@ -34,12 +42,16 @@ public class BigramStrategy extends NGramStrategy
        {
            for(int i = 0; i < words.length-1; i++)
            {
-               String bigram = words[i] + " " + words[i+1];
-               
-               if(distribution.containsKey(bigram))
-                    distribution.put(bigram, distribution.get(bigram) + 1);
-               else
-                   distribution.put(bigram, 1);
+               // don't allow combinations of two common words
+               if(!stopwords.contains(words[i].toLowerCase()) || !stopwords.contains(words[i+1].toLowerCase()))
+               {
+                    String bigram = words[i] + " " + words[i+1];
+
+                    if(distribution.containsKey(bigram))
+                         distribution.put(bigram, distribution.get(bigram) + 1);
+                    else
+                        distribution.put(bigram, 1);
+               }
            }
        }
        

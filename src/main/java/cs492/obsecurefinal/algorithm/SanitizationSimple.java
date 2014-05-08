@@ -35,10 +35,10 @@ import java.util.Map;
  */
 public class SanitizationSimple extends Sanitization
 {
-    public static final double EQUALITY_THRESHOLD = 0.5;
+    public static final double EQUALITY_THRESHOLD = 0.2;
     public static final int MAX_WINDOW = 3;
     public static final int MIN_WINDOW = 2;
-    public static final int MIN_LENGTH_FOR_MODELLING = 500;
+    public static final int MIN_LENGTH_FOR_MODELLING = 100;
     public static final int SS_MIN_LENGTH_FOR_MODELLING = 100;
     
     Document doc;
@@ -134,10 +134,10 @@ public class SanitizationSimple extends Sanitization
                             //Span entitySpan = ent.getSpan();
                             //String s1 = sentence.substring(0, entitySpan.getStart());
                             //String s2 = sentence.substring(entitySpan.getEnd(), sentence.length() - 1);
-                            String sentenceNoEntity = ent.getSentenceNoEntity().getText();
+                            //String sentenceNoEntity = ent.getSentenceNoEntity().getText();
 
                             // Run the inference on the entity-less sentence and context
-                            Topic[] topicListNoEntities = ident.readFromStrings(new String[] {prevSentence, sentenceNoEntity, nextSentence});
+                            //Topic[] topicListNoEntities = ident.readFromStrings(new String[] {prevSentence, sentenceNoEntity, nextSentence});
 
                             List<Topic[]> profileInferences = new ArrayList<>();
 
@@ -145,8 +145,9 @@ public class SanitizationSimple extends Sanitization
                             // associated with characteristic of the agent
                             for(EntityTypes type: EntityTypes.values())
                             {
-                                String profileEntity = profile.getCharacteristic(type).toUpperCase();
-                                Topic[] infTopics = infBuilder.loadInference(profileEntity);
+                                //String profileEntity = profile.getCharacteristic(type).toUpperCase();
+                                //Topic[] infTopics = infBuilder.loadInference(profileEntity);
+                                Topic[] infTopics = infBuilder.loadInference(type.toString());
                                 if(infTopics.length > 0)
                                     profileInferences.add(infTopics);
                             }
@@ -155,19 +156,19 @@ public class SanitizationSimple extends Sanitization
 
                             // Load topic distributions for the type of privacy data to which the entity
                             // belongs
-                            Topic[] infPrivacyType = infBuilder.loadInference(ent.getType().toString());
+                           // Topic[] infPrivacyType = infBuilder.loadInference(ent.getType().toString());
 
                             // For each topic inference related to the agent,
                             // check if the sentence matches
                             for(Topic[] inf : profileInferences)
                             {
                                 TopicMatcher matcher = new TopicMatcher(inf, topicList);
-                                TopicMatcher matcherNoEntities = new TopicMatcher(inf, topicListNoEntities);                            
-                                TopicMatcher matcherInfoType = new TopicMatcher(inf, infPrivacyType);
+                                //TopicMatcher matcherNoEntities = new TopicMatcher(inf, topicListNoEntities);                            
+                                //TopicMatcher matcherInfoType = new TopicMatcher(inf, infPrivacyType);
 
                                 double matchWithEntities = matcher.getMatchValue();
-                                double matchWithNoEntities = matcherNoEntities.getMatchValue();
-                                double matchType = matcherInfoType.getMatchValue();
+                               // double matchWithNoEntities = matcherNoEntities.getMatchValue();
+                                //double matchType = matcherInfoType.getMatchValue();
 
                                 //if (matchWithEntities > EQUALITY_THRESHOLD && matchWithNoEntities < matchWithEntities) // TODO: adjust threshold value
                                 //if(matchWithEntities > EQUALITY_THRESHOLD && matchType > EQUALITY_THRESHOLD)
@@ -272,9 +273,11 @@ public class SanitizationSimple extends Sanitization
                         SanitizationHint hint = new HintNoReplacements(sentences[i], 1);
                         finalResult.addHint(hint);
                     }
-                    if(checkSentenceNgramMatch(sentences[i], storedNgrams))
+                    
+                    String ngramMatch = checkSentenceNgramMatch(sentences[i], storedNgrams);
+                    if(ngramMatch != null)
                     {
-                        Debug.println("Found private data via ngram matching");
+                        Debug.println("Found private data via ngram matching: " + ngramMatch);
                         SanitizationHint hint = new HintNoReplacements(sentences[i], 1);
                         finalResult.addHint(hint);
                     }                    
@@ -346,7 +349,7 @@ public class SanitizationSimple extends Sanitization
          return false;
     }
 
-    private boolean checkSentenceNgramMatch(Sentence sentence, List<Map<String, Integer>> ngrams)
+    private String checkSentenceNgramMatch(Sentence sentence, List<Map<String, Integer>> ngrams)
     {
         String text = sentence.getText().toUpperCase();
         text = text.replaceAll("\\p{Punct}", "");
@@ -356,10 +359,10 @@ public class SanitizationSimple extends Sanitization
             for(String keyTerm: topicalNGram.keySet())
             {
                 if(text.contains(keyTerm.toUpperCase()))
-                    return true;
+                    return keyTerm;
             }
         }
         
-        return false;
+        return null;
     }
 }

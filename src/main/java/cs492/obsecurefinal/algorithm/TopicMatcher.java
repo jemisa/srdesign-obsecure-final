@@ -9,8 +9,9 @@ import cs492.obsecurefinal.common.Topic;
  */
 public class TopicMatcher 
 {
-    public static final double THRESHOLD_MULTIPLIER = 0.05;
-    public static final double MIN_VALUE = 0.01;
+    public static final double THRESHOLD_MULTIPLIER = 0.07;
+    public static final double MIN_VALUE = 0.001;
+    public static final double DELTA = 0.001;
     
     private  Topic[] topicListA, topicListB;
     
@@ -54,13 +55,13 @@ public class TopicMatcher
                     
                     if(probA >= MIN_VALUE && probB >= MIN_VALUE)
                     {
-                        totalSignificant += (probA + probB) / 2.0;
+                        totalSignificant += 1.0;//(probA + probB) / 2.0;
                         
-                        double fractionA = THRESHOLD_MULTIPLIER * probA;
-                        double fractionB = THRESHOLD_MULTIPLIER * probB;
+                        //double fractionA = THRESHOLD_MULTIPLIER * probA;
+                        //double fractionB = THRESHOLD_MULTIPLIER * probB;
 
-                        if(probA >= probB - fractionB && probA <= probB + fractionB)
-                            countCloseMatch += 1.0 * ((probA + probB) / 2.0); // use average prob to weight it
+                        if(probA >= probB - DELTA && probA <= probB + DELTA)
+                            countCloseMatch += 1.0;//((probA + probB) / 2.0); // use average prob to weight it
                             //countCloseMatch++; // unweighted version
                 
                     }

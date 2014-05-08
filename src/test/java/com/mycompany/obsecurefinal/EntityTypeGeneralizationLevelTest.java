@@ -46,7 +46,7 @@ public class EntityTypeGeneralizationLevelTest {
 	assertEquals(expectedFamilyLevel,EntityTypes.FAMILY.getGeneralizationLevel());
 	assertEquals(expectedLocationLevel,EntityTypes.LOCATION.getGeneralizationLevel());
 	assertEquals(expectedMedicalLevel,EntityTypes.MEDICAL.getGeneralizationLevel());
-	assertEquals(expectedPersonalAttacksLevel,EntityTypes.PERSONAL_ATTACKS.getGeneralizationLevel());
+	assertEquals(expectedPersonalAttacksLevel,EntityTypes.PERSONAL.getGeneralizationLevel());
 	assertEquals(expectedSterotypingLevel,EntityTypes.STEREOTYPING.getGeneralizationLevel());
     }
 }

@@ -56,7 +56,7 @@ public class GeneralizationManager {
 		return ObSecureCycFacade.getInstance();
 	    }
 	}, //MEDICAL is in both because individual symptons must be manually revices whereas diseases can be generalized
-	TEMPLATE(EntityTypes.MEDICAL, EntityTypes.DRUG_ALCOHOL, EntityTypes.EMOTION, EntityTypes.PERSONAL_ATTACKS, EntityTypes.STEREOTYPING, EntityTypes.FAMILY) {
+	TEMPLATE(EntityTypes.MEDICAL, EntityTypes.DRUG_ALCOHOL, EntityTypes.EMOTION, EntityTypes.PERSONAL, EntityTypes.STEREOTYPING, EntityTypes.FAMILY) {
 	    @Override
 	    GeneralizationFacade getFacade() throws Exception {
 		return TemplateFacade.getInstance();

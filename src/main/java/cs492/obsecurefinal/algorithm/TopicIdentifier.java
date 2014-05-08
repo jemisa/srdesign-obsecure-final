@@ -1,5 +1,5 @@
 /* 
- * Takes input string or document and returns the related topics and probabilities.
+ * Takes input string or document and returns the array of topic probabilities.
  *
  * Based off of UMass Mallet documentation
  *
@@ -44,26 +44,18 @@ public class TopicIdentifier {
     
     public TopicIdentifier(ParallelTopicModel ptm) {
         model = ptm;
-        numTopics = model.getNumTopics();
+        if (model != null){
+            numTopics = model.getNumTopics();
+        }
     }
-    
-    public TopicIdentifier(String location){
-        TopicBuilder tb = new TopicBuilder(numTopics, location);
-        model = tb.getModel();
-    }
-    
+        
     public Topic[] readFromStrings(String[] s){
         String text = "";
-        int iteration = 0;
-        while(text.length() < 100)
+        for(int i = 0; i < s.length; i++)
         {
-            int index=iteration % s.length;
-            
-            if(iteration > 0)
+            if(i > 0)
                 text += " ";
-            
-            text += s[index];
-            iteration++;
+            text += s[i];
         }
         
         String[] textArray = new String[] {text};
@@ -122,64 +114,5 @@ public class TopicIdentifier {
         pipeList.add(new TokenSequence2FeatureSequence());
 
         return new SerialPipes(pipeList);
-    }
-    
-    /** Functions below may no longer be required.  Dependent on TopicBuilder functionality. **/
-    
-    // Will probably be removed
-    private Topic[] instanceToTopicArray(InstanceList instances){
-    	model = modelTopics(instances);
-    	Topic[] topicArray = getTopicDetails(instances);
-    	
-    	return topicArray;
-    }
-    
-    // Returns Topic Model for an instance
-    private ParallelTopicModel modelTopics(InstanceList instances){
-        int numThreads = 2;
-        int numIterations = 10;  		// 1000 to 2000 recommended for production
-        double alpha = 1.00;
-        double beta = 0.01;
-        ParallelTopicModel ptm = new ParallelTopicModel(numTopics, alpha, beta);
-
-        ptm.addInstances(instances);
-        ptm.setNumThreads(numThreads);
-        ptm.setNumIterations(numIterations);
-        try {
-        	ptm.estimate();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return ptm;
-    }
-  	
-    // Returns array of Topics with IDs, probabilities, and top word list
-    // No longer used
-    private Topic[] getTopicDetails(InstanceList instances) {
-        Topic[] topicArray = new Topic[numTopics];
-        String[] topWords = new String[numTopWords];
-        //double[] probability = model.getTopicProbabilities(0);  // Don't think this is required anymore
-
-        Alphabet dataAlphabet = instances.getDataAlphabet();
-        ArrayList<TreeSet<IDSorter>> topicSortedWords = model.getSortedWords();
-
-        for (int topic = 0; topic < numTopics; topic++) {
-            int rank = 0;
-            Iterator<IDSorter> iterator = topicSortedWords.get(topic).iterator();
-
-            while (iterator.hasNext() && rank < numTopWords) {
-                IDSorter idCountPair = iterator.next();
-                topWords[rank] = dataAlphabet.lookupObject(idCountPair.getID()).toString();
-                rank++;
-            }
-
-            //topicArray[topic] = new Topic(topic, probability[topic], topWords);
-            topicArray[topic] = new Topic(topic, 0, topWords);
-            
-            topWords = new String[numTopWords];
-        }
-
-        return topicArray;
     }
 }
