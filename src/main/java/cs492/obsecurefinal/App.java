@@ -171,7 +171,7 @@ public class App
             }
             else
             {
-                System.out.println("-inference <input file> <output file>");
+                System.out.println("-inferencer <input file> <output file>");
             }
         }  else if (args.length > 0 && args[0].equals("-generalize"))
 	{
