@@ -42,11 +42,6 @@ public class NGramBuilder
 {
     public static int COUNT_NGRAMS = 50;
     
-    public NGramBuilder()
-    {
-        
-    }
-    
     // Loads a map of ngrams and their weight from a file
     // name is the name of a file containing extracted n-grams
     public HashMap<String, Integer> LoadNGrams(String name)
