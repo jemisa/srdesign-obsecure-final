@@ -179,7 +179,7 @@ public class App
 	    Scanner scan = new Scanner(System.in);
             final String text = scan.nextLine();
 	    EntityTypes[] types = new EntityTypes[] {
-		EntityTypes.COMPANY,EntityTypes.LOCATION, EntityTypes.OCCUPATION
+		EntityTypes.COMPANY,EntityTypes.LOCATION, EntityTypes.OCCUPATION, EntityTypes.DRUG_ALCOHOL, EntityTypes.FAMILY, EntityTypes.MEDICAL
 	    };
 	     
 	    System.out.println("enter type of entity");
