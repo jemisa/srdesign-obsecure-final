@@ -15,43 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package cs492.obsecurefinal.metaintelligence.bean;
+package cs492.obsecurefinal.spring.session.metaintelligence;
 
-import cs492.obsecurefinal.metaintelligence.parsetree.MetaNode;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRule;
+import org.springframework.data.repository.CrudRepository;
 
 /**
- * <weight value="1">City</weight>
+ *
  * @author Benjamin Arnold
  */
-@Table(name = "METAWEIGHT")
-@Entity(name = "METAWEIGHT")
-public class MetaWeight extends MetaBase implements MetaNode {
-    
-    @Column(name = "NAME")
-    private String name;
-	
-    @Column(name = "VALUE")
-    private Integer value;
+public interface MetaRuleRepository extends CrudRepository<MetaRule, Long> {
 
-    public String getName() {
-	return name;
-    }
-
-    public void setName(String name) {
-	this.name = name;
-    }
-
-    public Integer getValue() {
-	return value;
-    }
-
-    public void setValue(Integer value) {
-	this.value = value;
-    }
-    
-    
     
 }

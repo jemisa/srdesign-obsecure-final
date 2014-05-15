@@ -15,10 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package cs492.obsecurefinal.metaintelligence.bean;
+package cs492.obsecurefinal.spring.domain.metaintelligence;
 
-import cs492.obsecurefinal.metaintelligence.parsetree.MetaNode;
+import cs492.obsecurefinal.spring.domain.BaseEntity;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -26,28 +28,32 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
- *  <criteria>
-	<condition type="comment">DATE</condition>
-    </criteria>
+ *  <metric>
+	<weight value="1">City</weight>
+	<weight value="2">State-UnitedStates</weight>
+	<weight value="3">IndependentCountry</weight>
+	<weight value="4">Country</weight>
+	<weight value="5">Continent</weight>
+    </metric>
  * @author Benjamin Arnold
  */
-@Table(name = "METACRITERIA")
-@Entity(name = "METACRITERIA")
-public class MetaCriteria extends MetaBase implements MetaNode {
+@Entity
+public class MetaMetric extends BaseEntity implements MetaNode {
+    public static final String CLASS_NAME = "MetaMetric";
     
     @OneToMany(fetch=FetchType.EAGER)
-    private Set<MetaCondition> metaConditions = new HashSet<>();
+    private Set<MetaWeight> metaWeights = new HashSet<>();
 
-    public Set<MetaCondition> getMetaConditions() {
-	return metaConditions;
+    public Set<MetaWeight> getMetaWeights() {
+	return metaWeights;
     }
 
-    public void setMetaConditions(Set<MetaCondition> metaConditions) {
-	this.metaConditions = metaConditions;
+    public void setMetaWeights(Set<MetaWeight> metaWeights) {
+	this.metaWeights = metaWeights;
     }
 
-    public void addMetaCondition(MetaCondition metaCondition) {
-	metaConditions.add(metaCondition);
+    public void addWeight(MetaWeight metaWeight) {
+	metaWeights.add(metaWeight);
     }
-    
+  
 }

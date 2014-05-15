@@ -15,45 +15,49 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package cs492.obsecurefinal.metaintelligence.bean;
+package cs492.obsecurefinal.spring.domain.metaintelligence;
 
-import cs492.obsecurefinal.metaintelligence.parsetree.MetaNode;
-import java.util.HashMap;
+import cs492.obsecurefinal.spring.domain.BaseEntity;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
- *  <metric>
-	<weight value="1">City</weight>
-	<weight value="2">State-UnitedStates</weight>
-	<weight value="3">IndependentCountry</weight>
-	<weight value="4">Country</weight>
-	<weight value="5">Continent</weight>
-    </metric>
+ * <category name="LOCATION">
+        <rule name="namedLocation" type="OPENCYC" purpose="GENERALIZATION"></rule>
+ * </category>
  * @author Benjamin Arnold
  */
-@Table(name = "METAMETRIC")
-@Entity(name = "METAMETRIC")
-public class MetaMetric extends MetaBase implements MetaNode {
-    
+@Entity
+public class MetaCategory extends BaseEntity implements MetaNode {
+
     @OneToMany(fetch=FetchType.EAGER)
-    private Set<MetaWeight> metaWeights = new HashSet<>();
-
-    public Set<MetaWeight> getMetaWeights() {
-	return metaWeights;
+    private Set<MetaRule> metaRules = new HashSet<>();
+    
+    @Column
+    private String name;
+    
+    public void setMetaRules(Set<MetaRule> metaRules) {
+	this.metaRules = metaRules;
+    }
+    
+    public Set<MetaRule> getMetaRules() {
+	return metaRules;
     }
 
-    public void setMetaWeights(Set<MetaWeight> metaWeights) {
-	this.metaWeights = metaWeights;
+    public void setName(String name) {
+	this.name = name;
+    }
+    
+    public String getName() {
+	return name;
     }
 
-    public void addWeight(MetaWeight metaWeight) {
-	metaWeights.add(metaWeight);
+    public void addMetaRule(MetaRule metaRule) {
+	metaRules.add(metaRule);
     }
-  
 }

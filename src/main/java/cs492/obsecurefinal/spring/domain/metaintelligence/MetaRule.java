@@ -15,10 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package cs492.obsecurefinal.metaintelligence.bean;
+package cs492.obsecurefinal.spring.domain.metaintelligence;
 
-import cs492.obsecurefinal.metaintelligence.parsetree.MetaNode;
 
+import cs492.obsecurefinal.spring.domain.BaseEntity;
 import javax.persistence.*;
 
 /**
@@ -29,9 +29,8 @@ import javax.persistence.*;
     </rule>
  * @author Benjamin Arnold
  */
-@Table(name = "METARULE")
-@Entity(name = "METARULE")
-public class MetaRule  extends MetaBase implements MetaNode {
+@Entity
+public class MetaRule  extends BaseEntity implements MetaNode {
     
     @Column(name = "NAME")
     private String name;

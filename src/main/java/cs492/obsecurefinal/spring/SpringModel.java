@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Benjamin Arnold
+ * Copyright (C) 2014 Drexel University
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,35 +15,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package cs492.obsecurefinal.metaintelligence.parsetree;
+package cs492.obsecurefinal.spring;
 
-import cs492.obsecurefinal.spring.domain.metaintelligence.MetaNode;
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.Configuration;
 
 /**
  *
  * @author Benjamin Arnold
  */
-public class RuleTreeComposite extends RuleTreeComponent {
-    private List<RuleTreeComponent> children = new ArrayList<>();
+@Configuration
+@EnableAutoConfiguration
+public class SpringModel {
     
-    public RuleTreeComposite(XmlTag tag) {
-	super(tag);
-    }
-    
-
-    @Override
-    public MetaNode accept(Visitor visitor) {
-	return visitor.visit(this);
-    }
-
-    public void addChild(RuleTreeComponent child) {
-	children.add(child);
-    }
-    
-    public List<RuleTreeComponent> getChildren() {
-	return children;
+    public static void main(String[] args) {
+	SpringApplication.run(SpringModel.class, "--debug");
     }
     
 }

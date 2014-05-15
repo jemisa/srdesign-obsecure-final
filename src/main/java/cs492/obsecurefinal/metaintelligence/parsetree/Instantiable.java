@@ -17,6 +17,8 @@
 
 package cs492.obsecurefinal.metaintelligence.parsetree;
 
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaNode;
+
 /**
  *
  * @author Benjamin Arnold

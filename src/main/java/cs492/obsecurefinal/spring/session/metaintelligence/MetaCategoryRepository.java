@@ -15,35 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package cs492.obsecurefinal.metaintelligence.parsetree;
+package cs492.obsecurefinal.spring.session.metaintelligence;
 
-import cs492.obsecurefinal.spring.domain.metaintelligence.MetaNode;
-import java.util.ArrayList;
-import java.util.List;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaCategory;
+import org.springframework.data.repository.CrudRepository;
 
 /**
  *
  * @author Benjamin Arnold
  */
-public class RuleTreeComposite extends RuleTreeComponent {
-    private List<RuleTreeComponent> children = new ArrayList<>();
-    
-    public RuleTreeComposite(XmlTag tag) {
-	super(tag);
-    }
-    
+public interface MetaCategoryRepository extends CrudRepository<MetaCategory, Long> {
 
-    @Override
-    public MetaNode accept(Visitor visitor) {
-	return visitor.visit(this);
-    }
-
-    public void addChild(RuleTreeComponent child) {
-	children.add(child);
-    }
-    
-    public List<RuleTreeComponent> getChildren() {
-	return children;
-    }
-    
 }

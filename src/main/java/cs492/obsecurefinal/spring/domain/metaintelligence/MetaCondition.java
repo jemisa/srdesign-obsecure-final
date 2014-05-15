@@ -15,9 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package cs492.obsecurefinal.metaintelligence.bean;
+package cs492.obsecurefinal.spring.domain.metaintelligence;
 
-import cs492.obsecurefinal.metaintelligence.parsetree.MetaNode;
+import cs492.obsecurefinal.spring.domain.BaseEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -27,14 +27,14 @@ import javax.persistence.Table;
  * <condition type="isa">ANY</condition><!--checks if isa (ANY of "<weights> (Name))"
  * @author Benjamin Arnold
  */
-@Table(name = "METACONDITION")
-@Entity(name = "METACONDITION")
-public class MetaCondition extends MetaBase implements MetaNode {
+@Entity
+public class MetaCondition extends BaseEntity implements MetaNode {
+    public static final String CLASS_NAME = "MetaCondition";
   
-    @Column(name = "NAME")
+    @Column
     private String name;
 	
-    @Column(name = "TYPE")
+    @Column
     private String type;
 
     public String getName() {

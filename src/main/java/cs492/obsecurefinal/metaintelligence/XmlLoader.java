@@ -17,7 +17,7 @@
 
 package cs492.obsecurefinal.metaintelligence;
 
-import cs492.obsecurefinal.metaintelligence.bean.MetaRuleSet;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRuleSet;
 import cs492.obsecurefinal.metaintelligence.parsetree.XmlDocument;
 import java.io.IOException;
 import java.nio.file.FileSystems;

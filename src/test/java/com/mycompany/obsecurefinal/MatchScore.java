@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Benjamin Arnold
+ * Copyright (C) 2014 Drexel University
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,35 +15,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package cs492.obsecurefinal.metaintelligence.parsetree;
+package com.mycompany.obsecurefinal;
 
-import cs492.obsecurefinal.spring.domain.metaintelligence.MetaNode;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  *
  * @author Benjamin Arnold
  */
-public class RuleTreeComposite extends RuleTreeComponent {
-    private List<RuleTreeComponent> children = new ArrayList<>();
+public class MatchScore {
+    private final String[][] knownAgentDataSets;
     
-    public RuleTreeComposite(XmlTag tag) {
-	super(tag);
+    public MatchScore(String[][] knownAgentDataSets) {
+	this.knownAgentDataSets = knownAgentDataSets;
     }
     
-
-    @Override
-    public MetaNode accept(Visitor visitor) {
-	return visitor.visit(this);
+    public int score(List<Predicate> predicates) {
+	int score = 0;
+	for (String[] dataSet : knownAgentDataSets)  {
+	    int i = 0;
+	    for (Predicate predicate : predicates) {
+		if (predicate.apply(dataSet[i++])) {
+		    score++;
+		}
+	    }
+	    if (score < dataSet.length) {
+		score = 0;
+	    } else {
+		return score;
+	    }
+	}
+	return score;
     }
-
-    public void addChild(RuleTreeComponent child) {
-	children.add(child);
-    }
-    
-    public List<RuleTreeComponent> getChildren() {
-	return children;
-    }
-    
 }

@@ -17,8 +17,8 @@
 
 package cs492.obsecurefinal.metaintelligence;
 
-import cs492.obsecurefinal.metaintelligence.bean.MetaRule;
-import cs492.obsecurefinal.metaintelligence.bean.MetaRuleSet;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRule;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRuleSet;
 import cs492.obsecurefinal.common.EntityTypes;
 import java.util.ArrayList;
 import java.util.HashMap;

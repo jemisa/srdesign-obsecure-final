@@ -15,28 +15,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package cs492.obsecurefinal.metaintelligence.bean;
+package cs492.obsecurefinal.spring.domain.metaintelligence;
 
-import cs492.obsecurefinal.metaintelligence.parsetree.MetaNode;
+import cs492.obsecurefinal.spring.domain.BaseEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Table;
 
 /**
  * <filter type="adaptive" value="3">LocationFilter</filter>
  * @author Benjamin Arnold
  */
-@Table(name = "METAFILTER")
-@Entity(name = "METAFILTER")
-public class MetaFilter extends MetaBase implements MetaNode {
+@Entity
+public class MetaFilter extends BaseEntity implements MetaNode {
     
-    @Column(name = "NAME")
+    @Column
     private String name;
 	
-    @Column(name = "TYPE")
+    @Column
     private String type;
     
-    @Column(name = "VALUE")
+    @Column
     private Integer value;
 
     public String getName() {

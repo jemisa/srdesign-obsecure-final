@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Benjamin Arnold
+ * Copyright (C) 2014 Drexel University
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,14 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package cs492.obsecurefinal.metaintelligence.parsetree;
+package cs492.obsecurefinal.spring.session.common;
 
-import java.io.Serializable;
+import cs492.obsecurefinal.spring.domain.common.SpringAgent;
+import org.springframework.data.repository.CrudRepository;
 
 /**
  *
  * @author Benjamin Arnold
  */
-public interface MetaNode extends Serializable {
+public interface SpringAgentRepository extends CrudRepository<SpringAgent, Long> {
     
+    SpringAgent findByName(String name);
 }

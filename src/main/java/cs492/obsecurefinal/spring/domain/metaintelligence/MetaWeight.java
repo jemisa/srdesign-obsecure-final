@@ -15,46 +15,40 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package cs492.obsecurefinal.metaintelligence.bean;
+package cs492.obsecurefinal.spring.domain.metaintelligence;
 
-import java.util.Date;
+import cs492.obsecurefinal.spring.domain.BaseEntity;
 import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Version;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
- *
+ * <weight value="1">City</weight>
  * @author Benjamin Arnold
  */
-@MappedSuperclass
-public class MetaBase {
-    @Id //signifies the primary key
-    @Column(name = "ID", nullable = false)
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    protected long id;
+@Entity
+public class MetaWeight extends BaseEntity implements MetaNode {
+    @Column
+    private String name;
+    @Column
+    private Integer value;
+
+    public String getName() {
+	return name;
+    }
+
+    public void setName(String name) {
+	this.name = name;
+    }
+
+    public Integer getValue() {
+	return value;
+    }
+
+    public void setValue(Integer value) {
+	this.value = value;
+    }
     
-    @Version
-    @Column(name = "LAST_UPDATED_TIME")
-    protected Date updatedTime;
-
-    public long getId() {
-	return id;
-    }
-
-    public void setId(long id) {
-	this.id = id;
-    }
-
-    public Date getUpdatedTime() {
-	return updatedTime;
-    }
-
-    public void setUpdatedTime(Date updatedTime) {
-	this.updatedTime = updatedTime;
-    }
     
     
 }

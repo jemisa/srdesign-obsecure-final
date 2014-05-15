@@ -17,7 +17,7 @@
 
 package cs492.obsecurefinal.metaintelligence.parsetree;
 
-import cs492.obsecurefinal.metaintelligence.bean.MetaRuleSet;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRuleSet;
 
 /**
  *<ruleSet name="opencyc">

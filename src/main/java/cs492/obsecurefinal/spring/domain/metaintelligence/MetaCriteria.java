@@ -15,50 +15,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package cs492.obsecurefinal.metaintelligence.bean;
+package cs492.obsecurefinal.spring.domain.metaintelligence;
 
-import cs492.obsecurefinal.metaintelligence.parsetree.MetaNode;
+import cs492.obsecurefinal.spring.domain.BaseEntity;
 import java.util.HashSet;
 import java.util.Set;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
- * <category name="LOCATION">
-        <rule name="namedLocation" type="OPENCYC" purpose="GENERALIZATION"></rule>
- * </category>
+ *  <criteria>
+	<condition type="comment">DATE</condition>
+    </criteria>
  * @author Benjamin Arnold
  */
-@Table(name = "METACATEGORY")
-@Entity(name = "METACATEGORY")
-public class MetaCategory extends MetaBase implements MetaNode {
+@Entity
+public class MetaCriteria extends BaseEntity implements MetaNode {
+    public static final String CLASS_NAME = "MetaCriteria";
     
     @OneToMany(fetch=FetchType.EAGER)
-    private Set<MetaRule> metaRules = new HashSet<>();
-    
-    @Column(name = "NAME")
-    private String name;
-    
-    public void setMetaRules(Set<MetaRule> metaRules) {
-	this.metaRules = metaRules;
-    }
-    
-    public Set<MetaRule> getMetaRules() {
-	return metaRules;
+    private Set<MetaCondition> metaConditions = new HashSet<>();
+
+    public Set<MetaCondition> getMetaConditions() {
+	return metaConditions;
     }
 
-    public void setName(String name) {
-	this.name = name;
-    }
-    
-    public String getName() {
-	return name;
+    public void setMetaConditions(Set<MetaCondition> metaConditions) {
+	this.metaConditions = metaConditions;
     }
 
-    public void addMetaRule(MetaRule metaRule) {
-	metaRules.add(metaRule);
+    public void addMetaCondition(MetaCondition metaCondition) {
+	metaConditions.add(metaCondition);
     }
+    
 }

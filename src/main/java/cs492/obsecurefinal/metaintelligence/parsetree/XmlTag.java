@@ -17,14 +17,15 @@
 
 package cs492.obsecurefinal.metaintelligence.parsetree;
 
-import cs492.obsecurefinal.metaintelligence.bean.MetaCategory;
-import cs492.obsecurefinal.metaintelligence.bean.MetaCondition;
-import cs492.obsecurefinal.metaintelligence.bean.MetaCriteria;
-import cs492.obsecurefinal.metaintelligence.bean.MetaFilter;
-import cs492.obsecurefinal.metaintelligence.bean.MetaMetric;
-import cs492.obsecurefinal.metaintelligence.bean.MetaRule;
-import cs492.obsecurefinal.metaintelligence.bean.MetaRuleSet;
-import cs492.obsecurefinal.metaintelligence.bean.MetaWeight;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaNode;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaCategory;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaCondition;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaCriteria;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaFilter;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaMetric;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRule;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRuleSet;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaWeight;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;

@@ -18,14 +18,14 @@
 package com.mycompany.obsecurefinal;
 
 import cs492.obsecurefinal.metaintelligence.XmlLoader;
-import cs492.obsecurefinal.metaintelligence.bean.MetaCategory;
-import cs492.obsecurefinal.metaintelligence.bean.MetaCondition;
-import cs492.obsecurefinal.metaintelligence.bean.MetaCriteria;
-import cs492.obsecurefinal.metaintelligence.bean.MetaFilter;
-import cs492.obsecurefinal.metaintelligence.bean.MetaMetric;
-import cs492.obsecurefinal.metaintelligence.bean.MetaRule;
-import cs492.obsecurefinal.metaintelligence.bean.MetaRuleSet;
-import cs492.obsecurefinal.metaintelligence.bean.MetaWeight;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaCategory;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaCondition;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaCriteria;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaFilter;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaMetric;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRule;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRuleSet;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaWeight;
 import cs492.obsecurefinal.metaintelligence.parsetree.RuleTreeComponent;
 import cs492.obsecurefinal.metaintelligence.parsetree.RuleTreeComposite;
 import cs492.obsecurefinal.metaintelligence.parsetree.RuleTreeLeaf;
