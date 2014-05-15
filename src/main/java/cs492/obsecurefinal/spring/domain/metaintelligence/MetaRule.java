@@ -38,13 +38,13 @@ public class MetaRule  extends BaseEntity implements MetaNode {
     @Column(name = "TYPE")
     private String type;
     
-    @OneToOne(cascade=CascadeType.ALL)
+    @OneToOne//(cascade=CascadeType.ALL)
     private MetaFilter filter;
     
-    @OneToOne(cascade=CascadeType.ALL)
+    @OneToOne//(cascade=CascadeType.ALL)
     private MetaMetric metric;
     
-    @OneToOne(cascade=CascadeType.ALL)
+    @OneToOne//(cascade=CascadeType.ALL)
     private MetaCriteria criteria;
     
     public void setName(String name) {

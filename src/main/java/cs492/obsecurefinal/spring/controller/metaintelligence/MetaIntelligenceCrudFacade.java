@@ -15,25 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package cs492.obsecurefinal.spring;
+package cs492.obsecurefinal.spring.controller.metaintelligence;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.orm.jpa.EntityScan;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import cs492.obsecurefinal.spring.domain.BaseEntity;
 
 /**
  *
  * @author Benjamin Arnold
  */
-@Configuration
-@ComponentScan
-@EnableAutoConfiguration
-public class SpringModel {
+public interface MetaIntelligenceCrudFacade<T extends BaseEntity> {
     
-    public static void main(String[] args) {
-	SpringApplication.run(SpringModel.class, "--debug");
-    }
-    
+    T save(T entity);
 }
