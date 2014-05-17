@@ -35,7 +35,7 @@ public class TopicIdentifier {
     private ParallelTopicModel model;
     private int numTopics = 5;
     private int numTopWords = 5;
-    private String DEFAULT_DOCUMENT_DIRECTORY = "\\";
+    public static final String DEFAULT_DOCUMENT_DIRECTORY = "\\";
     
     public TopicIdentifier(){
         TopicBuilder tb = new TopicBuilder(numTopics, DEFAULT_DOCUMENT_DIRECTORY);
