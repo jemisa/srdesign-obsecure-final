@@ -17,17 +17,16 @@
 
 package cs492.obsecurefinal.metaintelligence;
 
+import cs492.obsecurefinal.common.EntityTypes;
+import cs492.obsecurefinal.common.NamedEntity;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRule;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRuleSet;
-import cs492.obsecurefinal.common.EntityTypes;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
-import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -39,9 +38,8 @@ public class IntelligenceGraph {
     
     private static final Long START_ID = 100000L;
     private Long counter = START_ID;
-    private final NavigableMap<Long, String> txns = new TreeMap<>();
+    private final NavigableMap<Long, NamedEntity> txns = new TreeMap<>();
     private final NavigableMap<Long, List<String>> txnsResults = new TreeMap<>();
-    private final NavigableMap<Long, EntityTypes> txnTypes = new TreeMap<>();
     private final NavigableMap<Long, MetaRule> txnRules = new TreeMap<>();
     
     private static final IntelligenceGraph instance = new IntelligenceGraph();
@@ -84,40 +82,28 @@ public class IntelligenceGraph {
 	return topRules;
     }
     
-    public void resolve(String original, String result) {
-	Set<Long> txnIds = findMatchingTxns(original);
-	for (Long txnId : txnIds) {
-	    List<String> results = txnsResults.get(txnId);
-	    EntityTypes types = txnTypes.get(txnId);
-	    MetaRule ruleUsed = txnRules.get(txnId);
-	    if (results.contains(result)) {
-		
-	    }
-	    
-	    
+    public void resolve(NamedEntity original, String result) {
+	Long txnId = original.getMetaTxnId();
+	EntityTypes types = original.getType();
+	List<String> results = txnsResults.get(txnId);
+	MetaRule ruleUsed = txnRules.get(txnId);
+	if (results.contains(result)) {
+
 	}
+
     }
     
-    private Set<Long> findMatchingTxns(String target) {
-	Set<Long> txnIds = new HashSet<>();
-	for (Long id : txns.navigableKeySet()) {
-	    String set = txns.get(id);
-	    if (target.equals(set)) {
-		txnIds.add(id);
-	    }
-	}
-	return txnIds;
-    }
-    
-    public Long mark(String originalText, EntityTypes type, List<String> results, MetaRule ruleUsed ) {
+   
+    public Long mark(NamedEntity entity, List<String> results, MetaRule ruleUsed ) {
 	Long txnId;
 	synchronized(this) {
-	    txnId =counter;
+	    txnId = counter;
 	    counter += 1L;
 	}
-	txns.put(txnId, originalText);
+	entity.setMetaTxnId(txnId);
+	
+	txns.put(txnId, entity);
 	txnsResults.put(txnId, results);
-	txnTypes.put(txnId, type);
 	txnRules.put(txnId, ruleUsed);
 	return txnId;
     }

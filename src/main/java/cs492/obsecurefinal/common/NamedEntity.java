@@ -13,6 +13,7 @@ public class NamedEntity implements Comparable
     private Sentence sentence;
     private Span entitySpan;
     private String[] words;
+    private Long metaTxnId;
     
     public NamedEntity(Sentence sentence, Span entitySpan, EntityTypes type)
     {
@@ -90,4 +91,13 @@ public class NamedEntity implements Comparable
 	}
 	return res;
     }
+
+    public Long getMetaTxnId() {
+	return metaTxnId;
+    }
+
+    public void setMetaTxnId(Long metaTxnId) {
+	this.metaTxnId = metaTxnId;
+    }
+    
 }
