@@ -20,6 +20,7 @@ import cs492.obsecurefinal.common.SanitizationResult;
 import cs492.obsecurefinal.common.Sentence;
 import cs492.obsecurefinal.generalization.GeneralizationManager;
 import cs492.obsecurefinal.obsecurecyc.CycEstimator;
+import cs492.obsecurefinal.ui.MainWindow;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -28,6 +29,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import javax.swing.JFrame;
 import org.apache.commons.lang3.math.NumberUtils;
 
 public class App 
@@ -245,7 +247,7 @@ public class App
                         Document d = new Document(text);
                         
                         NGramBuilder builder = new NGramBuilder();
-                        builder.CreateNGrams(d.getSentences(), args[2], 3);
+                        builder.createNGrams(d.getSentences(), args[2], 3);
 
                     }
                 }
@@ -260,6 +262,9 @@ public class App
         else
         {
             // launch gui
+            MainWindow main = new MainWindow();
+            main.setVisible(true);
+            main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         }
 	System.exit(0);
     }

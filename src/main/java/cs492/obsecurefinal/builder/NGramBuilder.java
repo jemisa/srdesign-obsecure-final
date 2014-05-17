@@ -40,16 +40,11 @@ import java.util.Map.Entry;
  */
 public class NGramBuilder 
 {
-    public static int COUNT_NGRAMS = 50;
-    
-    public NGramBuilder()
-    {
-        
-    }
-    
+    public static final int COUNT_NGRAMS = 50;
+         
     // Loads a map of ngrams and their weight from a file
     // name is the name of a file containing extracted n-grams
-    public HashMap<String, Integer> LoadNGrams(String name)
+    public HashMap<String, Integer> loadNGrams(String name)
     {
         HashMap<String, Integer> nGramCount = new HashMap<>();
         
@@ -93,7 +88,7 @@ public class NGramBuilder
     // extracts ngrams from a set of sentences
     // text is the text to extract n-grams from
     // name is the name of the file to save results to
-    public void CreateNGrams(Sentence[] sentences, String name, int maxSize)
+    public void createNGrams(Sentence[] sentences, String name, int maxSize)
     {
         HashMap<String, Integer> nGramCount = new HashMap<>();
         
@@ -147,7 +142,7 @@ public class NGramBuilder
         }
     }
     
-    public static <K extends Comparable,V extends Comparable> Map<K,V> sortByValues(Map<K,V> map)
+    private <K extends Comparable,V extends Comparable> Map<K,V> sortByValues(Map<K,V> map)
     {
         List<Map.Entry<K,V>> entries = new LinkedList<>(map.entrySet());
      
