@@ -173,7 +173,7 @@ public class App
             }
             else
             {
-                System.out.println("-inference <input file> <output file>");
+                System.out.println("-inferencer <input file> <output file>");
             }
         }  else if (args.length > 0 && args[0].equals("-generalize"))
 	{
@@ -181,7 +181,7 @@ public class App
 	    Scanner scan = new Scanner(System.in);
             final String text = scan.nextLine();
 	    EntityTypes[] types = new EntityTypes[] {
-		EntityTypes.COMPANY,EntityTypes.LOCATION, EntityTypes.OCCUPATION
+		EntityTypes.COMPANY,EntityTypes.LOCATION, EntityTypes.OCCUPATION, EntityTypes.DRUG_ALCOHOL, EntityTypes.FAMILY, EntityTypes.MEDICAL
 	    };
 	     
 	    System.out.println("enter type of entity");

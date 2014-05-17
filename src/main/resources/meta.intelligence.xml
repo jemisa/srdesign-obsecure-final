@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ruleSet name="opencyc">
+    <category name="LOCATION">
+        <rule name="namedLocation" type="OPENCYC" purpose="GENERALIZATION">
+            <filter type="adaptive" value="3">LocationFilter</filter>
+            <metric>
+                <weight value="1">City</weight>
+                <weight value="2">State-UnitedStates</weight>
+                <weight value="3">IndependentCountry</weight>
+                <weight value="4">Country</weight>
+                <weight value="5">Continent</weight>
+            </metric>
+            <criteria>
+                <condition type="isa">ANY</condition>
+            </criteria>
+        </rule>
+        <rule name="historic" type="OPENCYC" purpose="GENERALIZATION">
+            <filter type="adaptive" value="3">LocationFilter</filter>
+            <metric>
+                <weight value="1">Historic</weight>
+                <weight value="2">City</weight>
+                <weight value="3">State-UnitedStates</weight>
+                <weight value="4">IndependentCountry</weight>
+                <weight value="5">Country</weight>
+                <weight value="6">Continent</weight>
+            </metric>
+            <criteria>
+                <condition type="comment">DATE</condition>
+            </criteria>
+        </rule>
+    </category>
+</ruleSet>

@@ -52,6 +52,7 @@ public class GeneralizationTest {
 	}
     }
     
+    @Ignore
     @Test
      public void generalizeOrganization() throws Exception {
 	final String text = "Merck";

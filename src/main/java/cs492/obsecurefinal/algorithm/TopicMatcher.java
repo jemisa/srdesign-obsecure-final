@@ -13,7 +13,7 @@ public class TopicMatcher
     public static final double MIN_VALUE = 0.001;
     public static final double DELTA = 0.001;
     
-    private  Topic[] topicListA, topicListB;
+    private final Topic[] topicListA, topicListB;
     
     public TopicMatcher(Topic[] a, Topic[] b)
     {
