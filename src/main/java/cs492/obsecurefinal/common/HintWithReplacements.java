@@ -34,4 +34,11 @@ public class HintWithReplacements implements SanitizationHint
     {
         return entity;
     }
+
+    @Override
+    public double getMatchPercentage()
+    {
+        // Always returns 1 because an entity has been located, exact match
+        return 1.0;
+    }
 }

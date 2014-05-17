@@ -26,7 +26,7 @@ import java.util.TreeMap;
  * @author Benjamin Arnold
  */
 public class PrimaryCluster implements Serializable {
-    private static final long serialVersionUID = 7526472295622776147L;
+    private static final long SERIAL_VERSION_UID = 7526472295622776147L;
     
     private TreeMap<String, String> primaryCluster = new TreeMap<>();
     

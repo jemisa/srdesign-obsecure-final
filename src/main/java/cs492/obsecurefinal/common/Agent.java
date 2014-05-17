@@ -12,13 +12,13 @@ import java.util.HashMap;
  */
 public class Agent 
 {
-    String name, occupation, location, workplace;
+    String name;//, occupation, location, workplace;
     HashMap<EntityTypes, String> agentInfo;
     
     public Agent(String name)
     {
         this.name = name;
-        agentInfo = new HashMap<EntityTypes, String>();
+        agentInfo = new HashMap<>();
     }
         
     public Agent()
@@ -27,7 +27,7 @@ public class Agent
         //occupation = "";
         //location = "";
         //workplace = "";
-        agentInfo = new HashMap<EntityTypes, String>();
+        agentInfo = new HashMap<>();
     }
     
     public String getName()

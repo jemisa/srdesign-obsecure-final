@@ -16,6 +16,8 @@
  */
 package cs492.obsecurefinal.common;
 
+import java.util.List;
+
 /**
  *
  * @author JOEL
@@ -24,11 +26,13 @@ public class HintNoReplacements implements SanitizationHint
 {
     private Sentence sentence;
     private double matchValue;
+    private String associatedType;
     
-    public HintNoReplacements(Sentence s, double val)
+    public HintNoReplacements(Sentence s, double val, String type)
     {
         sentence = s;
         matchValue = val;
+        associatedType = type;
     }
     
     public Sentence getSentence()
@@ -36,14 +40,20 @@ public class HintNoReplacements implements SanitizationHint
         return sentence;
     }
     
-    public double getMatchValue()
-    {
-        return matchValue;
-    }
-
     @Override
     public String getText() 
     {
         return sentence.getText();
+    }
+
+    @Override
+    public double getMatchPercentage() 
+    {
+        return matchValue;
+    }
+    
+    public String getAssociatedType()
+    {
+        return associatedType;
     }
 }

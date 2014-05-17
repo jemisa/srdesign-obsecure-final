@@ -92,9 +92,9 @@ public class InferenceBuilder
                     int id=Integer.parseInt(topic[0]);
                     double prob=Double.parseDouble(topic[1]);
                     
-                    Topic t = new Topic();
-                    t.setId(id);
-                    t.setProbability(prob);
+                    Topic t = new Topic(id, prob, new String[] {});
+                    //t.setId(id);
+                    //t.setProbability(prob);
                     result[i] = t;
                 }
                 

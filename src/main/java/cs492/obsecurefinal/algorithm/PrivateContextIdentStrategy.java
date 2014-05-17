@@ -14,14 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package cs492.obsecurefinal.common;
+package cs492.obsecurefinal.algorithm;
 
 /**
  *
  * @author JOEL
  */
-public interface SanitizationHint 
-{    
-    public String getText();
-    public double getMatchPercentage();
+public abstract class PrivateContextIdentStrategy 
+{
+    public abstract PrivateContextMatch getMatchValue();
 }

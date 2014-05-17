@@ -5,10 +5,7 @@ public class Topic implements Comparable {
     private double probability;
     private String[] topWords;
 
-    public Topic(){
-    }
-
-    public Topic(int i, double d, String[] s){
+   public Topic(int i, double d, String[] s){
             id = i;
             probability = d;
             topWords = s;
