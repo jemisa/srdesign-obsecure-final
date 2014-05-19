@@ -21,7 +21,7 @@ package cs492.obsecurefinal.metaintelligence;
  *
  * @author Benjamin Arnold
  */
-public interface HandlerAware <S extends MetaAction, T extends MetaHandler> {
+public interface HandlerAware <S extends MetaActionHandlerAware, T extends MetaHandler> {
     
     T getHandler(S predicate);
 }

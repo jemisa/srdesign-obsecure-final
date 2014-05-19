@@ -21,7 +21,7 @@ package cs492.obsecurefinal.metaintelligence;
  *
  * @author Benjamin Arnold
  */
-public class MetaFunction implements MetaAction {
+public class MetaFunction implements MetaActionHandlerAware {
 
     @Override
     public MetaHandler getHandler() {

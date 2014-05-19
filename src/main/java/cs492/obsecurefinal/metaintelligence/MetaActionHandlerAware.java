@@ -21,7 +21,7 @@ package cs492.obsecurefinal.metaintelligence;
  *
  * @author Benjamin Arnold
  */
-public interface MetaAction<T extends MetaHandler> {
+public interface MetaActionHandlerAware<T extends MetaHandler> {
     
     public T getHandler();
     public String getName();

@@ -20,8 +20,13 @@ package cs492.obsecurefinal.obsecurecyc;
 import cs492.obsecurefinal.metaintelligence.MetaPredicate;
 import cs492.obsecurefinal.metaintelligence.PredicateHandler;
 import cs492.obsecurefinal.metaintelligence.StringClassifierUtil;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaCondition;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaMetric;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRule;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaWeight;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.Set;
 import org.opencyc.api.CycAccess;
 import org.opencyc.cycobject.CycFort;
 import org.opencyc.cycobject.CycList;
@@ -55,9 +60,26 @@ public class CycPredicateHandler implements PredicateHandler {
 		boolean condition = false;
 		CycAccess cycAccess = context.getCycAccess();
 		CycQueryStrategy strategy = context.getStrategy();
+		String conditional = metaPredicate.getCondition().getName();
+		
+		if ("ANY".equals(conditional)) {
+		    MetaRule metaRule = metaPredicate.getRule();
+		    MetaMetric metric = metaRule.getMetric();
+		    Set<MetaWeight> weights = metric.getMetaWeights();
+		    for (MetaWeight weight : weights) {
+			MetaCondition nthCondition = new MetaCondition();
+			nthCondition.setType(name());
+			nthCondition.setName(weight.getName());
+			MetaPredicate nthPredicate = new MetaPredicate(metaRule, nthCondition);
+			condition = nthPredicate.getHandler().apply(object, context, args);
+			if (condition) {
+			    return true;
+			}
+		    }
+		}
 		
 		CycList list = cycAccess.getAllIsa(object);
-		CycList constants = strategy.cycConstantAutoCompleteExact(cycAccess, metaPredicate.getCondition().getName());
+		CycList constants = strategy.cycConstantAutoCompleteExact(cycAccess, conditional);
 		for (Iterator it = constants.iterator(); it.hasNext();) {
 		    CycFort fort = (CycFort) it.next();
 		    for (Iterator isIt = list.iterator(); isIt.hasNext();) {

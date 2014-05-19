@@ -25,6 +25,9 @@ import cs492.obsecurefinal.obsecurecyc.CycQueryStrategy;
 import cs492.obsecurefinal.obsecurecyc.ObSecureCycFacade;
 import cs492.obsecurefinal.obsecurecyc.ObSecureCycStrategyFactory;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaCondition;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaMetric;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRule;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaWeight;
 import static junit.framework.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
@@ -44,7 +47,9 @@ public class MetaPredicateTest {
 	metaCondition.setType("isa");
 	metaCondition.setName("City");
 	
-	MetaPredicate metaPredicate = new MetaPredicate(metaCondition);
+	MetaRule rule = new MetaRule();
+	
+	MetaPredicate metaPredicate = new MetaPredicate(rule, metaCondition);
 	PredicateHandler handler = metaPredicate.getHandler();
 	CycAccess cycAccess = ObSecureCycFacade.getInstance().getCycAccess();
 	CycQueryStrategy strategy = ObSecureCycStrategyFactory.lookupStrategy(EntityTypes.LOCATION);
@@ -60,8 +65,9 @@ public class MetaPredicateTest {
 	MetaCondition metaCondition = new MetaCondition();
 	metaCondition.setType("isa");
 	metaCondition.setName("City");
+	MetaRule rule = new MetaRule();
 	
-	MetaPredicate metaPredicate = new MetaPredicate(metaCondition);
+	MetaPredicate metaPredicate = new MetaPredicate(rule, metaCondition);
 	PredicateHandler handler = metaPredicate.getHandler();
 	CycAccess cycAccess = ObSecureCycFacade.getInstance().getCycAccess();
 	CycQueryStrategy strategy = ObSecureCycStrategyFactory.lookupStrategy(EntityTypes.LOCATION);
@@ -77,8 +83,8 @@ public class MetaPredicateTest {
 	MetaCondition metaCondition = new MetaCondition();
 	metaCondition.setType("comment");
 	metaCondition.setName("DATE");
-	
-	MetaPredicate metaPredicate = new MetaPredicate(metaCondition);
+	MetaRule rule = new MetaRule();
+	MetaPredicate metaPredicate = new MetaPredicate(rule, metaCondition);
 	PredicateHandler handler = metaPredicate.getHandler();
 	CycAccess cycAccess = ObSecureCycFacade.getInstance().getCycAccess();
 	CycQueryStrategy strategy = ObSecureCycStrategyFactory.lookupStrategy(EntityTypes.LOCATION);
@@ -89,13 +95,14 @@ public class MetaPredicateTest {
 	assertTrue("The Liberty Bell has historic significance",test);
     }
     
-     @Test
+    @Test
     public void commentNotHistoric() throws Exception {
 	MetaCondition metaCondition = new MetaCondition();
 	metaCondition.setType("comment");
 	metaCondition.setName("DATE");
 	
-	MetaPredicate metaPredicate = new MetaPredicate(metaCondition);
+	MetaRule rule = new MetaRule();
+	MetaPredicate metaPredicate = new MetaPredicate(rule, metaCondition);
 	PredicateHandler handler = metaPredicate.getHandler();
 	CycAccess cycAccess = ObSecureCycFacade.getInstance().getCycAccess();
 	CycQueryStrategy strategy = ObSecureCycStrategyFactory.lookupStrategy(EntityTypes.LOCATION);
@@ -105,5 +112,37 @@ public class MetaPredicateTest {
 	boolean test = handler.apply((CycObject) matches.get(0), context, new String[]{});
 	assertFalse("A Kangaroo has no historic significance",test);
     }
+    
+    @Test
+    public void isaAny() throws Exception {
+	MetaCondition metaCondition = new MetaCondition();
+	metaCondition.setType("isa");
+	metaCondition.setName("ANY");
+	
+	MetaRule rule = new MetaRule();
+	
+	MetaMetric metric = new MetaMetric();
+	MetaWeight city = new MetaWeight();
+	city.setName("City");
+	city.setValue(2);
+	metric.addWeight(city);
+	
+	MetaWeight eagles = new MetaWeight();
+	eagles.setName("FootballTeam");
+	city.setValue(1);
+	metric.addWeight(eagles);
+	rule.setMetric(metric);
+	
+	MetaPredicate metaPredicate = new MetaPredicate(rule, metaCondition);
+	PredicateHandler handler = metaPredicate.getHandler();
+	CycAccess cycAccess = ObSecureCycFacade.getInstance().getCycAccess();
+	CycQueryStrategy strategy = ObSecureCycStrategyFactory.lookupStrategy(EntityTypes.LOCATION);
+	CycQuery context = new CycQuery(strategy, cycAccess);
+	CycList matches = strategy.cycConstantAutoCompleteExact(cycAccess, "PhiladelphiaEagles");
+	
+	boolean test = handler.apply((CycObject) matches.get(0), context, new String[]{});
+	assertTrue("ANY on PhiadelphiaEagles should match a FootballTeam",test);
+    }
+    
     
 }

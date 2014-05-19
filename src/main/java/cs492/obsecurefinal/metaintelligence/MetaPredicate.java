@@ -19,19 +19,22 @@ package cs492.obsecurefinal.metaintelligence;
 
 import cs492.obsecurefinal.obsecurecyc.CycPredicateHandler;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaCondition;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRule;
 
 /**
  *
  * @author Benjamin Arnold
  */
-public class MetaPredicate implements MetaAction<PredicateHandler> {
+public class MetaPredicate implements MetaActionHandlerAware<PredicateHandler> {
     private final PredicateHandler handler;
     private final MetaCondition condition;
+    private final MetaRule rule;
     private final String name;
     
-    public MetaPredicate(MetaCondition condition) {
+    public MetaPredicate(MetaRule rule, MetaCondition condition) {
 	this.condition = condition;
-	name = condition.getType().toUpperCase();
+	this.rule =  rule;
+	this.name = condition.getType().toUpperCase();
 	Handler wrapper = Handler.valueOf(name);
 	this.handler = wrapper.getHandler(this);
     }
@@ -50,6 +53,9 @@ public class MetaPredicate implements MetaAction<PredicateHandler> {
 	return condition;
     }
     
+    public MetaRule getRule() {
+	return rule;
+    }
     
     private static enum Handler implements HandlerAware<MetaPredicate, PredicateHandler> {
 	ISA {

@@ -16,9 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.opencyc.api.CycAccess;
 import org.opencyc.api.CycObjectFactory;
 import org.opencyc.cycobject.CycConstant;
-import org.opencyc.cycobject.CycFort;
 import org.opencyc.cycobject.CycList;
-import org.opencyc.cycobject.CycNart;
 import org.opencyc.cycobject.CycObject;
 import org.opencyc.cycobject.CycSymbol;
 import org.opencyc.cycobject.CycVariable;
@@ -54,12 +52,12 @@ public abstract class CycQueryStrategy {
     
     public abstract CycList exec(CycAccess cycAccess, CycList constants) throws UnknownHostException, IOException;
     
-    protected CycList cycConstantAutoCompleteContains(CycAccess cycAccess, String text) throws IOException {
+    public CycList cycConstantAutoCompleteContains(CycAccess cycAccess, String text) throws IOException {
 	final CycList constants = cycAccess.converseList(CycList.makeCycList(CONSTANT_APROPOS,text));
 	return constants;
     } 
     
-    protected CycList cycConstantAutoCompleteExact(CycAccess cycAccess, String text) throws IOException {
+    public CycList cycConstantAutoCompleteExact(CycAccess cycAccess, String text) throws IOException {
 	final CycList constants = cycAccess.converseList(CycList.makeCycList(CONSTANT_COMPLETE,text));
 	return constants;
     }
