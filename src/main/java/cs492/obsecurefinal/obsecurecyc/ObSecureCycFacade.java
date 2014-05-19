@@ -10,6 +10,7 @@ import cs492.obsecurefinal.common.EntityTypes;
 import cs492.obsecurefinal.common.GeneralizationResult;
 import cs492.obsecurefinal.common.NamedEntity;
 import cs492.obsecurefinal.generalization.GeneralizationFacade;
+import cs492.obsecurefinal.metaintelligence.IntelligenceGraph;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
@@ -53,7 +54,7 @@ public class ObSecureCycFacade implements GeneralizationFacade {
 	    EntityTypes type = entity.getType();
 	    CycQueryStrategy strategy = ObSecureCycStrategyFactory.lookupStrategy(type);
 	    try {
-		WordBall wordBall = new WordBall(entity.getText());  //encapsulate word metamorphis
+		WordBall wordBall = new WordBall(entity.getText());  //encapsulate word permutations
 		List<String> results = new CycQuery(strategy,cycAccess).execute(wordBall);
 		for (Iterator<String> it = results.iterator(); it.hasNext();) {
 		    result.add(it.next());
@@ -65,5 +66,9 @@ public class ObSecureCycFacade implements GeneralizationFacade {
 	}
 	return map;
 	
+    }
+    
+    public CycAccess getCycAccess() {
+	return cycAccess;
     }
 }
