@@ -18,6 +18,13 @@
 package com.mycompany.obsecurefinal;
 
 import cs492.obsecurefinal.metaintelligence.XmlLoader;
+import cs492.obsecurefinal.metaintelligence.parsetree.RuleTreeComponent;
+import cs492.obsecurefinal.metaintelligence.parsetree.RuleTreeComposite;
+import cs492.obsecurefinal.metaintelligence.parsetree.RuleTreeLeaf;
+import cs492.obsecurefinal.metaintelligence.parsetree.XmlDocument;
+import cs492.obsecurefinal.metaintelligence.parsetree.XmlTag;
+import cs492.obsecurefinal.spring.domain.common.SpringAgent;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaAction;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaCategory;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaCondition;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaCriteria;
@@ -26,11 +33,7 @@ import cs492.obsecurefinal.spring.domain.metaintelligence.MetaMetric;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRule;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRuleSet;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaWeight;
-import cs492.obsecurefinal.metaintelligence.parsetree.RuleTreeComponent;
-import cs492.obsecurefinal.metaintelligence.parsetree.RuleTreeComposite;
-import cs492.obsecurefinal.metaintelligence.parsetree.RuleTreeLeaf;
-import cs492.obsecurefinal.metaintelligence.parsetree.XmlDocument;
-import cs492.obsecurefinal.metaintelligence.parsetree.XmlTag;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -39,6 +42,7 @@ import java.util.Set;
 
 
 import static junit.framework.Assert.*;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -46,7 +50,7 @@ import org.junit.Test;
  * @author Benjamin Arnold
  */
 public class XmlRuleTest {
-    private static final String document = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><ruleSet name=\"opencyc\"><category name=\"LOCATION\"><rule name=\"namedLocation\" type=\"GENERALITY\"><filter type=\"adaptive\" value=\"3\">LocationFilter</filter><metric><weight value=\"1\">City</weight><weight value=\"2\">State-UnitedStates</weight><weight value=\"3\">IndependentCountry</weight><weight value=\"4\">Country</weight><weight value=\"5\">Continent</weight></metric><criteria><condition type=\"isa\">ANY</condition></criteria></rule><rule name=\"historic\" type=\"GENERALITY\"><filter type=\"adaptive\" value=\"3\">LocationFilter</filter><metric><weight value=\"1\">Historic</weight><weight value=\"2\">City</weight><weight value=\"3\">State-UnitedStates</weight><weight value=\"4\">IndependentCountry</weight><weight value=\"5\">Country</weight><weight value=\"6\">Continent</weight></metric><criteria><condition type=\"comment\">DATE</condition></criteria></rule></category></ruleSet>";
+    private static final String document = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><ruleSet name=\"opencyc\"><category name=\"LOCATION\"><rule name=\"namedLocation\" type=\"GENERALITY\"><filter type=\"adaptive\" value=\"3\">LocationFilter</filter><action type=\"isa\" value=\"1\">AUTO</action><metric><weight value=\"1\">City</weight><weight value=\"2\">State-UnitedStates</weight><weight value=\"3\">IndependentCountry</weight><weight value=\"4\">Country</weight><weight value=\"5\">Continent</weight></metric><criteria><condition type=\"isa\">ANY</condition></criteria></rule><rule name=\"historic\" type=\"GENERALITY\"><filter type=\"adaptive\" value=\"3\">LocationFilter</filter><action type=\"isa\" value=\"1\">AUTO</action><metric><weight value=\"1\">Historic</weight><weight value=\"2\">City</weight><weight value=\"3\">State-UnitedStates</weight><weight value=\"4\">IndependentCountry</weight><weight value=\"5\">Country</weight><weight value=\"6\">Continent</weight></metric><criteria><condition type=\"comment\">DATE</condition></criteria></rule></category></ruleSet>";
     
     @Test
     public void parseFilter() throws Exception {
@@ -55,6 +59,15 @@ public class XmlRuleTest {
 	assertEquals("adaptive", filter.getType());
 	assertEquals("3", filter.getValue());
 	assertEquals("LocationFilter", filter.getName());
+    }
+    
+    @Test
+    public void parseAction() throws Exception {
+	final String aString = "<action type=\"isa\" value=\"1\">AUTO</action>";
+	RuleTreeComponent filter = XmlTag.ACTION.parse(aString);
+	assertEquals("isa", filter.getType());
+	assertEquals("1", filter.getValue());
+	assertEquals("AUTO", filter.getName());
     }
     
     @Test
@@ -69,7 +82,7 @@ public class XmlRuleTest {
     public void parseTwoRuleSet() throws Exception {
 	XmlLoader loader = new XmlLoader() {
 	    @Override
-	    public String getDocumentContents() {
+	    public String getDocumentContents(String path) {
 		return document;
 	    }
 	};
@@ -83,24 +96,8 @@ public class XmlRuleTest {
 	
 	RuleTreeComposite category = (RuleTreeComposite) children.get(0);
 	assertEquals("LOCATION", category.getName());
-	List<RuleTreeComponent> categoryCildren = category.getChildren();
-	assertEquals(2, categoryCildren.size());
-	
-	{
-	RuleTreeComposite rule = (RuleTreeComposite) categoryCildren.get(0);
-	assertEquals("namedLocation", rule.getName());
-	List<RuleTreeComponent> ruleChildren = rule.getChildren();
-	assertEquals(3, ruleChildren.size());
-	
-	RuleTreeLeaf filter = (RuleTreeLeaf) ruleChildren.get(0);
-	assertEquals("LocationFilter", filter.getName());
-	assertEquals("3", filter.getValue());
-	
-	RuleTreeComposite metric = (RuleTreeComposite) ruleChildren.get(1);
-	List<RuleTreeComponent> metricChildren = metric.getChildren();
-	assertEquals(5, metricChildren.size());
-	
-	Iterator<RuleTreeComponent> weightIterator = metricChildren.iterator();
+	final List<RuleTreeComponent> categoryChildren = category.getChildren();
+	assertEquals(2, categoryChildren.size());
 	
 	final Map<Integer, String> expectedWeights = new HashMap<>();
 	expectedWeights.put(1, "City");
@@ -109,70 +106,136 @@ public class XmlRuleTest {
 	expectedWeights.put(4,"Country");
 	expectedWeights.put(5,"Continent");
 	
-	while (weightIterator.hasNext()) {
-	    RuleTreeComponent weight = weightIterator.next();
-	    String wtVal = weight.getValue();
-	    String expectedName = expectedWeights.get(Integer.valueOf(wtVal));
-	    assertEquals(expectedName, weight.getName());
+	final Map<Integer, String> expectedWeightsB = new HashMap<>();
+	expectedWeightsB.put(1, "Historic");
+	expectedWeightsB.put(2, "City");
+	expectedWeightsB.put(3,"State-UnitedStates");
+	expectedWeightsB.put(4,"IndependentCountry");
+	expectedWeightsB.put(5,"Country");
+	expectedWeightsB.put(6,"Continent");
+	
+	Object[][] expectedAgents = new Object[][] {
+	    {new Object[]{"namedLocation","4"},	new Object[]{"LocationFilter","3"},new Object[]{"AUTO","1","isa"},"5",expectedWeights,"1",new Object[]{"ANY","isa"}},
+	    {new Object[]{"historic","4"},	new Object[]{"LocationFilter","3"},new Object[]{"AUTO","1","isa"},"6",expectedWeightsB,"1",new Object[]{"DATE","comment"}}
+	};
+	
+	int score = 0;
+	int predicateSize = 0;
+	MatchScore matchScore = new MatchScore(expectedAgents);
+	for (int i = 0; i < categoryChildren.size(); i++) {
+	    RuleTreeComposite rule = (RuleTreeComposite) categoryChildren.get(i);
+	    List<RuleTreeComponent> ruleChildren = rule.getChildren();
+	    RuleTreeComposite metric = (RuleTreeComposite) ruleChildren.get(2);
+	    List<RuleTreeComponent> metricChildren = metric.getChildren();
+	    RuleTreeComposite criteria = (RuleTreeComposite) ruleChildren.get(3);
+	    List<RuleTreeComponent> criteriaChildren = criteria.getChildren();
+
+	    List<Predicate> predicates = generatePredicates(rule,ruleChildren, metricChildren,criteriaChildren); 
+	    score += matchScore.score(predicates);
+	    predicateSize = predicates.size();
 	}
-	
-	RuleTreeComposite criteria = (RuleTreeComposite) ruleChildren.get(2);
-	List<RuleTreeComponent> criteriaChildren = criteria.getChildren();
-	assertEquals(1, criteriaChildren.size());
-	
-	RuleTreeLeaf condition = (RuleTreeLeaf) criteriaChildren.get(0);
-	assertEquals("ANY", condition.getName());
-	assertEquals("isa", condition.getType());
-	}
-	
-	{
-	RuleTreeComposite rule = (RuleTreeComposite) categoryCildren.get(1);
-	assertEquals("historic", rule.getName());
-	List<RuleTreeComponent> ruleChildren = rule.getChildren();
-	assertEquals(3, ruleChildren.size());
-	
-	RuleTreeLeaf filter = (RuleTreeLeaf) ruleChildren.get(0);
-	assertEquals("LocationFilter", filter.getName());
-	assertEquals("3", filter.getValue());
-	
-	RuleTreeComposite metric = (RuleTreeComposite) ruleChildren.get(1);
-	List<RuleTreeComponent> metricChildren = metric.getChildren();
-	assertEquals(6, metricChildren.size());
-	
-	Iterator<RuleTreeComponent> weightIterator = metricChildren.iterator();
-	
-	final Map<Integer, String> expectedWeights = new HashMap<>();
-	expectedWeights.put(1, "Historic");
-	expectedWeights.put(2, "City");
-	expectedWeights.put(3,"State-UnitedStates");
-	expectedWeights.put(4,"IndependentCountry");
-	expectedWeights.put(5,"Country");
-	expectedWeights.put(6,"Continent");
-	
-	while (weightIterator.hasNext()) {
-	    RuleTreeComponent weight = weightIterator.next();
-	    String wtVal = weight.getValue();
-	    String expectedName = expectedWeights.get(Integer.valueOf(wtVal));
-	    assertEquals(expectedName, weight.getName());
-	}
-	
-	RuleTreeComposite criteria = (RuleTreeComposite) ruleChildren.get(2);
-	List<RuleTreeComponent> criteriaChildren = criteria.getChildren();
-	assertEquals(1, criteriaChildren.size());
-	
-	RuleTreeLeaf condition = (RuleTreeLeaf) criteriaChildren.get(0);
-	assertEquals("DATE", condition.getName());
-	assertEquals("comment", condition.getType());
-	}
+	assertEquals(2*predicateSize,score);
+
     }
-    
-   
+
+
+private List<Predicate> generatePredicates(final RuleTreeComposite rule,final List<RuleTreeComponent> ruleChildren,final List<RuleTreeComponent> metricChildren,final List<RuleTreeComponent> criteriaChildren) {
+	Predicate rulePredicate = new Predicate() {
+	    @Override
+	    public boolean apply(Object expectedValue) {
+		Object[] expected = (Object[]) expectedValue;
+		boolean matched = expected[0].equals(rule.getName());
+		if (matched) {
+		    matched = Integer.parseInt((String)expected[1]) == ruleChildren.size();
+		}
+		
+		return matched;
+	    }
+	};
+
+	Predicate filterPredicate = new Predicate() {
+	    @Override
+	     public boolean apply(Object expectedValue) {
+		Object[] expected = (Object[]) expectedValue;
+		RuleTreeLeaf filter = (RuleTreeLeaf) ruleChildren.get(0);
+		boolean matched = expected[0].equals(filter.getName());
+		if (matched) {
+		    matched = expected[1].equals(filter.getValue());
+		}
+		return matched;
+	    }
+	};
+
+	Predicate actionPredicate = new Predicate() {
+	    @Override
+	     public boolean apply(Object expectedValue) {
+		Object[] expected = (Object[]) expectedValue;
+		RuleTreeLeaf action = (RuleTreeLeaf) ruleChildren.get(1);
+		boolean matched = expected[0].equals(action.getName());
+		if (matched) {
+		    matched = expected[1].equals(action.getValue());
+		}
+		if (matched) {
+		    matched = expected[2].equals(action.getType());
+		}
+		return matched;
+	    }
+	};
+
+
+	Predicate metricPredicate = new Predicate() {
+	    @Override
+	     public boolean apply(Object expectedValue) {
+		boolean matched = Integer.parseInt((String)expectedValue) == metricChildren.size();
+		return matched;
+	     }
+	};
+
+	Predicate weightPredicate = new Predicate() {
+	    @Override
+	     public boolean apply(Object expectedValue) {
+		Map<Integer, String> expectedWeights = (Map<Integer, String>) expectedValue;
+		Iterator<RuleTreeComponent> weightIterator = metricChildren.iterator();
+		boolean matched = true;
+		while (weightIterator.hasNext() && matched) {
+		    RuleTreeComponent weight = weightIterator.next();
+		    String wtVal = weight.getValue();
+		    String expectedName = expectedWeights.get(Integer.valueOf(wtVal));
+		    matched = expectedName.equals(weight.getName());
+		}
+		return matched;
+	    }
+	};
+
+	Predicate criteriaPredicates = new Predicate() {
+	    @Override
+	    public boolean apply(Object expectedValue) {
+		boolean matched = Integer.parseInt((String) expectedValue) == criteriaChildren.size();
+		return matched;
+	    }
+	};
+
+	Predicate conditionPredicates = new Predicate() {
+	    @Override
+	    public boolean apply(Object expectedValue) {
+		Object[] expected = (Object[]) expectedValue;
+		RuleTreeLeaf condition = (RuleTreeLeaf) criteriaChildren.get(0);
+		boolean matched = expected[0].equals(condition.getName());
+		if (matched) {
+		    matched = expected[1].equals(condition.getType());
+		}
+		return matched;
+	    }
+	};
+
+	return Arrays.asList(new Predicate[]{rulePredicate,filterPredicate,actionPredicate,metricPredicate,weightPredicate,criteriaPredicates,conditionPredicates});
+    }
     
     @Test
     public void loadMetaRules() throws Exception {
 	XmlLoader loader = new XmlLoader() {
 	    @Override
-	    public String getDocumentContents() {
+	    public String getDocumentContents(String path) {
 		return document;
 	    }
 	};
@@ -195,6 +258,11 @@ public class XmlRuleTest {
 	MetaFilter filter = rule.getFilter();
 	assertEquals("LocationFilter", filter.getName());
 	assertEquals(Integer.valueOf(3), filter.getValue());
+	
+	MetaAction action = rule.getAction();
+	assertEquals("AUTO",action.getName());
+	assertEquals(Integer.valueOf(1),action.getValue());
+	assertEquals("isa",action.getType());
 	
 	MetaMetric metric = rule.getMetric();
 	Set<MetaWeight> weights = metric.getMetaWeights();
@@ -233,6 +301,11 @@ public class XmlRuleTest {
 	assertEquals("LocationFilter", filter.getName());
 	assertEquals(Integer.valueOf(3), filter.getValue());
 	
+	MetaAction action = rule.getAction();
+	assertEquals("AUTO",action.getName());
+	assertEquals(Integer.valueOf(1),action.getValue());
+	assertEquals("isa",action.getType());
+	
 	MetaMetric metric = rule.getMetric();
 	Set<MetaWeight> weights = metric.getMetaWeights();
 	assertEquals(6, weights.size());
@@ -262,5 +335,12 @@ public class XmlRuleTest {
 	assertEquals("DATE", condition.getName());
 	assertEquals("comment", condition.getType());
 	}
+    }
+    
+    @Test
+    public void testNoOverrides() throws Exception {
+	XmlLoader loader = new XmlLoader();
+	XmlDocument document = loader.getDocument();
+	assertFalse("A document should be loaded even if there are no overrides", document.isEmpty());
     }
 }

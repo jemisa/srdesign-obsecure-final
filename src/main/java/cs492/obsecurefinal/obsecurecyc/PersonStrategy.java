@@ -19,8 +19,8 @@ import org.opencyc.cycobject.CycObject;
  */
 public class PersonStrategy extends CycQueryStrategy {
 
-    protected PersonStrategy(EntityTypes type) {
-	super(type);
+    protected PersonStrategy(EntityTypes type, String microtheory) {
+	super(type, microtheory);
     }
 
     @Override

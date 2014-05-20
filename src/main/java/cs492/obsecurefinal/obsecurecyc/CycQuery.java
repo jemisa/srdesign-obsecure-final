@@ -6,6 +6,8 @@
 
 package cs492.obsecurefinal.obsecurecyc;
 
+import cs492.obsecurefinal.metaintelligence.IntelligenceGraph;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRule;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -47,6 +49,14 @@ public class CycQuery {
 	    }
 	}
 	return results;
+    }
+    
+    protected CycQueryStrategy getStrategy() {
+	return strategy;
+    }
+    
+    protected CycAccess getCycAccess() {
+	return cycAccess;
     }
     
 }

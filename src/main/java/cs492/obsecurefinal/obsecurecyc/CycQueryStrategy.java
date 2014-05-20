@@ -10,15 +10,14 @@ import cs492.obsecurefinal.common.EntityTypes;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.opencyc.api.CycAccess;
 import org.opencyc.api.CycObjectFactory;
 import org.opencyc.cycobject.CycConstant;
-import org.opencyc.cycobject.CycFort;
 import org.opencyc.cycobject.CycList;
-import org.opencyc.cycobject.CycNart;
 import org.opencyc.cycobject.CycObject;
 import org.opencyc.cycobject.CycSymbol;
 import org.opencyc.cycobject.CycVariable;
@@ -41,11 +40,19 @@ public abstract class CycQueryStrategy {
     protected static final String MICROTHEORY_ENGLISH = "EnglishMt";
     protected static final String MICROTHEORY_UNIVERSAL_VOCABULARY = "UniversalVocabularyMt";
     protected static final String MICROTHEORY_WORLD_TEMPORAL = "CurrentWorldDataCollectorMt-NonHomocentric";
+    protected static final String MICROTHEORY_MEDICAL_PARAPHRASE = "MedicalParaphraseMt";
+    protected static final String MICROTHEORY_MASS_MEDIA = "MassMediaDataMt";
+    protected static final String MICROTHEORY_HUMAN_AILMENT = "HumanAilmentMt";
     
     private EntityTypes type;
+    private String microtheory;
     
-    CycQueryStrategy(EntityTypes type) {
+    CycQueryStrategy(EntityTypes type, String microtheory) {
 	this.type = type;
+    }
+    
+    public String getMicroTheory() {
+	return microtheory;
     }
     
     EntityTypes getEntityTypes() {
@@ -54,18 +61,18 @@ public abstract class CycQueryStrategy {
     
     public abstract CycList exec(CycAccess cycAccess, CycList constants) throws UnknownHostException, IOException;
     
-    protected CycList cycConstantAutoCompleteContains(CycAccess cycAccess, String text) throws IOException {
+    public CycList cycConstantAutoCompleteContains(CycAccess cycAccess, String text) throws IOException {
 	final CycList constants = cycAccess.converseList(CycList.makeCycList(CONSTANT_APROPOS,text));
 	return constants;
     } 
     
-    protected CycList cycConstantAutoCompleteExact(CycAccess cycAccess, String text) throws IOException {
+    public CycList cycConstantAutoCompleteExact(CycAccess cycAccess, String text) throws IOException {
 	final CycList constants = cycAccess.converseList(CycList.makeCycList(CONSTANT_COMPLETE,text));
 	return constants;
     }
     
     public CycConstant getMicrotheory(CycAccess cycAccess) throws IOException {
-	return cycAccess.getConstantByName(MICROTHEORY_US_GEOGRAPHY);
+	return cycAccess.getConstantByName(getMicroTheory());
     }
     
     protected CycList getConstants(CycAccess cycAccess, Iterator<String> order) throws IOException {
@@ -128,7 +135,7 @@ public abstract class CycQueryStrategy {
 	    
 	    @Override
 	    public CycList filter(CycList input) throws IOException {
-		return CycFilter.filter(cycAccess, input, CycFilter.INDIVIDUAL);
+		return CycFilter.filter(cycAccess, input, Arrays.asList(CycFilter.INDIVIDUAL));
 	    }
 	};
 	CycList result = executor.execute(constants);
@@ -162,5 +169,9 @@ public abstract class CycQueryStrategy {
 	    }
 	}
 	return values;
-    }     
+    } 
+
+    protected List<CycFilter> getFilters()  {
+	return null;  //template
+    }
 }

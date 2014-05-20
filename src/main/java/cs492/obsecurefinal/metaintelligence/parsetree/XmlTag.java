@@ -17,12 +17,13 @@
 
 package cs492.obsecurefinal.metaintelligence.parsetree;
 
-import cs492.obsecurefinal.spring.domain.metaintelligence.MetaNode;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaAction;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaCategory;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaCondition;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaCriteria;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaFilter;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaMetric;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaNode;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRule;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRuleSet;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaWeight;
@@ -147,6 +148,26 @@ public enum XmlTag implements XmlConstants, Instantiable {
 	void handleResult(MetaNode parent, MetaNode child) {
 	    ((MetaCriteria)parent).addMetaCondition((MetaCondition) child);
 	}
+    },ACTION{
+	@Override
+	public MetaAction newInstance(RuleTreeComponent node) {
+	    MetaAction metaAction = new MetaAction();
+	    metaAction.setName(node.getName());
+	    metaAction.setType(node.getType());
+	    if (NumberUtils.isNumber(node.getValue())) {
+		Integer value = Integer.parseInt(node.getValue());
+		metaAction.setValue(value);
+	    } else {
+		metaAction.setExtra(node.getValue());
+	    }
+	    
+	    return metaAction;
+	}
+
+	@Override
+	void handleResult(MetaNode parent, MetaNode child) {
+	    ((MetaRule)parent).setAction((MetaAction) child);
+	}
     },NOT_FOUND{
 	@Override
 	public MetaNode newInstance(RuleTreeComponent parent) {
@@ -242,7 +263,7 @@ public enum XmlTag implements XmlConstants, Instantiable {
     }
 
     private XmlTag match(String sTag) {
-	XmlTag[] tags = new XmlTag[]{RULE_SET,CATEGORY,METRIC,WEIGHT,FILTER,RULE,CRITERIA,CONDITION};
+	XmlTag[] tags = new XmlTag[]{RULE_SET,CATEGORY,METRIC,WEIGHT,FILTER,RULE,CRITERIA,CONDITION,ACTION};
 	int shortEnd = sTag.indexOf(XML_TAG_CLOSE);
 	int open = sTag.indexOf(XML_TAG_OPEN) + 1;
 	final String likelyTag = (shortEnd == -1) ? sTag.substring(open) : sTag.substring(open,shortEnd);

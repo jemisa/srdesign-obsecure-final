@@ -25,5 +25,7 @@ import org.springframework.data.repository.CrudRepository;
  * @author Benjamin Arnold
  */
 public interface MetaCategoryRepository extends CrudRepository<MetaCategory, Long> {
+    
+    MetaCategory findByName(String name);
 
 }

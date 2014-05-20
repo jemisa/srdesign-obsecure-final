@@ -4,6 +4,7 @@
     <category name="LOCATION">
         <rule name="namedLocation" type="OPENCYC" purpose="GENERALIZATION">
             <filter type="adaptive" value="3">LocationFilter</filter>
+            <action type="isa" value="1">AUTO</action>
             <metric>
                 <weight value="1">City</weight>
                 <weight value="2">State-UnitedStates</weight>
@@ -12,11 +13,12 @@
                 <weight value="5">Continent</weight>
             </metric>
             <criteria>
-                <condition type="isa">ANY</condition>
+                    <condition type="isa">ANY</condition>
             </criteria>
         </rule>
         <rule name="historic" type="OPENCYC" purpose="GENERALIZATION">
             <filter type="adaptive" value="3">LocationFilter</filter>
+            <action type="isa" value="1">AUTO</action>
             <metric>
                 <weight value="1">Historic</weight>
                 <weight value="2">City</weight>

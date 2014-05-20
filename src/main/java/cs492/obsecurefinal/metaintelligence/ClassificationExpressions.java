@@ -15,36 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.mycompany.obsecurefinal;
-
-import java.util.List;
+package cs492.obsecurefinal.metaintelligence;
 
 /**
  *
  * @author Benjamin Arnold
  */
-public class MatchScore {
-    private final Object[][] knownAgentDataSets;
-    
-    public MatchScore(Object[][] knownAgentDataSets) {
-	this.knownAgentDataSets = knownAgentDataSets;
-    }
-    
-    public int score(List<Predicate> predicates) {
-	int score = 0;
-	for (Object[] dataSet : knownAgentDataSets)  {
-	    int i = 0;
-	    for (Predicate predicate : predicates) {
-		if (predicate.apply(dataSet[i++])) {
-		    score++;
-		}
-	    }
-	    if (score < dataSet.length) {
-		score = 0;
-	    } else {
-		return score;
-	    }
-	}
-	return score;
-    }
+interface ClassificationExpressions {
+    public static final String FOUR_DIGIT_NUMBER = "\\b\\d{4}\\b";
+    public static final String TWO_DIGIT_YEAR = "\b'\\d{2}\\b";
 }
+

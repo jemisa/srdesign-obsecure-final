@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Drexel University
+ * Copyright (C) 2014 Benjamin Arnold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,36 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.mycompany.obsecurefinal;
+package cs492.obsecurefinal.spring.session.metaintelligence;
 
-import java.util.List;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaAction;
+import org.springframework.data.repository.CrudRepository;
 
 /**
  *
  * @author Benjamin Arnold
  */
-public class MatchScore {
-    private final Object[][] knownAgentDataSets;
-    
-    public MatchScore(Object[][] knownAgentDataSets) {
-	this.knownAgentDataSets = knownAgentDataSets;
-    }
-    
-    public int score(List<Predicate> predicates) {
-	int score = 0;
-	for (Object[] dataSet : knownAgentDataSets)  {
-	    int i = 0;
-	    for (Predicate predicate : predicates) {
-		if (predicate.apply(dataSet[i++])) {
-		    score++;
-		}
-	    }
-	    if (score < dataSet.length) {
-		score = 0;
-	    } else {
-		return score;
-	    }
-	}
-	return score;
-    }
+public interface MetaActionRepository extends CrudRepository<MetaAction, Long> {
+
+   
+
 }

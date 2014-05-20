@@ -15,36 +15,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.mycompany.obsecurefinal;
+package cs492.obsecurefinal.obsecurecyc;
 
-import java.util.List;
+import cs492.obsecurefinal.common.EntityTypes;
+import java.io.IOException;
+import java.net.UnknownHostException;
+import org.opencyc.api.CycAccess;
+import org.opencyc.cycobject.CycList;
 
 /**
  *
  * @author Benjamin Arnold
  */
-public class MatchScore {
-    private final Object[][] knownAgentDataSets;
-    
-    public MatchScore(Object[][] knownAgentDataSets) {
-	this.knownAgentDataSets = knownAgentDataSets;
+class StereotypeStrategy extends CycQueryStrategy {
+
+    protected StereotypeStrategy(EntityTypes entityType, String microtheory) {
+	super(entityType, microtheory);
+    }
+
+    @Override
+    public CycList exec(CycAccess cycAccess, CycList constants) throws UnknownHostException, IOException {
+	return null;
     }
     
-    public int score(List<Predicate> predicates) {
-	int score = 0;
-	for (Object[] dataSet : knownAgentDataSets)  {
-	    int i = 0;
-	    for (Predicate predicate : predicates) {
-		if (predicate.apply(dataSet[i++])) {
-		    score++;
-		}
-	    }
-	    if (score < dataSet.length) {
-		score = 0;
-	    } else {
-		return score;
-	    }
-	}
-	return score;
-    }
 }

@@ -17,39 +17,31 @@
 
 package cs492.obsecurefinal.spring.controller.metaintelligence;
 
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaAction;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaCategory;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRule;
-import cs492.obsecurefinal.spring.session.metaintelligence.MetaCategoryRepository;
+import cs492.obsecurefinal.spring.session.metaintelligence.MetaActionRepository;
 
 /**
  *
  * @author Benjamin Arnold
  */
-public class MetaCategoryFacade implements MetaIntelligenceCrudFacade<MetaCategory> {
-    private static final MetaCategoryRepository metaCategoryRepository = MetaIntelligenceFacade.getInstance().getMetaCategoryRepository();
+public class MetaActionFacade implements MetaIntelligenceCrudFacade<MetaAction> {
+    private static final MetaActionRepository metaActionRepository = MetaIntelligenceFacade.getInstance().getMetaActionRepository();
     
-    private static final MetaCategoryFacade instance = new MetaCategoryFacade();
+    private static final MetaActionFacade instance = new MetaActionFacade();
     
-    private MetaCategoryFacade() {
+    private MetaActionFacade() {
 	//singleton
     }
     
-    public static final MetaCategoryFacade getInstance() {
+    public static final MetaActionFacade getInstance() {
 	return instance;
     }
     
     @Override
-    public MetaCategory save(MetaCategory entity) {
-	for (MetaRule rule : entity.getMetaRules()) {
-	    MetaRuleFacade.getInstance().save(rule);
-	}
-	    
-	return metaCategoryRepository.save(entity);
-    }
-
-    public Long findCategoryId(String categoryName) {
-	MetaCategory category = metaCategoryRepository.findByName(categoryName);
-	return category.getId();
+    public MetaAction save(MetaAction entity) {
+	return metaActionRepository.save(entity);
     }
     
 }

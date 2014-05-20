@@ -15,30 +15,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package cs492.obsecurefinal.spring;
+package cs492.obsecurefinal.metaintelligence;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.data.repository.CrudRepository;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
  * @author Benjamin Arnold
  */
-public class SpringBeanFactory {
-    private static final SpringBeanFactory instance = new SpringBeanFactory();
-    private final ConfigurableApplicationContext context;
+public class MetaIntelligenceFramework {
+    private static final Map<String, MetaHandler> services = new HashMap<>();
     
-    private SpringBeanFactory() {
-	context = SpringApplication.run(SpringModel.class);
+    public static void registerService(String serviceName, MetaHandler service) {
+	services.put(serviceName, service);
     }
     
-    public static SpringBeanFactory getInstance() {
-	return instance;
+    public static MetaHandler getService(String serviceName) {
+	return services.get(serviceName);
     }
     
-    public <T extends CrudRepository> T getSession(Class<? extends CrudRepository> klass) {
-	return (T) context.getBean(klass);
+    /* convenience methods */
+    public static PredicateHandler getPredicateHandler() {
+	return (PredicateHandler) getService(PredicateHandler.SERVICE_NAME).newInstance();
     }
-     
+    
+     public static FunctionHandler getFunctionHandler() {
+	return (FunctionHandler) getService(FunctionHandler.SERVICE_NAME).newInstance();
+    }
 }

@@ -15,36 +15,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.mycompany.obsecurefinal;
+package cs492.obsecurefinal.metaintelligence;
 
-import java.util.List;
+import cs492.obsecurefinal.obsecurecyc.CycQuery;
+import java.io.IOException;
+import org.opencyc.cycobject.CycList;
+import org.opencyc.cycobject.CycObject;
 
 /**
  *
  * @author Benjamin Arnold
  */
-public class MatchScore {
-    private final Object[][] knownAgentDataSets;
+public interface FunctionHandler extends MetaHandler<FunctionHandler> {
+    public static final String SERVICE_NAME = "functionHandler";
     
-    public MatchScore(Object[][] knownAgentDataSets) {
-	this.knownAgentDataSets = knownAgentDataSets;
-    }
+    public CycList invoke(CycObject object, CycQuery context, String[] args) throws IOException;
+    public void setMetaFunction(MetaFunction metaFunction);
     
-    public int score(List<Predicate> predicates) {
-	int score = 0;
-	for (Object[] dataSet : knownAgentDataSets)  {
-	    int i = 0;
-	    for (Predicate predicate : predicates) {
-		if (predicate.apply(dataSet[i++])) {
-		    score++;
-		}
-	    }
-	    if (score < dataSet.length) {
-		score = 0;
-	    } else {
-		return score;
-	    }
-	}
-	return score;
-    }
+    @Override
+    public FunctionHandler newInstance();
 }
