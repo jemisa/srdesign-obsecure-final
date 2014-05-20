@@ -23,5 +23,5 @@ package com.mycompany.obsecurefinal;
  */
 public interface Predicate {
     
-    boolean apply(String expectedValue);
+    boolean apply(Object expectedValue);
 }

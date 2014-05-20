@@ -151,28 +151,28 @@ public class SpringAgentTest {
     private List<Predicate> generatePredicates(final SpringAgent agent) {
 	Predicate nameMatch = new Predicate() {
 	    @Override
-	    public boolean apply(String expectedValue) {
+	    public boolean apply(Object expectedValue) {
 		return expectedValue.equals(agent.getName());
 	    }
 
 	};
 	Predicate occupationMatch = new Predicate() {
 	    @Override
-	    public boolean apply(String expectedValue) {
+	    public boolean apply(Object expectedValue) {
 		return expectedValue.equals(agent.getOccupation());
 	    }
 
 	};
 	Predicate locationMatch = new Predicate() {
 	    @Override
-	    public boolean apply(String expectedValue) {
+	    public boolean apply(Object expectedValue) {
 		return expectedValue.equals(agent.getLocation());
 	    }
 
 	};
 	Predicate workplaceMatch = new Predicate() {
 	    @Override
-	    public boolean apply(String expectedValue) {
+	    public boolean apply(Object expectedValue) {
 		return expectedValue.equals(agent.getWorkplace());
 	    }
 

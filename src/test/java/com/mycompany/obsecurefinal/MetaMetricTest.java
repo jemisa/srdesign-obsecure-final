@@ -97,14 +97,14 @@ public class MetaMetricTest {
     private List<Predicate> generatePredicates(final MetaWeight weight) {
 	Predicate nameMatch = new Predicate() {
 	    @Override
-	    public boolean apply(String expectedValue) {
+	    public boolean apply(Object expectedValue) {
 		return expectedValue.equals(weight.getName());
 	    }
 
 	};
 	Predicate valueMatch = new Predicate() {
 	    @Override
-	    public boolean apply(String expectedValue) {
+	    public boolean apply(Object expectedValue) {
 		return expectedValue.equals(weight.getValue().toString());
 	    }
 

@@ -17,11 +17,13 @@
 
 package cs492.obsecurefinal.metaintelligence;
 
-import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRuleSet;
 import cs492.obsecurefinal.metaintelligence.parsetree.XmlDocument;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRuleSet;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import org.apache.commons.lang3.StringUtils;
 
@@ -38,19 +40,33 @@ public class XmlLoader {
     }
     
     public XmlDocument getDocument() throws IOException {
-	return new XmlDocument(getDocumentContents());
+	String documentContents = null;
+	try {
+	    documentContents = getDocumentContents(getFullOverrideDocumentPathName());
+	} catch (NoSuchFileException ex) {
+	    //expected if not override
+	}
+	if (documentContents == null || documentContents.isEmpty()) {
+	    documentContents = getDocumentContents(getFullDocumentPathName());
+	}
+	return new XmlDocument(documentContents);
     }
     
-    public String getDocumentContents() throws IOException {
-	return new String(Files.readAllBytes(getDocumentPath()));
+    public String getDocumentContents(String path) throws IOException {
+	return new String(Files.readAllBytes(getDocumentPath(path)));
     }
     
-    private Path getDocumentPath() {
-	return FileSystems.getDefault().getPath(getFullDocumentPathName(), StringUtils.EMPTY);
+    private Path getDocumentPath(String pathName) {
+	return FileSystems.getDefault().getPath(pathName, StringUtils.EMPTY);
     }
     
     private String getFullDocumentPathName() {
 	return "src/main/resources/meta.intelligence.xml";
+    }
+    
+     private String getFullOverrideDocumentPathName() {
+	String userHome = System.getProperty("user.home") ;
+	return userHome + File.separator + "obsecure/meta.intelligence.xml";
     }
 	    
 }

@@ -44,6 +44,10 @@ public class XmlDocument {
 	this.contents = contents;
     }
     
+    public boolean isEmpty() {
+	return contents == null || contents.isEmpty();
+    }
+    
     public RuleTreeComponent createParseTree() {
 	XmlTag start = XmlTag.RULE_SET;
 	boolean hasOverride = checkForOverride(contents, start);

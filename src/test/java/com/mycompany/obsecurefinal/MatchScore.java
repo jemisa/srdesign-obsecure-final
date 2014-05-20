@@ -24,15 +24,15 @@ import java.util.List;
  * @author Benjamin Arnold
  */
 public class MatchScore {
-    private final String[][] knownAgentDataSets;
+    private final Object[][] knownAgentDataSets;
     
-    public MatchScore(String[][] knownAgentDataSets) {
+    public MatchScore(Object[][] knownAgentDataSets) {
 	this.knownAgentDataSets = knownAgentDataSets;
     }
     
     public int score(List<Predicate> predicates) {
 	int score = 0;
-	for (String[] dataSet : knownAgentDataSets)  {
+	for (Object[] dataSet : knownAgentDataSets)  {
 	    int i = 0;
 	    for (Predicate predicate : predicates) {
 		if (predicate.apply(dataSet[i++])) {
