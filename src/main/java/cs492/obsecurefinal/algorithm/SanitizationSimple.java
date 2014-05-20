@@ -125,7 +125,7 @@ public class SanitizationSimple extends Sanitization
 		prevSentence = BrownClusters.getInstance().clusterSentence(prevSentence);
                 
                             
-                PrivateContextIdentStrategy ngramChecker = new NGramContextStrategy(sentences[i], storedNgrams);
+                PrivateContextIdentStrategy ngramChecker = new NGramContextStrategy(new Sentence(prevSentence + " " + sentence + " " + nextSentence, 0), storedNgrams);
                 PrivateContextIdentStrategy tmChecker = new TopicModelingContextStrategy(prevSentence + " " + sentence + " " + nextSentence, 
                                                                                          profileInferences, ident); 
                 
@@ -178,7 +178,10 @@ public class SanitizationSimple extends Sanitization
                     
                     try
                     {
-                        Map<NamedEntity, GeneralizationResult> generalizedResults = GeneralizationManager.generalize(allEntities);
+                        GeneralizationWorker worker = new GeneralizationWorker(allEntities);
+                        worker.execute();
+                        Map<NamedEntity, GeneralizationResult> generalizedResults = worker.get();
+                        //Map<NamedEntity, GeneralizationResult> generalizedResults = GeneralizationManager.generalize(allEntities);
 
                         for(NamedEntity ent: generalizedResults.keySet())
                         {

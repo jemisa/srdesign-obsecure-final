@@ -223,7 +223,7 @@ public class MainWindow extends javax.swing.JFrame {
                                 
                                 if(i != hwr.getEntity().getSentence().getIndex())
                                 {
-                                    newDocText += currDocument.getSentences()[i];
+                                    newDocText += currDocument.getSentences()[i].getText();
                                 }
                                 else
                                 {
@@ -236,7 +236,7 @@ public class MainWindow extends javax.swing.JFrame {
                             jTextArea1.setText(newDocText);
                             
                             // inform meta intelligence of user's choice
-                            IntelligenceGraph.getInstance().resolve(hwr.getEntity(), hwr.getReplacements().getResults()[chosenIndex]);
+                            //IntelligenceGraph.getInstance().resolve(hwr.getEntity(), hwr.getReplacements().getResults()[chosenIndex]);
                         }
                     }
                     else if (hint instanceof HintNoReplacements)
