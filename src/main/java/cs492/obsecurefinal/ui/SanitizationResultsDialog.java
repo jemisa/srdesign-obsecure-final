@@ -16,8 +16,6 @@
  */
 package cs492.obsecurefinal.ui;
 
-import java.util.List;
-
 /**
  *
  * @author JOEL
@@ -41,8 +39,9 @@ public class SanitizationResultsDialog extends javax.swing.JDialog {
         
         jLabel3.setText("The sensitivity ratio is " + amount);
         
-        if(replacements == null || replacements.length > 0)
+        if(replacements == null || replacements.length == 0)
         {
+            jList1.setListData(new String[] {});
             jList1.setEnabled(false);
             jButton1.setEnabled(false);
         }

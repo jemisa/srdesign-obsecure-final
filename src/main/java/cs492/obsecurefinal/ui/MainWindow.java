@@ -23,6 +23,7 @@ import cs492.obsecurefinal.common.DatabaseAccess;
 import cs492.obsecurefinal.common.Document;
 import cs492.obsecurefinal.common.HintNoReplacements;
 import cs492.obsecurefinal.common.HintWithReplacements;
+import cs492.obsecurefinal.common.NGramHintWithReplacement;
 import cs492.obsecurefinal.common.SanitizationHint;
 import cs492.obsecurefinal.common.SanitizationResult;
 import cs492.obsecurefinal.common.Sentence;
@@ -174,6 +175,9 @@ public class MainWindow extends javax.swing.JFrame {
 
     // Perform sanitization
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
+        
+        currDocument = new Document(jTextArea1.getText());
+        
         if(currDocument == null || currDocument.getText().equals(""))
         {
              JOptionPane.showMessageDialog(this, "Document missing or invalid");
@@ -184,6 +188,9 @@ public class MainWindow extends javax.swing.JFrame {
         }
         else
         {
+            jTextArea1.setEnabled(false);
+            jLabel1.setText("Sanitizing document");
+            
             Sanitization sanitization = new SanitizationSimple(currDocument, currAgent);
             SanitizationResult result = sanitization.sanitize();
             
@@ -240,12 +247,51 @@ public class MainWindow extends javax.swing.JFrame {
                                                                    null);
                         resultsDlg.showDialog();
                     }
+                    else if (hint instanceof NGramHintWithReplacement)
+                    {
+                        NGramHintWithReplacement ngh = (NGramHintWithReplacement)hint;
+                        
+                        resultsDlg = new SanitizationResultsDialog(this, true, ngh.getText(), 
+                                                                   ngh.getType(), Double.toString(ngh.getMatchPercentage()), 
+                                                                   new String[] {ngh.getReplacementText()});
+                        int chosenIndex = resultsDlg.showDialog();
+                        
+                        if(chosenIndex >= 0)
+                        {
+                            Sentence sentence = ngh.getSentence();
+                            String newSentText = sentence.getText().replace(ngh.getText(), ngh.getReplacementText());
+                            
+                            String newDocText = "";
+                            
+                            for(int i = 0; i < currDocument.getSentences().length; i++)
+                            {
+                                if(i != 0)
+                                    newDocText += " ";
+                                
+                                if(i != ngh.getSentence().getIndex())
+                                {
+                                    newDocText += currDocument.getSentences()[i];
+                                }
+                                else
+                                {
+                                    newDocText += newSentText;
+                                }
+                            }
+                            
+                            currDocument.setText(newDocText);
+                            
+                            jTextArea1.setText(newDocText);
+                        }
+                    }
                 }
             }
             else
             {
                 JOptionPane.showMessageDialog(this, "No results were obtained");
             }
+            
+            jLabel1.setText("Obsecure");
+            jTextArea1.setEnabled(true);
         }
         
     }//GEN-LAST:event_jMenuItem5ActionPerformed

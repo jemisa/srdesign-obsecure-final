@@ -18,12 +18,15 @@ import cs492.obsecurefinal.common.GeneralizationResult;
 import cs492.obsecurefinal.common.HintNoReplacements;
 import cs492.obsecurefinal.common.NamedEntity;
 import cs492.obsecurefinal.common.HintWithReplacements;
+import cs492.obsecurefinal.common.NGramHintWithReplacement;
 import cs492.obsecurefinal.common.PrivacyStatus;
 import cs492.obsecurefinal.common.SanitizationHint;
 import cs492.obsecurefinal.common.SanitizationResult;
 import cs492.obsecurefinal.common.Sentence;
 import cs492.obsecurefinal.common.Topic;
 import cs492.obsecurefinal.generalization.GeneralizationManager;
+import cs492.obsecurefinal.wordngrams.NGram;
+import cs492.obsecurefinal.wordngrams.NGramGeneralizer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -194,7 +197,10 @@ public class SanitizationSimple extends Sanitization
                 }
             }
             
-                       
+            
+            NGramGeneralizer ngramgen = new NGramGeneralizer();
+            ngramgen.loadGeneralizations();
+            
             // Check sentences which contained no entities, and see if they contain private information
             // that can't be manually taken out.
             for(int i = 0; i < sentences.length; i++)
@@ -223,10 +229,22 @@ public class SanitizationSimple extends Sanitization
                        PrivateContextMatch match = ngramChecker.getMatchValue();
                        if(match != null)
                        {
-                        
-                            Debug.println("Found private data via ngram matching: " + match.getSensitiveText());
-                            SanitizationHint hint = new HintNoReplacements(sentences[i], match.getMatchValue(), match.getDescriptor());
-                            finalResult.addHint(hint);
+                           Debug.println("Found private data via ngram matching: " + match.getSensitiveText());
+                           
+                           SanitizationHint hint;
+                           
+                           String genresult = ngramgen.getGeneralizedNgram(match.getSensitiveText());
+                           if(!genresult.equals(""))
+                           {
+                               NGram n = new NGram(match.getSensitiveText(), match.getDescriptor(), sentences[i]);
+                               hint = new NGramHintWithReplacement(n, genresult, match.getMatchValue());
+                           }
+                           else
+                           {
+                                hint  = new HintNoReplacements(sentences[i], match.getMatchValue(), match.getDescriptor());
+                           }
+                           
+                           finalResult.addHint(hint);
                        }
                     }                    
                     else

@@ -106,6 +106,8 @@ public class App
                 else
                     System.out.println("An error occured in the sanitization process");
             }
+            
+            System.exit(0);
         }
         else if (args.length > 0 && (args[0].equals("-builder") || args[0].equals("-bob")))
         {
@@ -266,6 +268,6 @@ public class App
             main.setVisible(true);
             main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         }
-	System.exit(0);
+	
     }
 }
