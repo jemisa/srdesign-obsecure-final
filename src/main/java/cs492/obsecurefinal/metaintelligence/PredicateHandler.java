@@ -28,6 +28,7 @@ import org.opencyc.cycobject.CycObject;
 public interface PredicateHandler extends MetaHandler<PredicateHandler> {
     public static final String SERVICE_NAME = "predicateHandler";
     
+    public boolean applies(MetaFlow flow);
     public boolean apply(CycObject object, CycQuery context, String[] args) throws IOException;
     public void setMetaPredicate(MetaPredicate metaPredicate);
     

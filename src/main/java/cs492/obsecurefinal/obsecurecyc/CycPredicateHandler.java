@@ -17,6 +17,9 @@
 
 package cs492.obsecurefinal.obsecurecyc;
 
+import cs492.obsecurefinal.common.EntityTypes;
+import cs492.obsecurefinal.common.NamedEntity;
+import cs492.obsecurefinal.metaintelligence.MetaFlow;
 import cs492.obsecurefinal.metaintelligence.MetaPredicate;
 import cs492.obsecurefinal.metaintelligence.PredicateHandler;
 import cs492.obsecurefinal.metaintelligence.StringClassifierUtil;
@@ -26,7 +29,10 @@ import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRule;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaWeight;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.opencyc.api.CycAccess;
 import org.opencyc.cycobject.CycFort;
 import org.opencyc.cycobject.CycList;
@@ -37,6 +43,7 @@ import org.opencyc.cycobject.CycObject;
  * @author Benjamin Arnold
  */
 public class CycPredicateHandler implements PredicateHandler {
+    private static final String CYC_OBJECT_KEY = "cycObjectKey";
     private MetaPredicate metaPredicate;
     private CycPredicateType type;
     
@@ -55,6 +62,40 @@ public class CycPredicateHandler implements PredicateHandler {
     @Override
     public PredicateHandler newInstance() {
 	return new CycPredicateHandler();
+    }
+
+    @Override
+    public boolean applies(MetaFlow flow) {
+	NamedEntity namedEntity = flow.getEntity();
+	EntityTypes type = namedEntity.getType();
+	CycQueryStrategy strategy = ObSecureCycStrategyFactory.lookupStrategy(type);
+	boolean applies = false;
+	try {
+	    CycAccess cycAccess = ObSecureCycFacade.getInstance().getCycAccess();
+	    CycQuery context = new CycQuery(strategy,cycAccess);
+	    
+	    Object o = flow.retrieveFromCache(CYC_OBJECT_KEY);
+	    
+	    if (o == null) {
+		WordBall wordBall = new WordBall(namedEntity.getText());  //encapsulate word permutations
+		CycList constants = strategy.getConstants(cycAccess, wordBall.iterator());
+		for (Iterator it = constants.iterator(); it.hasNext();) {
+		    CycObject co = (CycObject) it.next();
+		    boolean coApplies = apply(co, context, new String[]{});
+		    if (coApplies) {
+			flow.cache(CYC_OBJECT_KEY, co);
+			o = co;
+			break;
+		    }
+		}
+	    }
+	    
+	    applies = apply((CycObject) o, context, new String[]{});
+	    
+	} catch (Exception ex) {
+	    Logger.getLogger(ObSecureCycFacade.class.getName()).log(Level.SEVERE, null, ex); //TODO: we need to implement a logging solution
+	} 
+	return applies;
     }
     
   

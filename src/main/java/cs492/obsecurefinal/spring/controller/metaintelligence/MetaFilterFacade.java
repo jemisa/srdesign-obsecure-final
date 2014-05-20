@@ -42,5 +42,9 @@ public class MetaFilterFacade implements MetaIntelligenceCrudFacade<MetaFilter> 
     public MetaFilter save(MetaFilter entity) {
 	return metaFilterRepository.save(entity);
     }
+
+    int getEpsilon(MetaFilter filter) {
+	return filter.getValue();
+    }
     
 }

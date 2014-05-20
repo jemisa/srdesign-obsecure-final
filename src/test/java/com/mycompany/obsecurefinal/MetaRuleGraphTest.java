@@ -18,6 +18,9 @@
 package com.mycompany.obsecurefinal;
 
 import cs492.obsecurefinal.common.EntityTypes;
+import cs492.obsecurefinal.metaintelligence.FunctionHandler;
+import cs492.obsecurefinal.metaintelligence.MetaIntelligenceFramework;
+import cs492.obsecurefinal.obsecurecyc.CycFunctionHandler;
 import cs492.obsecurefinal.spring.controller.metaintelligence.MetaCategoryFacade;
 import cs492.obsecurefinal.spring.controller.metaintelligence.MetaIntelligenceFacade;
 import cs492.obsecurefinal.spring.controller.metaintelligence.MetaRuleGraphFacade;
@@ -25,9 +28,6 @@ import cs492.obsecurefinal.spring.domain.metaintelligence.MetaCategory;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRuleGraph;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRuleSet;
 import java.util.Iterator;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import org.junit.BeforeClass;
@@ -44,6 +44,7 @@ public class MetaRuleGraphTest {
     
     @BeforeClass
     public static void setup() throws Exception {
+	MetaIntelligenceFramework.registerService(FunctionHandler.SERVICE_NAME, new CycFunctionHandler());
 	MetaRuleSet metaRuleSet = facade.loadRules();
 	expectedRuleCount = 0;
 	for (MetaCategory category : metaRuleSet.getMetaCategories()) {

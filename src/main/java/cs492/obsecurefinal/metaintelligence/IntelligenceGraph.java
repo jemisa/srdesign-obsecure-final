@@ -94,12 +94,8 @@ public class IntelligenceGraph {
     }
     
    
-    public Long mark(NamedEntity entity, List<String> results, MetaRule ruleUsed ) {
-	Long txnId;
-	synchronized(this) {
-	    txnId = counter;
-	    counter += 1L;
-	}
+    public Long mark(Long txnId, NamedEntity entity, List<String> results, MetaRule ruleUsed ) {
+	
 	entity.setMetaTxnId(txnId);
 	
 	txns.put(txnId, entity);
@@ -110,6 +106,12 @@ public class IntelligenceGraph {
 
     public Long getCounter() {
 	return counter;
+    }
+
+    protected synchronized Long startTransaction() {
+	Long txnId = counter;
+	counter += 1L;
+	return txnId;
     }
     
 }

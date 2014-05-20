@@ -42,7 +42,15 @@ public class MetaRuleFacade implements MetaIntelligenceCrudFacade<MetaRule> {
 	MetaMetricFacade.getInstance().save(entity.getMetric());
 	MetaCriteriaFacade.getInstance().save(entity.getCriteria());
 	MetaFilterFacade.getInstance().save(entity.getFilter());
+	MetaActionFacade.getInstance().save(entity.getAction());
 	return metaRuleRepository.save(entity);
     }
+
+    public MetaRule read(Long ruleId) {
+	return metaRuleRepository.findOne(ruleId);
+    }
     
+    public int getEpisolon(MetaRule rule) {
+	return MetaFilterFacade.getInstance().getEpsilon(rule.getFilter());
+    }
 }

@@ -251,25 +251,6 @@ private List<Predicate> generatePredicates(final RuleTreeComposite rule,final Li
 	assertEquals(2, categoryChildren.size());
 	Iterator<MetaRule> metaRuleIterator = categoryChildren.iterator();
 	
-	{
-	MetaRule rule = metaRuleIterator.next();
-	assertEquals("namedLocation", rule.getName());
-	
-	MetaFilter filter = rule.getFilter();
-	assertEquals("LocationFilter", filter.getName());
-	assertEquals(Integer.valueOf(3), filter.getValue());
-	
-	MetaAction action = rule.getAction();
-	assertEquals("AUTO",action.getName());
-	assertEquals(Integer.valueOf(1),action.getValue());
-	assertEquals("isa",action.getType());
-	
-	MetaMetric metric = rule.getMetric();
-	Set<MetaWeight> weights = metric.getMetaWeights();
-	assertEquals(5, weights.size());
-	
-	Iterator<MetaWeight> weightIterator = weights.iterator();
-	
 	final Map<Integer, String> expectedWeights = new HashMap<>();
 	expectedWeights.put(1, "City");
 	expectedWeights.put(2,"State-UnitedStates");
@@ -277,64 +258,127 @@ private List<Predicate> generatePredicates(final RuleTreeComposite rule,final Li
 	expectedWeights.put(4,"Country");
 	expectedWeights.put(5,"Continent");
 	
-	while (weightIterator.hasNext()) {
-	    MetaWeight weight = weightIterator.next();
-	    Integer wtVal = weight.getValue();
-	    String expectedName = expectedWeights.get(wtVal);
-	    assertEquals(expectedName, weight.getName());
+	final Map<Integer, String> expectedWeightsB = new HashMap<>();
+	expectedWeightsB.put(1, "Historic");
+	expectedWeightsB.put(2, "City");
+	expectedWeightsB.put(3,"State-UnitedStates");
+	expectedWeightsB.put(4,"IndependentCountry");
+	expectedWeightsB.put(5,"Country");
+	expectedWeightsB.put(6,"Continent");
+	
+	Object[][] expectedAgents = new Object[][] {
+	    {new Object[]{"namedLocation","4"},	new Object[]{"LocationFilter","3"},new Object[]{"AUTO","1","isa"},"5",expectedWeights,"1",new Object[]{"ANY","isa"}},
+	    {new Object[]{"historic","4"},	new Object[]{"LocationFilter","3"},new Object[]{"AUTO","1","isa"},"6",expectedWeightsB,"1",new Object[]{"DATE","comment"}}
+	};
+	
+	int score = 0;
+	int predicateSize = 0;
+	MatchScore matchScore = new MatchScore(expectedAgents);
+	
+	while (metaRuleIterator.hasNext()) {
+	    MetaRule rule = metaRuleIterator.next();
+	    MetaFilter filter = rule.getFilter();
+	    MetaAction action = rule.getAction();
+	    MetaMetric metric = rule.getMetric();
+	    Set<MetaWeight> weights = metric.getMetaWeights();
+
+	    MetaCriteria criteria = rule.getCriteria();
+	    Set<MetaCondition> conditions = criteria.getMetaConditions();
+	    MetaCondition condition = conditions.iterator().next();
+	    List<Predicate> predicates = generateMetaPredicates(rule, filter, action, metric, weights, criteria, conditions, condition);
+	    score += matchScore.score(predicates);
+	    predicateSize = predicates.size();
 	}
+	assertEquals(2*predicateSize,score);
 	
-	MetaCriteria criteria = rule.getCriteria();
-	Set<MetaCondition> conditions = criteria.getMetaConditions();
-	assertEquals(1, conditions.size());
-	
-	MetaCondition condition = conditions.iterator().next();
-	assertEquals("ANY", condition.getName());
-	assertEquals("isa", condition.getType());
-	}
-	
-	{
-	MetaRule rule = metaRuleIterator.next();
-	assertEquals("historic", rule.getName());
-	
-	MetaFilter filter = rule.getFilter();
-	assertEquals("LocationFilter", filter.getName());
-	assertEquals(Integer.valueOf(3), filter.getValue());
-	
-	MetaAction action = rule.getAction();
-	assertEquals("AUTO",action.getName());
-	assertEquals(Integer.valueOf(1),action.getValue());
-	assertEquals("isa",action.getType());
-	
-	MetaMetric metric = rule.getMetric();
-	Set<MetaWeight> weights = metric.getMetaWeights();
-	assertEquals(6, weights.size());
-	
-	Iterator<MetaWeight> weightIterator = weights.iterator();
-	
-	final Map<Integer, String> expectedWeights = new HashMap<>();
-	expectedWeights.put(1, "Historic");
-	expectedWeights.put(2, "City");
-	expectedWeights.put(3,"State-UnitedStates");
-	expectedWeights.put(4,"IndependentCountry");
-	expectedWeights.put(5,"Country");
-	expectedWeights.put(6,"Continent");
-	
-	while (weightIterator.hasNext()) {
-	    MetaWeight weight = weightIterator.next();
-	    Integer wtVal = weight.getValue();
-	    String expectedName = expectedWeights.get(wtVal);
-	    assertEquals(expectedName, weight.getName());
-	}
-	
-	MetaCriteria criteria = rule.getCriteria();
-	Set<MetaCondition> conditions = criteria.getMetaConditions();
-	assertEquals(1, conditions.size());
-	
-	MetaCondition condition = conditions.iterator().next();
-	assertEquals("DATE", condition.getName());
-	assertEquals("comment", condition.getType());
-	}
+    }
+    
+    private List<Predicate> generateMetaPredicates(final MetaRule rule, final MetaFilter filter, final MetaAction action, final MetaMetric metric, final Set<MetaWeight> weights, final MetaCriteria criteria, final Set<MetaCondition> conditions, final MetaCondition condition) {
+	Predicate rulePredicate = new Predicate() {
+	    @Override
+	    public boolean apply(Object expectedValue) {
+		Object[] expected = (Object[]) expectedValue;
+		boolean matched = expected[0].equals(rule.getName());
+		
+		return matched;
+	    }
+	};
+
+	Predicate filterPredicate = new Predicate() {
+	    @Override
+	     public boolean apply(Object expectedValue) {
+		Object[] expected = (Object[]) expectedValue;
+		boolean matched = expected[0].equals(filter.getName());
+		if (matched) {
+		    matched = Integer.valueOf((String)expected[1]).equals(filter.getValue());
+		}
+		return matched;
+	    }
+	};
+
+	Predicate actionPredicate = new Predicate() {
+	    @Override
+	     public boolean apply(Object expectedValue) {
+		Object[] expected = (Object[]) expectedValue;
+		boolean matched = expected[0].equals(action.getName());
+		if (matched) {
+		    matched = Integer.valueOf((String)expected[1]).equals(action.getValue());
+		}
+		if (matched) {
+		    matched = expected[2].equals(action.getType());
+		}
+		return matched;
+	    }
+	};
+
+
+	Predicate metricPredicate = new Predicate() {
+	    @Override
+	     public boolean apply(Object expectedValue) {
+		return true;
+	     }
+	};
+
+	Predicate weightPredicate = new Predicate() {
+	    @Override
+	     public boolean apply(Object expectedValue) {
+		Map<Integer, String> expectedWeights = (Map<Integer, String>) expectedValue;
+		Iterator<MetaWeight> weightIterator = weights.iterator();
+		boolean matched = true;
+		while (weightIterator.hasNext() && matched) {
+		    MetaWeight weight = weightIterator.next();
+		    Integer wtVal = weight.getValue();
+		    matched = wtVal <= expectedWeights.size();
+		    if (matched) {
+			 String expectedName = expectedWeights.get(wtVal);
+			matched = expectedName.equals(weight.getName());
+		    }
+		   
+		}
+		return matched;
+	    }
+	};
+
+	Predicate criteriaPredicates = new Predicate() {
+	    @Override
+	    public boolean apply(Object expectedValue) {
+		return true;
+	    }
+	};
+
+	Predicate conditionPredicates = new Predicate() {
+	    @Override
+	    public boolean apply(Object expectedValue) {
+		Object[] expected = (Object[]) expectedValue;
+		boolean matched = expected[0].equals(condition.getName());
+		if (matched) {
+		    matched = expected[1].equals(condition.getType());
+		}
+		return matched;
+	    }
+	};
+
+	return Arrays.asList(new Predicate[]{rulePredicate,filterPredicate,actionPredicate,metricPredicate,weightPredicate,criteriaPredicates,conditionPredicates});
     }
     
     @Test

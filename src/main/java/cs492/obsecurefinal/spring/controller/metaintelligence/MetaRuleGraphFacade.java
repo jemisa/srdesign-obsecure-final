@@ -51,26 +51,32 @@ public class MetaRuleGraphFacade implements MetaIntelligenceCrudFacade<MetaRuleG
 	return metaRuleGraphRepository.findAll();
     }
     
+    public Iterable<MetaRuleGraph> findAll(String categoryName) {
+	Long categoryId = MetaCategoryFacade.getInstance().findCategoryId(categoryName);
+	Iterable<MetaRuleGraph> categoryGraphs = metaRuleGraphRepository.findAllByMetaCategoryId(categoryId);
+	return categoryGraphs;
+    }
+    
     public Iterable<MetaRuleGraph> findHighestScoring(String categoryName) { 
 	return findHighestScoring(categoryName, 1);
     }
     
     public Iterable<MetaRuleGraph> findHighestScoring(String categoryName, int epsilon) {
-	Long categoryId = MetaCategoryFacade.getInstance().findCategoryId(categoryName);
-	
+	Iterable<MetaRuleGraph> categoryGraphs = findAll(categoryName);
+	return findHighestScoring(categoryGraphs, epsilon);
+    }
+
+    public Iterable<MetaRuleGraph> findHighestScoring(Iterable<MetaRuleGraph> categoryGraphs, int epsilon) {
 	Set<MetaRuleGraph> highestScoring = new HashSet<>();
-	
-	Iterable<MetaRuleGraph> categoryGraphs = metaRuleGraphRepository.findAllByMetaCategoryId(categoryId);
 	int highestScore = findHighestScore(categoryGraphs, epsilon);
 	for (MetaRuleGraph graph : categoryGraphs) {
 	    if (graph.getScore() >= highestScore) {
 		highestScoring.add(graph);
 	    }
-	    
 	}
 	return highestScoring;
     }
-
+    
     private int findHighestScore(Iterable<MetaRuleGraph> categoryGraphs, int epsilon) {
 	int highest = Integer.MIN_VALUE;
 	TreeSet<Integer> scores = new TreeSet<Integer>();

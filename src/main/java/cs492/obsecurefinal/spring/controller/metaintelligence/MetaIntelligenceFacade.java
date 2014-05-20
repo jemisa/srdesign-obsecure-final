@@ -20,7 +20,13 @@ package cs492.obsecurefinal.spring.controller.metaintelligence;
 import cs492.obsecurefinal.common.GeneralizationResult;
 import cs492.obsecurefinal.common.NamedEntity;
 import cs492.obsecurefinal.generalization.*;
+import cs492.obsecurefinal.metaintelligence.FunctionHandler;
+import cs492.obsecurefinal.metaintelligence.MetaFlow;
+import cs492.obsecurefinal.metaintelligence.MetaIntelligenceFramework;
+import cs492.obsecurefinal.metaintelligence.PredicateHandler;
 import cs492.obsecurefinal.metaintelligence.XmlLoader;
+import cs492.obsecurefinal.obsecurecyc.CycFunctionHandler;
+import cs492.obsecurefinal.obsecurecyc.CycPredicateHandler;
 import cs492.obsecurefinal.spring.SpringBeanFactory;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaCategory;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRule;
@@ -77,6 +83,8 @@ public class MetaIntelligenceFacade implements GeneralizationFacade {
 	metaWeightRepository = springModel.getSession(MetaWeightRepository.class);
 	metaRuleGraphRepository = springModel.getSession(MetaRuleGraphRepository.class);
 	metaActionRepository = springModel.getSession(MetaActionRepository.class);
+	
+	initFramework();
     }
     
     public static MetaIntelligenceFacade getInstance() {
@@ -135,17 +143,23 @@ public class MetaIntelligenceFacade implements GeneralizationFacade {
 	    if (!ruleSet.iterator().hasNext()) {
 		metaRuleSet = loadRules();	
 	    } else {
-		metaRuleSet = ruleSet.iterator().next();
+		metaRuleSet = ruleSet.iterator().next(); //FIXME: assumes exactly 1 ruleSet
 	    }
 	    
 	    MetaRuleGraphFacade metaRuleGraphFacade = MetaRuleGraphFacade.getInstance();
-	    Iterable<MetaRuleGraph> highestGraphs = metaRuleGraphFacade.findHighestScoring(entity.getType().name());
-	   
-//	    for (MetaRule rule: highestGraphs) {
-//		
-//	    }
+	    String categoryName = entity.getType().name();
+	    
+	    Iterable<MetaRuleGraph> categoryGraphs = metaRuleGraphFacade.findAll(categoryName);
+	        
+	    MetaFlow flow = new MetaFlow(entity);
+	    flow.start(categoryGraphs);
 	}
 	return results;
+    }
+    
+    private void initFramework() {
+	MetaIntelligenceFramework.registerService(FunctionHandler.SERVICE_NAME, new CycFunctionHandler());
+	MetaIntelligenceFramework.registerService(FunctionHandler.SERVICE_NAME, new CycPredicateHandler());
     }
 
     public MetaRuleSet loadRules() {
