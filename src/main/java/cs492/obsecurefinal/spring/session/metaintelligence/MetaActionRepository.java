@@ -17,15 +17,15 @@
 
 package cs492.obsecurefinal.spring.session.metaintelligence;
 
-import cs492.obsecurefinal.spring.domain.metaintelligence.MetaCategory;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaAction;
 import org.springframework.data.repository.CrudRepository;
 
 /**
  *
  * @author Benjamin Arnold
  */
-public interface MetaCategoryRepository extends CrudRepository<MetaCategory, Long> {
-    
-    MetaCategory findByName(String name);
+public interface MetaActionRepository extends CrudRepository<MetaAction, Long> {
+
+   
 
 }

@@ -26,6 +26,7 @@ import cs492.obsecurefinal.spring.domain.metaintelligence.MetaCategory;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRule;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRuleGraph;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRuleSet;
+import cs492.obsecurefinal.spring.session.metaintelligence.MetaActionRepository;
 import cs492.obsecurefinal.spring.session.metaintelligence.MetaCategoryRepository;
 import cs492.obsecurefinal.spring.session.metaintelligence.MetaConditionRepository;
 import cs492.obsecurefinal.spring.session.metaintelligence.MetaCriteriaRepository;
@@ -38,6 +39,7 @@ import cs492.obsecurefinal.spring.session.metaintelligence.MetaWeightRepository;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -60,6 +62,7 @@ public class MetaIntelligenceFacade implements GeneralizationFacade {
     private final MetaCriteriaRepository metaCriteriaRepository;
     private final MetaWeightRepository metaWeightRepository;
     private final MetaRuleGraphRepository metaRuleGraphRepository;
+    private final MetaActionRepository metaActionRepository;
     
     
     private MetaIntelligenceFacade() {
@@ -73,6 +76,7 @@ public class MetaIntelligenceFacade implements GeneralizationFacade {
 	metaCriteriaRepository = springModel.getSession(MetaCriteriaRepository.class);
 	metaWeightRepository = springModel.getSession(MetaWeightRepository.class);
 	metaRuleGraphRepository = springModel.getSession(MetaRuleGraphRepository.class);
+	metaActionRepository = springModel.getSession(MetaActionRepository.class);
     }
     
     public static MetaIntelligenceFacade getInstance() {
@@ -115,6 +119,10 @@ public class MetaIntelligenceFacade implements GeneralizationFacade {
 	return metaConditionRepository;
     }
     
+     public MetaActionRepository getMetaActionRepository() {
+	return metaActionRepository;
+    }
+    
      
     @Override
     public Map<NamedEntity, GeneralizationResult> generalize(List<NamedEntity> sensitiveEntities) {
@@ -125,13 +133,17 @@ public class MetaIntelligenceFacade implements GeneralizationFacade {
 	    Iterable<MetaRuleSet> ruleSet = metaRuleSetRepository.findAll();
 	    MetaRuleSet metaRuleSet;
 	    if (!ruleSet.iterator().hasNext()) {
-		metaRuleSet = loadRules();
-		
+		metaRuleSet = loadRules();	
 	    } else {
 		metaRuleSet = ruleSet.iterator().next();
 	    }
 	    
-	    
+	    MetaRuleGraphFacade metaRuleGraphFacade = MetaRuleGraphFacade.getInstance();
+	    Iterable<MetaRuleGraph> highestGraphs = metaRuleGraphFacade.findHighestScoring(entity.getType().name());
+	   
+//	    for (MetaRule rule: highestGraphs) {
+//		
+//	    }
 	}
 	return results;
     }
@@ -163,9 +175,7 @@ public class MetaIntelligenceFacade implements GeneralizationFacade {
 	}
     }
 
-    public Iterable<MetaRuleGraph> findAllMetaRuleGraphs() {
-	return metaRuleGraphRepository.findAll();
-    }
+   
 
     public MetaRuleGraph save(MetaRuleGraph graph) {
 	Long id = metaRuleGraphRepository.save(graph).getId();

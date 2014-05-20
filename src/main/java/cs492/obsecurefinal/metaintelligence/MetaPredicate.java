@@ -25,7 +25,7 @@ import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRule;
  *
  * @author Benjamin Arnold
  */
-public class MetaPredicate implements MetaActionHandlerAware<PredicateHandler> {
+    public class MetaPredicate implements MetaActionHandlerAware<PredicateHandler> {
     private final PredicateHandler handler;
     private final MetaCondition condition;
     private final MetaRule rule;

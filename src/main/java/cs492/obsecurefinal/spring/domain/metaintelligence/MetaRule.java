@@ -47,6 +47,9 @@ public class MetaRule  extends BaseEntity implements MetaNode {
     @OneToOne//(cascade=CascadeType.ALL)
     private MetaCriteria criteria;
     
+    @OneToOne
+    private MetaAction action;
+    
     public void setName(String name) {
 	this.name = name;
     }
@@ -86,6 +89,13 @@ public class MetaRule  extends BaseEntity implements MetaNode {
     public void setCriteria(MetaCriteria criteria) {
 	this.criteria = criteria;
     }
+
+    public MetaAction getAction() {
+	return action;
+    }
+
+    public void setAction(MetaAction action) {
+	this.action = action;
+    }
     
-     
 }

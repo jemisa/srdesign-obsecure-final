@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Benjamin Arnold
+ * Copyright (C) 2014 Drexel University
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,12 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package cs492.obsecurefinal.obsecurecyc;
+package cs492.obsecurefinal.metaintelligence;
 
-import cs492.obsecurefinal.common.EntityTypes;
+import cs492.obsecurefinal.obsecurecyc.CycQuery;
 import java.io.IOException;
-import java.net.UnknownHostException;
-import org.opencyc.api.CycAccess;
 import org.opencyc.cycobject.CycList;
 import org.opencyc.cycobject.CycObject;
 
@@ -28,23 +26,7 @@ import org.opencyc.cycobject.CycObject;
  *
  * @author Benjamin Arnold
  */
-public class MedicalStrategy extends CycQueryStrategy {
-
-    protected MedicalStrategy(EntityTypes type, String microtheory) {
-	super(type, microtheory);
-    }
-
-    @Override
-    public CycList exec(final CycAccess cycAccess, CycList constants) throws UnknownHostException, IOException {
-	CycQueryExecutor executor = new CycQueryExecutor() {
-	    @Override
-	    public CycList loop(CycObject cycObject) throws UnknownHostException, IOException {
-		return cycAccess.getGenls(cycObject);
-	    }
-	};
-	CycList generalizations = executor.execute(constants);
-		
-	return generalizations;
-    }
+public interface FunctionHandler extends MetaHandler {
     
+    public CycList invoke(CycObject object, CycQuery context, String[] args) throws IOException;
 }

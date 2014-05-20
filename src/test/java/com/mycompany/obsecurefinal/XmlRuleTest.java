@@ -18,6 +18,12 @@
 package com.mycompany.obsecurefinal;
 
 import cs492.obsecurefinal.metaintelligence.XmlLoader;
+import cs492.obsecurefinal.metaintelligence.parsetree.RuleTreeComponent;
+import cs492.obsecurefinal.metaintelligence.parsetree.RuleTreeComposite;
+import cs492.obsecurefinal.metaintelligence.parsetree.RuleTreeLeaf;
+import cs492.obsecurefinal.metaintelligence.parsetree.XmlDocument;
+import cs492.obsecurefinal.metaintelligence.parsetree.XmlTag;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaAction;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaCategory;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaCondition;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaCriteria;
@@ -26,11 +32,6 @@ import cs492.obsecurefinal.spring.domain.metaintelligence.MetaMetric;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRule;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRuleSet;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaWeight;
-import cs492.obsecurefinal.metaintelligence.parsetree.RuleTreeComponent;
-import cs492.obsecurefinal.metaintelligence.parsetree.RuleTreeComposite;
-import cs492.obsecurefinal.metaintelligence.parsetree.RuleTreeLeaf;
-import cs492.obsecurefinal.metaintelligence.parsetree.XmlDocument;
-import cs492.obsecurefinal.metaintelligence.parsetree.XmlTag;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -39,6 +40,7 @@ import java.util.Set;
 
 
 import static junit.framework.Assert.*;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -46,7 +48,7 @@ import org.junit.Test;
  * @author Benjamin Arnold
  */
 public class XmlRuleTest {
-    private static final String document = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><ruleSet name=\"opencyc\"><category name=\"LOCATION\"><rule name=\"namedLocation\" type=\"GENERALITY\"><filter type=\"adaptive\" value=\"3\">LocationFilter</filter><metric><weight value=\"1\">City</weight><weight value=\"2\">State-UnitedStates</weight><weight value=\"3\">IndependentCountry</weight><weight value=\"4\">Country</weight><weight value=\"5\">Continent</weight></metric><criteria><condition type=\"isa\">ANY</condition></criteria></rule><rule name=\"historic\" type=\"GENERALITY\"><filter type=\"adaptive\" value=\"3\">LocationFilter</filter><metric><weight value=\"1\">Historic</weight><weight value=\"2\">City</weight><weight value=\"3\">State-UnitedStates</weight><weight value=\"4\">IndependentCountry</weight><weight value=\"5\">Country</weight><weight value=\"6\">Continent</weight></metric><criteria><condition type=\"comment\">DATE</condition></criteria></rule></category></ruleSet>";
+    private static final String document = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><ruleSet name=\"opencyc\"><category name=\"LOCATION\"><rule name=\"namedLocation\" type=\"GENERALITY\"><filter type=\"adaptive\" value=\"3\">LocationFilter</filter><action type=\"isa\" value=\"1\">AUTO</action><metric><weight value=\"1\">City</weight><weight value=\"2\">State-UnitedStates</weight><weight value=\"3\">IndependentCountry</weight><weight value=\"4\">Country</weight><weight value=\"5\">Continent</weight></metric><criteria><condition type=\"isa\">ANY</condition></criteria></rule><rule name=\"historic\" type=\"GENERALITY\"><filter type=\"adaptive\" value=\"3\">LocationFilter</filter><action type=\"isa\" value=\"1\">AUTO</action><metric><weight value=\"1\">Historic</weight><weight value=\"2\">City</weight><weight value=\"3\">State-UnitedStates</weight><weight value=\"4\">IndependentCountry</weight><weight value=\"5\">Country</weight><weight value=\"6\">Continent</weight></metric><criteria><condition type=\"comment\">DATE</condition></criteria></rule></category></ruleSet>";
     
     @Test
     public void parseFilter() throws Exception {
@@ -55,6 +57,15 @@ public class XmlRuleTest {
 	assertEquals("adaptive", filter.getType());
 	assertEquals("3", filter.getValue());
 	assertEquals("LocationFilter", filter.getName());
+    }
+    
+    @Test
+    public void parseAction() throws Exception {
+	final String aString = "<action type=\"isa\" value=\"1\">AUTO</action>";
+	RuleTreeComponent filter = XmlTag.ACTION.parse(aString);
+	assertEquals("isa", filter.getType());
+	assertEquals("1", filter.getValue());
+	assertEquals("AUTO", filter.getName());
     }
     
     @Test
@@ -90,13 +101,18 @@ public class XmlRuleTest {
 	RuleTreeComposite rule = (RuleTreeComposite) categoryCildren.get(0);
 	assertEquals("namedLocation", rule.getName());
 	List<RuleTreeComponent> ruleChildren = rule.getChildren();
-	assertEquals(3, ruleChildren.size());
+	assertEquals(4, ruleChildren.size());
 	
 	RuleTreeLeaf filter = (RuleTreeLeaf) ruleChildren.get(0);
 	assertEquals("LocationFilter", filter.getName());
 	assertEquals("3", filter.getValue());
 	
-	RuleTreeComposite metric = (RuleTreeComposite) ruleChildren.get(1);
+	RuleTreeLeaf action = (RuleTreeLeaf) ruleChildren.get(1);
+	assertEquals("AUTO",action.getName());
+	assertEquals("1",action.getValue());
+	assertEquals("isa",action.getType());
+	
+	RuleTreeComposite metric = (RuleTreeComposite) ruleChildren.get(2);
 	List<RuleTreeComponent> metricChildren = metric.getChildren();
 	assertEquals(5, metricChildren.size());
 	
@@ -116,7 +132,7 @@ public class XmlRuleTest {
 	    assertEquals(expectedName, weight.getName());
 	}
 	
-	RuleTreeComposite criteria = (RuleTreeComposite) ruleChildren.get(2);
+	RuleTreeComposite criteria = (RuleTreeComposite) ruleChildren.get(3);
 	List<RuleTreeComponent> criteriaChildren = criteria.getChildren();
 	assertEquals(1, criteriaChildren.size());
 	
@@ -129,13 +145,18 @@ public class XmlRuleTest {
 	RuleTreeComposite rule = (RuleTreeComposite) categoryCildren.get(1);
 	assertEquals("historic", rule.getName());
 	List<RuleTreeComponent> ruleChildren = rule.getChildren();
-	assertEquals(3, ruleChildren.size());
+	assertEquals(4, ruleChildren.size());
 	
 	RuleTreeLeaf filter = (RuleTreeLeaf) ruleChildren.get(0);
 	assertEquals("LocationFilter", filter.getName());
 	assertEquals("3", filter.getValue());
 	
-	RuleTreeComposite metric = (RuleTreeComposite) ruleChildren.get(1);
+	RuleTreeLeaf action = (RuleTreeLeaf) ruleChildren.get(1);
+	assertEquals("AUTO",action.getName());
+	assertEquals("1",action.getValue());
+	assertEquals("isa",action.getType());
+	
+	RuleTreeComposite metric = (RuleTreeComposite) ruleChildren.get(2);
 	List<RuleTreeComponent> metricChildren = metric.getChildren();
 	assertEquals(6, metricChildren.size());
 	
@@ -156,7 +177,7 @@ public class XmlRuleTest {
 	    assertEquals(expectedName, weight.getName());
 	}
 	
-	RuleTreeComposite criteria = (RuleTreeComposite) ruleChildren.get(2);
+	RuleTreeComposite criteria = (RuleTreeComposite) ruleChildren.get(3);
 	List<RuleTreeComponent> criteriaChildren = criteria.getChildren();
 	assertEquals(1, criteriaChildren.size());
 	
@@ -165,8 +186,6 @@ public class XmlRuleTest {
 	assertEquals("comment", condition.getType());
 	}
     }
-    
-   
     
     @Test
     public void loadMetaRules() throws Exception {
@@ -195,6 +214,11 @@ public class XmlRuleTest {
 	MetaFilter filter = rule.getFilter();
 	assertEquals("LocationFilter", filter.getName());
 	assertEquals(Integer.valueOf(3), filter.getValue());
+	
+	MetaAction action = rule.getAction();
+	assertEquals("AUTO",action.getName());
+	assertEquals(Integer.valueOf(1),action.getValue());
+	assertEquals("isa",action.getType());
 	
 	MetaMetric metric = rule.getMetric();
 	Set<MetaWeight> weights = metric.getMetaWeights();
@@ -232,6 +256,11 @@ public class XmlRuleTest {
 	MetaFilter filter = rule.getFilter();
 	assertEquals("LocationFilter", filter.getName());
 	assertEquals(Integer.valueOf(3), filter.getValue());
+	
+	MetaAction action = rule.getAction();
+	assertEquals("AUTO",action.getName());
+	assertEquals(Integer.valueOf(1),action.getValue());
+	assertEquals("isa",action.getType());
 	
 	MetaMetric metric = rule.getMetric();
 	Set<MetaWeight> weights = metric.getMetaWeights();

@@ -19,7 +19,6 @@ package cs492.obsecurefinal.obsecurecyc;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
-import org.opencyc.api.CycAccess;
 import org.opencyc.cycobject.CycList;
 import org.opencyc.cycobject.CycObject;
 
@@ -35,6 +34,11 @@ public abstract class CycQueryExecutor {
 	    CycList tResult = loop((CycObject) constants.get(i));
 	    result.addAll(tResult);
 	}
+	return filter(result);
+    }
+    
+    public CycList execute(CycObject constant) throws IOException {
+	CycList result = loop(constant);
 	return filter(result);
     }
     

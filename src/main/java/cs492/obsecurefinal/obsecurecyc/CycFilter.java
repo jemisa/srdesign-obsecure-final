@@ -66,7 +66,7 @@ public enum CycFilter {
 	return result;
     }
     
-    protected static CycList filter(CycAccess cycAccess, CycList input, CycFilter...filters) throws IOException {
+    protected static CycList filter(CycAccess cycAccess, CycList input, List<CycFilter> filters) throws IOException {
 	CycList result = input;
 	if (filters != null) {
 	    for (CycFilter filter : filters) {

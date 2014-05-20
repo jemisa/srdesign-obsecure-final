@@ -46,5 +46,15 @@ public class MetaRuleSetFacade implements MetaIntelligenceCrudFacade<MetaRuleSet
 	    
 	return metaRuleSetRepository.save(entity);
     }
+
+    public MetaCategory getCategory(MetaRuleSet ruleSet, String name) {
+	MetaCategory match = null;
+	for (MetaCategory category : ruleSet.getMetaCategories()) {
+	    if (name.equals(category.getName())) {
+		match = category;
+	    }
+	}
+	return match;
+    }
     
 }

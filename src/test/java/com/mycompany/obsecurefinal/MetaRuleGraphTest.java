@@ -17,20 +17,22 @@
 
 package com.mycompany.obsecurefinal;
 
+import cs492.obsecurefinal.common.EntityTypes;
+import cs492.obsecurefinal.spring.controller.metaintelligence.MetaCategoryFacade;
 import cs492.obsecurefinal.spring.controller.metaintelligence.MetaIntelligenceFacade;
-import cs492.obsecurefinal.spring.SpringModel;
+import cs492.obsecurefinal.spring.controller.metaintelligence.MetaRuleGraphFacade;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaCategory;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRuleGraph;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRuleSet;
-import cs492.obsecurefinal.spring.session.metaintelligence.MetaRuleGraphRepository;
 import java.util.Iterator;
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
 
 /**
  * 
@@ -52,7 +54,8 @@ public class MetaRuleGraphTest {
     @Test
     public void initialization() throws Exception {
 	int actualCount = 0;
-	Iterable<MetaRuleGraph> ruleGraphScores = facade.findAllMetaRuleGraphs();
+	MetaRuleGraphFacade metaRuleGraphFacade = MetaRuleGraphFacade.getInstance();
+	Iterable<MetaRuleGraph> ruleGraphScores = metaRuleGraphFacade.findAll();
 	MetaRuleGraph graph;
 	
 	for (Iterator<MetaRuleGraph> it = ruleGraphScores.iterator(); it.hasNext(); graph = it.next()) {
@@ -65,7 +68,8 @@ public class MetaRuleGraphTest {
     @Test
     public void update() throws Exception {
 	final int updatedScore = 12;
-	Iterable<MetaRuleGraph> ruleGraphScores = facade.findAllMetaRuleGraphs();
+	MetaRuleGraphFacade metaRuleGraphFacade = MetaRuleGraphFacade.getInstance();
+	Iterable<MetaRuleGraph> ruleGraphScores = metaRuleGraphFacade.findAll();
 	MetaRuleGraph graph;
 	
 	for (Iterator<MetaRuleGraph> it = ruleGraphScores.iterator(); it.hasNext();) {
@@ -74,11 +78,25 @@ public class MetaRuleGraphTest {
 	    facade.save(graph);
 	}
 	
-	ruleGraphScores = facade.findAllMetaRuleGraphs();
+	ruleGraphScores = metaRuleGraphFacade.findAll();
 	
 	for (Iterator<MetaRuleGraph> it = ruleGraphScores.iterator(); it.hasNext();) {
 	    graph = it.next();
 	    assertEquals(updatedScore, graph.getScore().intValue());
+	}
+	
+    }
+    
+    @Test
+    public void byCategory() throws Exception {
+	Long categoryId = MetaCategoryFacade.getInstance().findCategoryId(EntityTypes.LOCATION.name());
+	assertNotNull(categoryId);
+	
+	Iterable<MetaRuleGraph> graphs = MetaRuleGraphFacade.getInstance().findHighestScoring(EntityTypes.LOCATION.name());
+	assertNotNull(graphs);
+	
+	for (MetaRuleGraph graph : graphs) {
+	    assertEquals(categoryId, graph.getMetaCategoryId());
 	}
 	
     }

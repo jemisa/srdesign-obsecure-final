@@ -19,6 +19,10 @@ package cs492.obsecurefinal.spring.controller.metaintelligence;
 
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRuleGraph;
 import cs492.obsecurefinal.spring.session.metaintelligence.MetaRuleGraphRepository;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  *
@@ -42,5 +46,42 @@ public class MetaRuleGraphFacade implements MetaIntelligenceCrudFacade<MetaRuleG
 	
 	return metaRuleGraphRepository.save(entity);
     }
+
+    public Iterable<MetaRuleGraph> findAll() {
+	return metaRuleGraphRepository.findAll();
+    }
     
+    public Iterable<MetaRuleGraph> findHighestScoring(String categoryName) { 
+	return findHighestScoring(categoryName, 1);
+    }
+    
+    public Iterable<MetaRuleGraph> findHighestScoring(String categoryName, int epsilon) {
+	Long categoryId = MetaCategoryFacade.getInstance().findCategoryId(categoryName);
+	
+	Set<MetaRuleGraph> highestScoring = new HashSet<>();
+	
+	Iterable<MetaRuleGraph> categoryGraphs = metaRuleGraphRepository.findAllByMetaCategoryId(categoryId);
+	int highestScore = findHighestScore(categoryGraphs, epsilon);
+	for (MetaRuleGraph graph : categoryGraphs) {
+	    if (graph.getScore() >= highestScore) {
+		highestScoring.add(graph);
+	    }
+	    
+	}
+	return highestScoring;
+    }
+
+    private int findHighestScore(Iterable<MetaRuleGraph> categoryGraphs, int epsilon) {
+	int highest = Integer.MIN_VALUE;
+	TreeSet<Integer> scores = new TreeSet<Integer>();
+	
+	for (MetaRuleGraph graph : categoryGraphs) {
+	    scores.add(graph.getScore());	    
+	}
+	
+	for (Iterator<Integer> it = scores.iterator(); it.hasNext() && epsilon > 0; epsilon--) {
+	    highest = it.next();
+	}
+	return highest;
+    }
 }

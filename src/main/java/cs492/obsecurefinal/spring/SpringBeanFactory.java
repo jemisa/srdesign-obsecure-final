@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Pivotal Software, Inc.
+ * Copyright (C) 2014 Drexel University
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,10 +17,6 @@
 
 package cs492.obsecurefinal.spring;
 
-import cs492.obsecurefinal.App;
-import cs492.obsecurefinal.spring.session.metaintelligence.MetaCategoryRepository;
-import cs492.obsecurefinal.spring.session.metaintelligence.MetaFilterRepository;
-import cs492.obsecurefinal.spring.SpringModel;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.repository.CrudRepository;

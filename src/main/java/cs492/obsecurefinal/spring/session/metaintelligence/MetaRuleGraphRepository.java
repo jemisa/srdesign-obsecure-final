@@ -25,5 +25,7 @@ import org.springframework.data.repository.CrudRepository;
  * @author Benjamin Arnold
  */
 public interface MetaRuleGraphRepository extends CrudRepository<MetaRuleGraph, Long> {
+
+    public Iterable<MetaRuleGraph> findAllByMetaCategoryId(Long categoryId);
     
 }

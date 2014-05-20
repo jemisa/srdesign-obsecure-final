@@ -17,20 +17,54 @@
 
 package cs492.obsecurefinal.metaintelligence;
 
+import cs492.obsecurefinal.obsecurecyc.CycFunctionHandler;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaAction;
+import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRule;
+
 /**
  *
  * @author Benjamin Arnold
  */
-public class MetaFunction implements MetaActionHandlerAware {
+public class MetaFunction implements MetaActionHandlerAware<FunctionHandler> {
+    private final String name;
+    private final MetaRule rule;
+    private final MetaAction action;
+    private final FunctionHandler handler;
 
+    public MetaFunction(MetaRule rule, MetaAction action) {
+	this.name = action.getType().toUpperCase();
+	this.rule = rule;
+	this.action = action;
+	Handler type = Handler.valueOf(name);
+	this.handler = type.getHandler(this);
+    }
+    
     @Override
-    public MetaHandler getHandler() {
-	throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public FunctionHandler getHandler() {
+	return handler;
     }
 
     @Override
     public String getName() {
-	throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	return name;
     }
+    
+    public MetaAction getAction() {
+	return action;
+    }
+    
+    public MetaRule getRule() {
+	return rule;
+    }
+
+   private static enum Handler implements HandlerAware<MetaFunction, FunctionHandler> {
+	ISA {
+	    @Override
+	    public FunctionHandler getHandler(MetaFunction metaFunction) {
+		return new CycFunctionHandler(metaFunction);
+	    }
+
+	};
+   }
     
 }
