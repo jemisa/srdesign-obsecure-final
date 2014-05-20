@@ -18,8 +18,10 @@
 package com.mycompany.obsecurefinal;
 
 import cs492.obsecurefinal.common.EntityTypes;
+import cs492.obsecurefinal.metaintelligence.MetaIntelligenceFramework;
 import cs492.obsecurefinal.metaintelligence.MetaPredicate;
 import cs492.obsecurefinal.metaintelligence.PredicateHandler;
+import cs492.obsecurefinal.obsecurecyc.CycPredicateHandler;
 import cs492.obsecurefinal.obsecurecyc.CycQuery;
 import cs492.obsecurefinal.obsecurecyc.CycQueryStrategy;
 import cs492.obsecurefinal.obsecurecyc.ObSecureCycFacade;
@@ -30,6 +32,7 @@ import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRule;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaWeight;
 import static junit.framework.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opencyc.api.CycAccess;
 import org.opencyc.cycobject.CycList;
@@ -142,6 +145,11 @@ public class MetaPredicateTest {
 	
 	boolean test = handler.apply((CycObject) matches.get(0), context, new String[]{});
 	assertTrue("ANY on PhiadelphiaEagles should match a FootballTeam",test);
+    }
+    
+    @BeforeClass
+    public static void setup() throws Exception {
+        MetaIntelligenceFramework.registerService(PredicateHandler.SERVICE_NAME, new CycPredicateHandler());
     }
     
     
