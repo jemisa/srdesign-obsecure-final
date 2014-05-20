@@ -16,8 +16,21 @@
  */
 package cs492.obsecurefinal.ui;
 
-import java.awt.FileDialog;
+import cs492.obsecurefinal.algorithm.Sanitization;
+import cs492.obsecurefinal.algorithm.SanitizationSimple;
+import cs492.obsecurefinal.common.Agent;
+import cs492.obsecurefinal.common.DatabaseAccess;
+import cs492.obsecurefinal.common.Document;
+import cs492.obsecurefinal.common.HintNoReplacements;
+import cs492.obsecurefinal.common.HintWithReplacements;
+import cs492.obsecurefinal.common.SanitizationHint;
+import cs492.obsecurefinal.common.SanitizationResult;
+import cs492.obsecurefinal.common.Sentence;
+import cs492.obsecurefinal.metaintelligence.IntelligenceGraph;
+import java.util.Arrays;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JRadioButtonMenuItem;
 
 /**
  *
@@ -25,11 +38,39 @@ import javax.swing.JFileChooser;
  */
 public class MainWindow extends javax.swing.JFrame {
 
+    Document currDocument;
+    Agent currAgent;
+    String[] allProfiles;
+    DatabaseAccess dbAccess;
+    
     /**
      * Creates new form MainWindow
      */
     public MainWindow() {
         initComponents();
+        
+        dbAccess = new DatabaseAccess();
+            
+        if(dbAccess.isAvailable())
+        {
+            allProfiles = dbAccess.getProfileNames();
+            
+            Arrays.sort(allProfiles);
+
+            for(String agentName: allProfiles)
+            {
+                JRadioButtonMenuItem rbItem = new JRadioButtonMenuItem(agentName); 
+                rbItem.addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        String ctrlName = evt.getActionCommand();
+                        Agent agent = dbAccess.getProfileByName(ctrlName);
+                        if(agent != null)
+                            currAgent = agent;
+                    }
+                });
+                jMenu4.add(rbItem);
+            }
+        }
     }
 
     /**
@@ -131,13 +172,99 @@ public class MainWindow extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    // Perform sanitization
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
-        // TODO add your handling code here:
+        if(currDocument == null || currDocument.getText().equals(""))
+        {
+             JOptionPane.showMessageDialog(this, "Document missing or invalid");
+        }
+        else if(currAgent == null)
+        {
+             JOptionPane.showMessageDialog(this, "No agent selected");
+        }
+        else
+        {
+            Sanitization sanitization = new SanitizationSimple(currDocument, currAgent);
+            SanitizationResult result = sanitization.sanitize();
+            
+            if(result != null)
+            {
+                for(SanitizationHint hint: result.getResults())
+                {
+                    SanitizationResultsDialog resultsDlg;
+                    
+                    if(hint instanceof HintWithReplacements)
+                    {
+                        HintWithReplacements hwr = (HintWithReplacements)hint;
+                        
+                        resultsDlg = new SanitizationResultsDialog(this, true, hwr.getEntity().getText(), 
+                                                                   hwr.getEntity().getType().toString(), Double.toString(hwr.getMatchPercentage()), 
+                                                                   hwr.getReplacements().getResults());
+                        int chosenIndex = resultsDlg.showDialog();
+                        if(chosenIndex >= 0)
+                        {
+                            // make replacement in document
+                            Sentence sentence = hwr.getEntity().getSentence();
+                            String newSentText = sentence.getText().replace(hwr.getEntity().getText(), hwr.getReplacements().getResults()[chosenIndex]);
+                            
+                            String newDocText = "";
+                            
+                            for(int i = 0; i < currDocument.getSentences().length; i++)
+                            {
+                                if(i != 0)
+                                    newDocText += " ";
+                                
+                                if(i != hwr.getEntity().getSentence().getIndex())
+                                {
+                                    newDocText += currDocument.getSentences()[i];
+                                }
+                                else
+                                {
+                                    newDocText += newSentText;
+                                }
+                            }
+                            
+                            currDocument.setText(newDocText);
+                            
+                            jTextArea1.setText(newDocText);
+                            
+                            // inform meta intelligence of user's choice
+                            IntelligenceGraph.getInstance().resolve(hwr.getEntity(), hwr.getReplacements().getResults()[chosenIndex]);
+                        }
+                    }
+                    else if (hint instanceof HintNoReplacements)
+                    {
+                        HintNoReplacements hnr = (HintNoReplacements)hint;
+                        resultsDlg = new SanitizationResultsDialog(this, true, hnr.getText(), 
+                                                                   hnr.getAssociatedType().toString(), Double.toString(hnr.getMatchPercentage()), 
+                                                                   null);
+                        resultsDlg.showDialog();
+                    }
+                }
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(this, "No results were obtained");
+            }
+        }
+        
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         JFileChooser chooser = new JFileChooser();
-        chooser.showDialog(this, "Open");
+        int dlgResult = chooser.showDialog(this, "Open");
+        if(dlgResult == JFileChooser.APPROVE_OPTION)
+        {
+            currDocument = new Document(chooser.getSelectedFile());
+            if(currDocument.isValid())
+                jTextArea1.setText(currDocument.getText());
+            else
+            {
+                currDocument = null;
+                jTextArea1.setText("");
+            }
+        }
+        
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     /**

@@ -5,7 +5,6 @@
 package cs492.obsecurefinal.common;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.InputStream;
 import opennlp.tools.sentdetect.SentenceDetectorME;
