@@ -17,21 +17,30 @@
 
 package cs492.obsecurefinal.metaintelligence;
 
-import cs492.obsecurefinal.obsecurecyc.CycQuery;
-import java.io.IOException;
-import org.opencyc.cycobject.CycList;
-import org.opencyc.cycobject.CycObject;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
  * @author Benjamin Arnold
  */
-public interface FunctionHandler extends MetaHandler<FunctionHandler> {
-    public static final String SERVICE_NAME = "functionHandler";
+public class MetaIntelligenceFramework {
+    private static final Map<String, MetaHandler> services = new HashMap<>();
     
-    public CycList invoke(CycObject object, CycQuery context, String[] args) throws IOException;
-    public void setMetaFunction(MetaFunction metaFunction);
+    public static void registerService(String serviceName, MetaHandler service) {
+	services.put(serviceName, service);
+    }
     
-    @Override
-    public FunctionHandler newInstance();
+    public static MetaHandler getService(String serviceName) {
+	return services.get(serviceName);
+    }
+    
+    /* convenience methods */
+    public static PredicateHandler getPredicateHandler() {
+	return (PredicateHandler) getService(PredicateHandler.SERVICE_NAME).newInstance();
+    }
+    
+     public static FunctionHandler getFunctionHandler() {
+	return (FunctionHandler) getService(FunctionHandler.SERVICE_NAME).newInstance();
+    }
 }

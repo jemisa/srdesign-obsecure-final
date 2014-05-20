@@ -37,10 +37,11 @@ import org.opencyc.cycobject.CycObject;
  * @author Benjamin Arnold
  */
 public class CycPredicateHandler implements PredicateHandler {
-    private final MetaPredicate metaPredicate;
-    private final CycPredicateType type;
+    private MetaPredicate metaPredicate;
+    private CycPredicateType type;
     
-    public CycPredicateHandler(MetaPredicate metaPredicate) {
+    @Override
+    public void setMetaPredicate(MetaPredicate metaPredicate) {
 	this.metaPredicate = metaPredicate;
 	String name = metaPredicate.getName();
 	type = CycPredicateType.valueOf(name);
@@ -50,9 +51,13 @@ public class CycPredicateHandler implements PredicateHandler {
     public boolean apply(CycObject object, CycQuery context, String[] args) throws IOException {
 	return type.apply(object, metaPredicate, context, args);
     }
+
+    @Override
+    public PredicateHandler newInstance() {
+	return new CycPredicateHandler();
+    }
     
   
-    
     private static enum CycPredicateType {
 	ISA {
 	    @Override

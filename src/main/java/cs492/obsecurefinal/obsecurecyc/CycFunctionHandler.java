@@ -41,11 +41,12 @@ import org.opencyc.cycobject.CycVariable;
  * @author Benjamin Arnold
  */
 public class CycFunctionHandler implements FunctionHandler {
-    private final MetaFunction metaFunction;
-    private final Mode mode;
+    private MetaFunction metaFunction;
+    private Mode mode;
     private QueryType queryType;
     
-    public CycFunctionHandler(MetaFunction metaFunction) {
+    @Override
+    public void setMetaFunction(MetaFunction metaFunction) {
 	this.metaFunction = metaFunction;
 	String modeName = metaFunction.getAction().getName();
 	this.mode = Mode.valueOf(modeName);
@@ -88,6 +89,11 @@ public class CycFunctionHandler implements FunctionHandler {
 
 	CycList result = executor.execute(object);
 	return result;
+    }
+
+    @Override
+    public FunctionHandler newInstance() {
+	return new CycFunctionHandler();
     }
     
     private static enum Mode {

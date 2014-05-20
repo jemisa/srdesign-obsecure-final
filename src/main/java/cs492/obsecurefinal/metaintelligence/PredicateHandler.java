@@ -25,7 +25,13 @@ import org.opencyc.cycobject.CycObject;
  *
  * @author Benjamin Arnold
  */
-public interface PredicateHandler extends MetaHandler {
+public interface PredicateHandler extends MetaHandler<PredicateHandler> {
+    public static final String SERVICE_NAME = "predicateHandler";
     
     public boolean apply(CycObject object, CycQuery context, String[] args) throws IOException;
+    public void setMetaPredicate(MetaPredicate metaPredicate);
+    
+    @Override
+    public PredicateHandler newInstance();
+    
 }

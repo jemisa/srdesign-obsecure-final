@@ -17,7 +17,6 @@
 
 package cs492.obsecurefinal.metaintelligence;
 
-import cs492.obsecurefinal.obsecurecyc.CycFunctionHandler;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaAction;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRule;
 
@@ -61,7 +60,9 @@ public class MetaFunction implements MetaActionHandlerAware<FunctionHandler> {
 	ISA {
 	    @Override
 	    public FunctionHandler getHandler(MetaFunction metaFunction) {
-		return new CycFunctionHandler(metaFunction);
+		FunctionHandler functionHandler = MetaIntelligenceFramework.getFunctionHandler();
+		functionHandler.setMetaFunction(metaFunction);
+		return functionHandler;
 	    }
 
 	};

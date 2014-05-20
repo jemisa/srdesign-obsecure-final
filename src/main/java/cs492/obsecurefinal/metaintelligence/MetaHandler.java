@@ -21,6 +21,6 @@ package cs492.obsecurefinal.metaintelligence;
  *
  * @author Benjamin Arnold
  */
-public interface MetaHandler {
-    
+public interface MetaHandler<T extends MetaHandler> {
+    public T newInstance();
 }

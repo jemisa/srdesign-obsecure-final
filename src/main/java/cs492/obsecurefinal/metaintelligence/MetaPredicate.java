@@ -17,7 +17,6 @@
 
 package cs492.obsecurefinal.metaintelligence;
 
-import cs492.obsecurefinal.obsecurecyc.CycPredicateHandler;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaCondition;
 import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRule;
 
@@ -61,13 +60,17 @@ import cs492.obsecurefinal.spring.domain.metaintelligence.MetaRule;
 	ISA {
 	    @Override
 	    public PredicateHandler getHandler(MetaPredicate predicate) {
-		return new CycPredicateHandler(predicate);
+		PredicateHandler predicateHandler = MetaIntelligenceFramework.getPredicateHandler();
+		predicateHandler.setMetaPredicate(predicate);
+		return predicateHandler;
 	    }
 
 	},COMMENT {
 	      @Override
 	    public PredicateHandler getHandler(MetaPredicate predicate) {
-		return new CycPredicateHandler(predicate);
+		PredicateHandler predicateHandler = MetaIntelligenceFramework.getPredicateHandler();
+		predicateHandler.setMetaPredicate(predicate);
+		return predicateHandler;
 	    }
 	};
 	
