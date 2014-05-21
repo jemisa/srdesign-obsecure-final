@@ -102,6 +102,7 @@ public class MainWindow extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jTextArea1.setColumns(20);
+        jTextArea1.setLineWrap(true);
         jTextArea1.setRows(5);
         jScrollPane1.setViewportView(jTextArea1);
 
@@ -270,7 +271,7 @@ public class MainWindow extends javax.swing.JFrame {
                                 
                                 if(i != ngh.getSentence().getIndex())
                                 {
-                                    newDocText += currDocument.getSentences()[i];
+                                    newDocText += currDocument.getSentences()[i].getText();
                                 }
                                 else
                                 {

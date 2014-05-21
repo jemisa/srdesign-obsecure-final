@@ -1,1 +1,1 @@
-am drunk,am incapacitated
+am drunk,am incapacitated:requires dialysis,requires treatment
